@@ -9,13 +9,5 @@ public class RoomSprintBacklog extends Room
         super(id, description);
     }
 
-    @Override
-    protected void askChallenge(Player player) {
 
-    }
-
-    @Override
-    public void handleInput(String input, Player player) {
-
-    }
 }
