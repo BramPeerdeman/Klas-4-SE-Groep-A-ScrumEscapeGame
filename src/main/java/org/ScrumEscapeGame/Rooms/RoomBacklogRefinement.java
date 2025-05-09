@@ -12,18 +12,6 @@ public class RoomBacklogRefinement extends Room
         super(id, description);
     }
 
-    @Override
-    protected void askChallenge(Player player) {
-
-    }
-
-    @Override
-    public void handleInput(String input, Player player) {
-
-    }
-    //if(player.Position(1)){
-        //onEnter(Player player);
-
 
 }
 

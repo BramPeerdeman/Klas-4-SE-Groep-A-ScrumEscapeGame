@@ -9,14 +9,4 @@ public class RoomDailyScrum extends Room
     protected RoomDailyScrum(int id, String description) {
         super(id, description);
     }
-
-    @Override
-    protected void askChallenge(Player player) {
-
-    }
-
-    @Override
-    public void handleInput(String input, Player player) {
-
-    }
 }

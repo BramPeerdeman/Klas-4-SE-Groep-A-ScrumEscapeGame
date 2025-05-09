@@ -14,11 +14,14 @@ abstract public class Room {
         this.description = description;
         this.neighbours = new HashMap<>();
     }
+
     public int getId() {
         return id;
     }
 
-    /** Optioneel: alleen nodig als je id later wilt wijzigen */
+    /**
+     * Optioneel: alleen nodig als je id later wilt wijzigen
+     */
     public void setId(int id) {
         this.id = id;
     }
@@ -27,18 +30,24 @@ abstract public class Room {
         return description;
     }
 
-    /** Optioneel: alleen nodig als je omschrijving later wilt wijzigen */
+    /**
+     * Optioneel: alleen nodig als je omschrijving later wilt wijzigen
+     */
     public void setDescription(String description) {
         this.description = description;
     }
+
     public void setNeighbours(String richting, Room room) {
         neighbours.put(richting.toLowerCase(), room);
     }
 
-    /** Haal de buurkamer op in de gegeven richting */
+    /**
+     * Haal de buurkamer op in de gegeven richting
+     */
     public Optional<Room> getNeighbour(String richting) {
         return Optional.ofNullable(neighbours.get(richting.toLowerCase()));
     }
+
     // update de de locatie van de speler naar huidige kamer
     // het laat ook de beschrijving van de kamer zien en de vraag die je moet beantwoorden
     public final void onEnter(Player player) {
@@ -47,13 +56,6 @@ abstract public class Room {
 
         System.out.println(description);
 
-        askChallenge(player);
     }
-
-    /** Iedere concrete kamer implementeert z’n eigen challenge(s). */
-    protected abstract void askChallenge(Player player);
-
-    /** Verwerk een speler-input (bijv. antwoord op een vraag). */
-    public abstract void handleInput(String input, Player player);
 }
 
