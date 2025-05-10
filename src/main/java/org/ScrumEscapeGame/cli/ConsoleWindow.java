@@ -9,6 +9,12 @@ public class ConsoleWindow extends JFrame {
     private JTextArea outputArea;
     private JTextField inputField;
 
+    /*
+       BELANGRIJK! Als je iets wilt uitprinten in een command of object:
+       gebruik niet: System.out.print
+       maar gebruik: Game.consoleWindow.printMessage
+    */
+
     public ConsoleWindow() {
         setTitle("Game Console");
         setSize(600, 400);

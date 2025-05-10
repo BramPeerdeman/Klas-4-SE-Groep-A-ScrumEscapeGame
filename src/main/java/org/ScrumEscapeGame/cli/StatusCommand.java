@@ -15,8 +15,8 @@ public class StatusCommand implements Command
     @Override
     public void execute()
     {
-        System.out.println("You are currently in room number: " + player.getPosition());
-        System.out.println("Your current status is: " + player.getStatus());
+        Game.consoleWindow.printMessage("You are currently in room number: " + player.getPosition());
+        Game.consoleWindow.printMessage("Your current status is: " + player.getStatus());
     }
 
 

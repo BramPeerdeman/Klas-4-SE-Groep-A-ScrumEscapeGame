@@ -1,5 +1,7 @@
 package org.ScrumEscapeGame.GameObjects;
 
+import org.ScrumEscapeGame.cli.Game;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +56,7 @@ abstract public class Room {
 
         player.setPosition(this.getId());
 
-        System.out.println(description);
+        Game.consoleWindow.printMessage(description);
 
     }
 }
