@@ -1,7 +1,14 @@
 package org.ScrumEscapeGame.cli;
 
+import org.ScrumEscapeGame.GameObjects.Player;
+
 class LookCommand implements Command {
+    private Player player;
+    public LookCommand(Player player) {
+        this.player = player;
+    }
+
     public void execute() {
-        Game.consoleWindow.printMessage("You are in a dark room. There is a door to the north.");
+        Game.consoleWindow.printMessage(Game.rooms.get(player.getPosition()).getDescription());
     }
 }
