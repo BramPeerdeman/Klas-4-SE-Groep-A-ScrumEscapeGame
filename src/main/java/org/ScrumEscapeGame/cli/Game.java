@@ -21,15 +21,19 @@ public class Game
     static HashMap<Integer, Room> rooms = new HashMap<>(); //Hiermee kunnen we in main de map aanmaken.
 
     public void start() {
+        consoleWindow = new ConsoleWindow(this); // 👈 pass Game reference
+        consoleWindow.setVisible(true);
+    }
+
+    public void beginGame() {
+        // called after START button is clicked
         commands.put("look", new LookCommand(player));
         commands.put("map", new MapCommand(player));
         commands.put("status", new StatusCommand(player));
-        /*LET OP: dit zijn de commands voor het bewegen, ik maak gebruik van WASD*/
+        commands.put("w", new MoveCommand("north", player, rooms));
         commands.put("a", new MoveCommand("west", player, rooms));
+        commands.put("s", new MoveCommand("south", player, rooms));
         commands.put("d", new MoveCommand("east", player, rooms));
-
-        consoleWindow = new ConsoleWindow();
-        consoleWindow.setVisible(true);
 
         List<RoomWithQuestion> roomList = RoomFactory.createRandomizedRooms();
         for (int i = 0; i < roomList.size(); i++)
@@ -50,7 +54,9 @@ public class Game
         // Auto-enter the first room
         roomList.get(0).onEnter(player);
 
-        consoleWindow.initWelcomePanel();
+        player.setPosition(1);
+        Room startingRoom = rooms.get(player.getPosition());
+        startingRoom.onEnter(player); // 👈 only now enter the room!
     }
 
     public static void handleCommand(String command) {
