@@ -7,7 +7,15 @@ public class RoomBacklogRefinement extends RoomWithQuestion
 {
     public RoomBacklogRefinement(int id, String description)
     {
-        super(id, description, RoomQuestions.getQuestionForRoom(id));
+        super(1,"""
+            Je duwt de stalen deur open; hij piept alsof hij al jaren
+            niet meer is gesmeerd. Binnen flikkeren kapotte TL-lampen
+            boven een tafel vol verroeste schroevendraaiers en half
+            gesoldeerde printplaten. De lucht smaakt naar roest en
+            verbrand plastic, en mistige vlekken kruipen over de vloer.
+            Er klinkt haast onhoorbaar geruis – komt het uit de
+            ventilatieroosters?
+            """, RoomQuestions.getQuestionForRoom(id));
     }
 }
 
