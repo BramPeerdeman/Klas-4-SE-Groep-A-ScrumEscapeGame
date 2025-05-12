@@ -52,7 +52,7 @@ abstract public class Room {
 
     // update de de locatie van de speler naar huidige kamer
     // het laat ook de beschrijving van de kamer zien en de vraag die je moet beantwoorden
-    public final void onEnter(Player player) {
+    public void onEnter(Player player) {
 
         player.setPosition(this.getId());
 
