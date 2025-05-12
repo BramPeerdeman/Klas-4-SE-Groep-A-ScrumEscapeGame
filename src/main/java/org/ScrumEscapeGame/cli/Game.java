@@ -28,7 +28,8 @@ public class Game
         consoleWindow = new ConsoleWindow();
         consoleWindow.setVisible(true);
 
-        consoleWindow.printWelcomeMessage();
+        consoleWindow.initWelcomePanel();
+
     }
 
     public static void handleCommand(String command) {
