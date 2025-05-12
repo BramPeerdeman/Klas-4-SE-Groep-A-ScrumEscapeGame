@@ -1,12 +1,19 @@
 package org.ScrumEscapeGame.Rooms;
 
-import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 
-public class RoomSprintRetrospective extends Room
-{
-    protected RoomSprintRetrospective(int id, String description) {
-        super(id, description);
+public class RoomSprintRetrospective extends RoomWithQuestion {
+    public RoomSprintRetrospective() {
+        super(
+                8,
+                """
+                Een dikke mist kronkelt over de vloer. Aan de muren hangen
+                bordjes met cryptische aantekeningen in bloedrode inkt.
+                Er ligt een verzameling kapotgeslagen projectieschermen
+                op de grond. Iets fluistert iets onverstaanbaars,
+                net buiten gehoorsafstand.
+                """,
+                RoomQuestions.getQuestionForRoom(8)
+        );
     }
-
 }

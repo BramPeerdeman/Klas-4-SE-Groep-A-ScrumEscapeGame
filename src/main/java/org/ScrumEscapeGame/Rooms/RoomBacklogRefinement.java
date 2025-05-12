@@ -3,16 +3,20 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 
-public class RoomBacklogRefinement extends Room
+public class RoomBacklogRefinement extends RoomWithQuestion
 {
-
-    private int id;
-
-    protected RoomBacklogRefinement(int id, String description) {
-        super(id, description);
+    public RoomBacklogRefinement(int id, String description)
+    {
+        super(1,"""
+            Je duwt de stalen deur open; hij piept alsof hij al jaren
+            niet meer is gesmeerd. Binnen flikkeren kapotte TL-lampen
+            boven een tafel vol verroeste schroevendraaiers en half
+            gesoldeerde printplaten. De lucht smaakt naar roest en
+            verbrand plastic, en mistige vlekken kruipen over de vloer.
+            Er klinkt haast onhoorbaar geruis – komt het uit de
+            ventilatieroosters?
+            """, RoomQuestions.getQuestionForRoom(id));
     }
-
-
 }
 
 
