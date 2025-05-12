@@ -50,7 +50,7 @@ public class Game
         // Auto-enter the first room
         roomList.get(0).onEnter(player);
 
-        consoleWindow.printWelcomeMessage();
+        consoleWindow.initWelcomePanel();
     }
 
     public static void handleCommand(String command) {
