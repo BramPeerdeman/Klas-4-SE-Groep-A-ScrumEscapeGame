@@ -3,7 +3,7 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.GameObjects.Room;
 
 public class RoomSprintReview extends RoomWithQuestion {
-    public RoomSprintReview() {
+    public RoomSprintReview(int id) {
         super(
                 9,
                 """
@@ -13,7 +13,7 @@ public class RoomSprintReview extends RoomWithQuestion {
                 alsof ze je hartslag bijhouden. Elke seconde voel je de
                 spanning groeien – hier wil je niet langer blijven.
                 """,
-                RoomQuestions.getQuestionForRoom(9)
-        );
+                RoomQuestions.getQuestionForRoom(id));
+
     }
 }
