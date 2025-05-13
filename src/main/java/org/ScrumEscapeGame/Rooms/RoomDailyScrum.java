@@ -3,7 +3,7 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.GameObjects.Room;
 
 public class RoomDailyScrum extends RoomWithQuestion {
-    public RoomDailyScrum() {
+    public RoomDailyScrum(int id) {
         super(
                 2,
                 """
@@ -13,7 +13,7 @@ public class RoomDailyScrum extends RoomWithQuestion {
                 In de hoek knippert een oud computerscherm, het flauwse licht
                 werpt lange schaduwen. Je voelt dat je niet alleen bent.
                 """,
-                RoomQuestions.getQuestionForRoom(2)
-        );
+                RoomQuestions.getQuestionForRoom(id));
+
     }
 }

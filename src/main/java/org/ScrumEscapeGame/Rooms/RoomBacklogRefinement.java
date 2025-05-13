@@ -5,7 +5,7 @@ import org.ScrumEscapeGame.GameObjects.Room;
 
 public class RoomBacklogRefinement extends RoomWithQuestion
 {
-    public RoomBacklogRefinement(int id, String description)
+    public RoomBacklogRefinement(int id)
     {
         super(1,"""
             Je duwt de stalen deur open; hij piept alsof hij al jaren

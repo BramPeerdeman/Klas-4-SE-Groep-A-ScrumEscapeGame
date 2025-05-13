@@ -41,15 +41,16 @@ public class ConsoleWindow extends JFrame {
         JButton start = new JButton("START");
         start.addActionListener(e -> {
             cards.show(panelContainer, "map");
-            game.beginGame(); // ✅ this starts the game logic (calls onEnter etc.)
+            Game game = new Game();
+            game.beginGame();
         });
-
         getRootPane().setDefaultButton(start);
 
         welcome.add(msg, BorderLayout.CENTER);
         welcome.add(start, BorderLayout.SOUTH);
         panelContainer.add(welcome, "welcome");
     }
+
 
     private void initMapPanel(Player player, Map<Integer, Room> rooms) {
         JPanel mapCard = new JPanel(new BorderLayout(5, 5));
