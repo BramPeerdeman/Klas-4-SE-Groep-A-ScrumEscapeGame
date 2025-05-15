@@ -6,35 +6,41 @@ import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.cli.Game;
 
 import javax.swing.*; // only needed for demo fallback input
+import java.util.List;
 import java.util.Scanner;
 
 public class RoomWithQuestion extends Room {
     private Question question;
+    private boolean questionAsked = false;
 
     public RoomWithQuestion(int id, String description, Question question) {
         super(id, description);
         this.question = question;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
     @Override
     public final void onEnter(Player player) {
         super.onEnter(player);
 
-        if (question != null) {
-            Game.consoleWindow.printMessage("Question: " + question.getPrompt());
+        if (question != null && !questionAsked) {
+            questionAsked = true;
+            Game.consoleWindow.printMessage("❓ Question: " + question.getPrompt());
 
-            // Fallback input if consoleWindow doesn't support readLine
-            String input = JOptionPane.showInputDialog("Your answer: ");
+            List<String> options = question.getChoices();
+            char optionLetter = 'a';
+            for (String option : options) {
+                Game.consoleWindow.printMessage("  " + optionLetter + ") " + option);
+                optionLetter++;
+            }
 
-            if (question.isCorrect(input)) {
+            String input = Game.consoleWindow.readLine("Your answer (a, b, c, d): ").trim().toLowerCase();
+
+            if (input.matches("[a-d]") && question.isCorrect(input)) {
                 Game.consoleWindow.printMessage("✅ Correct!");
             } else {
-                Game.consoleWindow.printMessage("❌ Incorrect. You can try again or explore elsewhere.");
+                Game.consoleWindow.printMessage("❌ Incorrect. Correct answer was: " + question.getCorrectAnswer());
             }
         }
     }
 }
+

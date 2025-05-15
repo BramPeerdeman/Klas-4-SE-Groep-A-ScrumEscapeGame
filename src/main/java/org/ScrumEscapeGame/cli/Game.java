@@ -21,36 +21,35 @@ public class Game
     static HashMap<Integer, Room> rooms = new HashMap<>(); //Hiermee kunnen we in main de map aanmaken.
 
     public void start() {
+        consoleWindow = new ConsoleWindow(this); // 👈 pass Game reference
+        consoleWindow.setVisible(true);
+    }
+
+    public void beginGame() {
+        // Setup commands
         commands.put("look", new LookCommand(player));
         commands.put("map", new MapCommand(player));
         commands.put("status", new StatusCommand(player));
-        /*LET OP: dit zijn de commands voor het bewegen, ik maak gebruik van WASD*/
+        commands.put("w", new MoveCommand("north", player, rooms));
         commands.put("a", new MoveCommand("west", player, rooms));
+        commands.put("s", new MoveCommand("south", player, rooms));
         commands.put("d", new MoveCommand("east", player, rooms));
 
-        consoleWindow = new ConsoleWindow();
-        consoleWindow.setVisible(true);
-
-        List<RoomWithQuestion> roomList = RoomFactory.createRandomizedRooms();
-        for (int i = 0; i < roomList.size(); i++)
-        {
-            rooms.put(roomList.get(i).getId(), roomList.get(i));
+        List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
+        for (RoomWithQuestion room : roomList) {
+            rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
         }
 
-        // Connect rooms linearly for simplicity
-        for (int i = 0; i < roomList.size() - 1; i++)
-        {
-            roomList.get(i).setNeighbours("east", roomList.get(i + 1)); // "d"
-            roomList.get(i + 1).setNeighbours("west", roomList.get(i)); // "a"
+        // Link the rooms linearly according to shuffled order
+        for (int i = 0; i < roomList.size() - 1; i++) {
+            roomList.get(i).setNeighbours("east", roomList.get(i + 1));
+            roomList.get(i + 1).setNeighbours("west", roomList.get(i));
         }
 
-        // Set player start position
-        player.setPosition(roomList.get(0).getId());
-
-        // Auto-enter the first room
-        roomList.get(0).onEnter(player);
-
-        consoleWindow.initWelcomePanel();
+        // Start the game at the first room in the shuffled list
+        Room startingRoom = roomList.get(0);
+        player.setPosition(startingRoom.getId());
+        startingRoom.onEnter(player);
     }
 
     public static void handleCommand(String command) {
