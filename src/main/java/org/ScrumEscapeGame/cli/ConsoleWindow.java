@@ -188,6 +188,15 @@ public class ConsoleWindow extends JFrame {
                 updateMap(player, rooms);
             }
         });
+
+        inputMap.put(KeyStroke.getKeyStroke("Q"), "answer");
+        actionMap.put("answer", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.handleCommand("answer");
+                updateMap(player, rooms);
+            }
+        });
     }
 
     public void updateMap(Player player, Map<Integer, Room> rooms) {
