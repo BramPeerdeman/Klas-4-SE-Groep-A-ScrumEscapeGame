@@ -10,6 +10,7 @@ public class Monster {
     private int roomId;
 
 
+
     //dit is een NORMAAL monster
     public Monster(String name, String description) {
         this(name, description, false, 1);
