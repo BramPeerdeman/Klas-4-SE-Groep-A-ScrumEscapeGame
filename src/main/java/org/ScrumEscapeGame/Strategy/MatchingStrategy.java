@@ -6,10 +6,12 @@ import org.ScrumEscapeGame.cli.Game;
 
 public class MatchingStrategy implements QuestionStrategy {
     @Override
-    public void ask(Player player, Question question) {
-        // Simpele simulatie
+    public boolean ask(Player player, Question question) {
         Game.consoleWindow.printMessage("🧩 Match the Scrum term with its definition!");
         Game.consoleWindow.printMessage(question.getPrompt());
-        Game.consoleWindow.printMessage("Functionality not yet implemented."); // Placeholder
+        Game.consoleWindow.printMessage("Functionality not yet implemented.");
+        // Return a default; adjust later when the matching functionality is implemented.
+        return true;
     }
 }
+

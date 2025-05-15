@@ -3,7 +3,9 @@ package org.ScrumEscapeGame.cli;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
+import org.ScrumEscapeGame.Rooms.RoomMapBuilder;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
+import org.ScrumEscapeGame.Rooms.StartingRoom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,21 +37,83 @@ public class Game
         commands.put("s", new MoveCommand("south", player, rooms));
         commands.put("d", new MoveCommand("east", player, rooms));
 
+        commands.put("answer", new AnswerCommand(player, rooms));
+
+        StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape Game! In this game you must answer questions to progress. Be careful: answer incorrectly and you'll have to start over.");
+
         List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
         for (RoomWithQuestion room : roomList) {
             rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
         }
 
-        // Link the rooms linearly according to shuffled order
-        for (int i = 0; i < roomList.size() - 1; i++) {
-            roomList.get(i).setNeighbours("east", roomList.get(i + 1));
-            roomList.get(i + 1).setNeighbours("west", roomList.get(i));
+
+
+        // Use the builder to add your starting room and the rest.
+        RoomMapBuilder builder = new RoomMapBuilder()
+                .addRoom(startRoom)          // Always add the starting room first.
+                .addRooms(roomList);
+
+        // Connect the rooms in your layout.
+        // For instance, assume the starting room connects to the first shuffled room.
+        builder.connect(startRoom.getId(), "east", roomList.get(0).getId());
+        // And then arrange the remaining rooms among themselves:
+        builder.connect(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connect(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connect(roomList.get(2).getId(), "south", roomList.get(3).getId());
+
+        // Build the complete map.
+
+        Game.rooms.clear();
+        Game.rooms.putAll(builder.build());
+
+
+        // Set up game state: starting room is always at the beginning.
+        player.setPosition(startRoom.getId());
+        startRoom.onEnter(player);
+
+    }
+
+    /**
+     * Resets the game when a question is answered wrong.
+     * This clears the current room map, re-shuffles the questions, and sends the
+     * player to the start room.
+     */
+    public static void resetGame() {
+        consoleWindow.printMessage("Wrong answer! Resetting game...");
+        // Clear current game rooms.
+        rooms.clear();
+        // Re-create and shuffle the rooms.
+        StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape Game! In this game you must answer questions to progress. Be careful: answer incorrectly and you'll have to start over.");
+
+        List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
+        for (RoomWithQuestion room : roomList) {
+            rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
         }
 
-        // Start the game at the first room in the shuffled list
-        Room startingRoom = roomList.get(0);
-        player.setPosition(startingRoom.getId());
-        startingRoom.onEnter(player);
+
+
+        // Use the builder to add your starting room and the rest.
+        RoomMapBuilder builder = new RoomMapBuilder()
+                .addRoom(startRoom)          // Always add the starting room first.
+                .addRooms(roomList);
+
+        // Connect the rooms in your layout.
+        // For instance, assume the starting room connects to the first shuffled room.
+        builder.connect(startRoom.getId(), "east", roomList.get(0).getId());
+        // And then arrange the remaining rooms among themselves:
+        builder.connect(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connect(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connect(roomList.get(2).getId(), "south", roomList.get(3).getId());
+
+        // Build the complete map.
+
+        Game.rooms.clear();
+        Game.rooms.putAll(builder.build());
+
+
+        // Set up game state: starting room is always at the beginning.
+        player.setPosition(startRoom.getId());
+        startRoom.onEnter(player);
     }
 
     public static void handleCommand(String command) {
