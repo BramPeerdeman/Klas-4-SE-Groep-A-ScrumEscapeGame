@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomPlanning extends RoomWithQuestion {
     public RoomPlanning() {
@@ -13,7 +14,8 @@ public class RoomPlanning extends RoomWithQuestion {
                 onregelmatig en onthult geschreven krabbels over experimenten.
                 Het gezoem van een ventilator klinkt als een rochelende worst.
                 """,
-                RoomQuestions.getQuestionForRoom(3)
+                RoomQuestions.getQuestionForRoom(3),
+                new MultipleChoiceStrategy()
         );
     }
 }

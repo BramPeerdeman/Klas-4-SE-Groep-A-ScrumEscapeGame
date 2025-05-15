@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomSprintReview extends RoomWithQuestion {
     public RoomSprintReview(int id) {
@@ -13,7 +14,8 @@ public class RoomSprintReview extends RoomWithQuestion {
                 alsof ze je hartslag bijhouden. Elke seconde voel je de
                 spanning groeien – hier wil je niet langer blijven.
                 """,
-                RoomQuestions.getQuestionForRoom(id));
-
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
+        );
     }
 }

@@ -1,9 +1,10 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomReview extends RoomWithQuestion {
-    public RoomReview() {
+    public RoomReview(int id) {
         super(
                 5,
                 """
@@ -13,7 +14,8 @@ public class RoomReview extends RoomWithQuestion {
                 In de spiegel aan de muur zie je vaag een tweede gestalte,
                 maar als je omdraait is er niemand.
                 """,
-                RoomQuestions.getQuestionForRoom(5)
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
         );
     }
 }

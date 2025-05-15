@@ -1,9 +1,10 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomSprint extends RoomWithQuestion {
-    public RoomSprint() {
+    public RoomSprint(int id) {
         super(
                 6,
                 """
@@ -12,7 +13,9 @@ public class RoomSprint extends RoomWithQuestion {
                 blijven staan op exact middernacht. Het echoot onder je voeten,
                 en in de verte klinkt het getik van een klok die niet bestaat.
                 """,
-                RoomQuestions.getQuestionForRoom(6)
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
+
         );
     }
 }

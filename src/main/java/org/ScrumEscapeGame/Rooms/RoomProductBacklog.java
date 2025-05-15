@@ -1,9 +1,10 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomProductBacklog extends RoomWithQuestion {
-    public RoomProductBacklog() {
+    public RoomProductBacklog(int id) {
         super(
                 4,
                 """
@@ -13,7 +14,8 @@ public class RoomProductBacklog extends RoomWithQuestion {
                 kraakt iets achter een van de planken – een echo die niet
                 van deze wereld lijkt.
                 """,
-                RoomQuestions.getQuestionForRoom(4)
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
         );
     }
 }

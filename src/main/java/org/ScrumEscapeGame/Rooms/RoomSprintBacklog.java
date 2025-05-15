@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomSprintBacklog extends RoomWithQuestion {
     public RoomSprintBacklog(int id) {
@@ -13,6 +14,8 @@ public class RoomSprintBacklog extends RoomWithQuestion {
                 Plotseling valt een lade uit zichzelf open, onthullend
                 een foto van … jou?
                 """,
-                RoomQuestions.getQuestionForRoom(id));
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
+        );
     }
 }
