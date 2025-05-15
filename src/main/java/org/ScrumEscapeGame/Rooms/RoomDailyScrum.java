@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MatchingStrategy;
 
 public class RoomDailyScrum extends RoomWithQuestion {
     public RoomDailyScrum(int id) {
@@ -13,7 +14,8 @@ public class RoomDailyScrum extends RoomWithQuestion {
                 In de hoek knippert een oud computerscherm, het flauwse licht
                 werpt lange schaduwen. Je voelt dat je niet alleen bent.
                 """,
-                RoomQuestions.getQuestionForRoom(id));
+                RoomQuestions.getQuestionForRoom(id),
+                new MatchingStrategy());
 
     }
 }
