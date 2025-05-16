@@ -1,5 +1,6 @@
 package org.ScrumEscapeGame.GameObjects;
 
+import org.ScrumEscapeGame.Rooms.Connection;
 import org.ScrumEscapeGame.cli.Game;
 
 import java.util.HashMap;
@@ -9,7 +10,9 @@ import java.util.Optional;
 abstract public class Room {
     private int id;
     private String description;
-    private Map<String, Room> neighbours;
+    private Map<String, Connection> neighbours;
+    // New field for display purposes:
+    private int displayOrder;
 
     protected Room(int id, String description) {
         this.id = id;
@@ -17,47 +20,37 @@ abstract public class Room {
         this.neighbours = new HashMap<>();
     }
 
+    // Existing getters and setters ...
     public int getId() {
         return id;
-    }
-
-    /**
-     * Optioneel: alleen nodig als je id later wilt wijzigen
-     */
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Optioneel: alleen nodig als je omschrijving later wilt wijzigen
-     */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNeighbour(String direction, Connection connection) {
+        neighbours.put(direction.toLowerCase(), connection);
     }
 
-    public void setNeighbours(String richting, Room room) {
-        neighbours.put(richting.toLowerCase(), room);
+    public Optional<Connection> getNeighbour(String direction) {
+        return Optional.ofNullable(neighbours.get(direction.toLowerCase()));
     }
 
-    /**
-     * Haal de buurkamer op in de gegeven richting
-     */
-    public Optional<Room> getNeighbour(String richting) {
-        return Optional.ofNullable(neighbours.get(richting.toLowerCase()));
-    }
-
-    // update de de locatie van de speler naar huidige kamer
-    // het laat ook de beschrijving van de kamer zien en de vraag die je moet beantwoorden
     public void onEnter(Player player) {
-
-        player.setPosition(this.getId());
-
+        player.setPosition(this.id);
         Game.consoleWindow.printMessage(description);
+    }
 
+    // New getters and setters:
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
+
+
 

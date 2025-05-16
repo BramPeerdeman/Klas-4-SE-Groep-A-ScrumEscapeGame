@@ -28,7 +28,7 @@ public class Game
     }
 
     public void beginGame() {
-        // Setup commands
+        // Set up commands (look, map, status, move commands, answer command, etc.)
         commands.put("look", new LookCommand(player));
         commands.put("map", new MapCommand(player));
         commands.put("status", new StatusCommand(player));
@@ -36,42 +36,42 @@ public class Game
         commands.put("a", new MoveCommand("west", player, rooms));
         commands.put("s", new MoveCommand("south", player, rooms));
         commands.put("d", new MoveCommand("east", player, rooms));
-
         commands.put("answer", new AnswerCommand(player, rooms));
 
-        StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape Game! In this game you must answer questions to progress. Be careful: answer incorrectly and you'll have to start over.");
-
+        // Create the starting room (always open from the start).
+        // Example insertion in your map-building logic:
+        StartingRoom startRoom = new StartingRoom(0, "Welcome ...");
+        startRoom.setDisplayOrder(1);
         List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
-        for (RoomWithQuestion room : roomList) {
-            rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
+
+        // Assume you want the remaining rooms to display in fixed order (2, 3, 4, …):
+        for (int i = 0; i < roomList.size(); i++) {
+            roomList.get(i).setDisplayOrder(i + 2);
         }
 
 
-
-        // Use the builder to add your starting room and the rest.
+        // Build the map.
         RoomMapBuilder builder = new RoomMapBuilder()
-                .addRoom(startRoom)          // Always add the starting room first.
+                .addRoom(startRoom)
                 .addRooms(roomList);
 
-        // Connect the rooms in your layout.
-        // For instance, assume the starting room connects to the first shuffled room.
-        builder.connect(startRoom.getId(), "east", roomList.get(0).getId());
-        // And then arrange the remaining rooms among themselves:
-        builder.connect(roomList.get(0).getId(), "south", roomList.get(1).getId());
-        builder.connect(roomList.get(1).getId(), "east", roomList.get(2).getId());
-        builder.connect(roomList.get(2).getId(), "south", roomList.get(3).getId());
+        // Connect the starting room to the first Question room with an unlocked door:
+        builder.connectDirect(startRoom.getId(), "east", roomList.get(0).getId());
 
-        // Build the complete map.
+        // Connect the remaining rooms with locked doors. For example:
+        builder.connectLocked(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connectLocked(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connectLocked(roomList.get(2).getId(), "south", roomList.get(3).getId());
 
+        // Finalize the map.
         Game.rooms.clear();
         Game.rooms.putAll(builder.build());
 
-
-        // Set up game state: starting room is always at the beginning.
+        // Set initial player position and display the starting room.
         player.setPosition(startRoom.getId());
         startRoom.onEnter(player);
-
     }
+
 
     /**
      * Resets the game when a question is answered wrong.
@@ -79,39 +79,38 @@ public class Game
      * player to the start room.
      */
     public static void resetGame() {
-        consoleWindow.printMessage("Wrong answer! Resetting game...");
+        consoleWindow.printMessage("Wrong answer! The monster gets you! Resetting game...");
         // Clear current game rooms.
         rooms.clear();
         // Re-create and shuffle the rooms.
-        StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape Game! In this game you must answer questions to progress. Be careful: answer incorrectly and you'll have to start over.");
 
+        StartingRoom startRoom = new StartingRoom(0, "Welcome ...");
+        startRoom.setDisplayOrder(1);
         List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
-        for (RoomWithQuestion room : roomList) {
-            rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
+
+        // Assume you want the remaining rooms to display in fixed order (2, 3, 4, …):
+        for (int i = 0; i < roomList.size(); i++) {
+            roomList.get(i).setDisplayOrder(i + 2);
         }
 
-
-
-        // Use the builder to add your starting room and the rest.
+        // Build the map.
         RoomMapBuilder builder = new RoomMapBuilder()
-                .addRoom(startRoom)          // Always add the starting room first.
+                .addRoom(startRoom)
                 .addRooms(roomList);
 
-        // Connect the rooms in your layout.
-        // For instance, assume the starting room connects to the first shuffled room.
-        builder.connect(startRoom.getId(), "east", roomList.get(0).getId());
-        // And then arrange the remaining rooms among themselves:
-        builder.connect(roomList.get(0).getId(), "south", roomList.get(1).getId());
-        builder.connect(roomList.get(1).getId(), "east", roomList.get(2).getId());
-        builder.connect(roomList.get(2).getId(), "south", roomList.get(3).getId());
+        // Connect the starting room to the first Question room with an unlocked door:
+        builder.connectDirect(startRoom.getId(), "east", roomList.get(0).getId());
 
-        // Build the complete map.
+        // Connect the remaining rooms with locked doors. For example:
+        builder.connectLocked(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connectLocked(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connectLocked(roomList.get(2).getId(), "south", roomList.get(3).getId());
 
+        // Finalize the map.
         Game.rooms.clear();
         Game.rooms.putAll(builder.build());
 
-
-        // Set up game state: starting room is always at the beginning.
+        // Set initial player position and display the starting room.
         player.setPosition(startRoom.getId());
         startRoom.onEnter(player);
     }
