@@ -14,6 +14,7 @@ public class StartingRoom extends Room {
         player.setPosition(this.getId());
         Game.consoleWindow.printMessage(getDescription());
         Game.consoleWindow.printMessage("This is the starting room. Read the introduction and get ready to begin!");
+        Game.consoleWindow.printMessage("NOTE: currently only hardcore mode is functional, the monster instakills!");
     }
 }
 

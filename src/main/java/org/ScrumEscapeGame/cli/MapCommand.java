@@ -3,8 +3,9 @@ package org.ScrumEscapeGame.cli;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 
-class MapCommand implements Command {
+public class MapCommand implements Command {
     private Player player;
+
     public MapCommand(Player player) {
         this.player = player;
     }
@@ -26,14 +27,15 @@ class MapCommand implements Command {
         int currentRoomId = player.getPosition();
         Room currentRoom = Game.rooms.get(currentRoomId);
 
-        // Append the current room info.
+        // Instead of using the room's internal id, use displayOrder.
         if (currentRoom != null) {
-            map += String.format("You are at room %s", currentRoom.getId());
+            map += String.format("\nYou are at room %s", currentRoom.getDisplayOrder());
         } else {
-            map += "Current room not found in the map.";
+            map += "\nCurrent room not found in the map.";
         }
 
         // Print the map to the console window.
         Game.consoleWindow.printMessage(map);
     }
 }
+
