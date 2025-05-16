@@ -12,8 +12,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 /*
 
 BE CAREFUL: Audio player can only use .wav files
-How to call the AudioPlayer: AudioPlayer name = new Audioplayer("SoundFx/filename.wav");
-                             Then call it using name.play();
+
+How to initialize an audio:
+    AudioPlayer name = new Audioplayer("SoundFx/filename.wav");
+    Then call it using name.play();
 It will also ask to be able to throw exceptions, just let intellij add them for you via the context menu
 
  */
