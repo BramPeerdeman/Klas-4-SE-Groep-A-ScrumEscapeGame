@@ -1,28 +1,33 @@
 package org.ScrumEscapeGame.Storage;
 
-import java.io.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.ScrumEscapeGame.GameObjects.GameState;
 
-public class GameStorage
-{
-    String cache;
-    String test = "test";
-    public void saveGame(String fileName) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(test + "\n"); //Copy en paste deze line met een nieuwe getter van informatie (Bijv Kamer.getOpgelost)
-            System.out.println("Game saved successfully!");
+import java.io.*;
+import java.util.List;
+
+public class GameStorage {
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    public void saveGame(String fileName, int playerPosition, List<Integer> solvedRooms) {
+        GameState gameState = new GameState(playerPosition, solvedRooms);
+        try (Writer writer = new FileWriter(fileName)) {
+            gson.toJson(gameState, writer);
+            System.out.println("✅ Game saved.");
         } catch (IOException e) {
-            System.out.println("Error saving game: " + e.getMessage());
+            System.out.println("❌ Failed to save game: " + e.getMessage());
         }
     }
 
-    public void loadGame(String fileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String name = reader.readLine();
-            int level = Integer.parseInt(reader.readLine());
-            int score = Integer.parseInt(reader.readLine());
-            System.out.println("Game loaded successfully!");
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("Error loading game: " + e.getMessage());
+    public GameState loadGame(String fileName) {
+        try (Reader reader = new FileReader(fileName)) {
+            GameState gameState = gson.fromJson(reader, GameState.class);
+            System.out.println("✅ Game loaded.");
+            return gameState;
+        } catch (IOException e) {
+            System.out.println("⚠️ No previous save found.");
+            return null;
         }
     }
 }
