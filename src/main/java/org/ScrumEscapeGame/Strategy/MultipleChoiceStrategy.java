@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MultipleChoiceStrategy implements QuestionStrategy {
     @Override
-    public void ask(Player player, Question question) {
+    public boolean ask(Player player, Question question) {
         Game.consoleWindow.printMessage("❓ " + question.getPrompt());
 
         List<String> options = question.getChoices();
@@ -23,8 +23,11 @@ public class MultipleChoiceStrategy implements QuestionStrategy {
 
         if (index >= 0 && index < options.size() && options.get(index).equalsIgnoreCase(question.getCorrectAnswer())) {
             Game.consoleWindow.printMessage("✅ Correct!");
+            return true;
         } else {
             Game.consoleWindow.printMessage("❌ Incorrect. Correct answer was: " + question.getCorrectAnswer());
+            return false;
         }
     }
 }
+

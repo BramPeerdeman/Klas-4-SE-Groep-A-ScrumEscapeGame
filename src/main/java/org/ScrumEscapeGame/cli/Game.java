@@ -3,7 +3,9 @@ package org.ScrumEscapeGame.cli;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
+import org.ScrumEscapeGame.Rooms.RoomMapBuilder;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
+import org.ScrumEscapeGame.Rooms.StartingRoom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,7 @@ public class Game
     }
 
     public void beginGame() {
-        // Setup commands
+        // Set up commands (look, map, status, move commands, answer command, etc.)
         commands.put("look", new LookCommand(player));
         commands.put("map", new MapCommand(player));
         commands.put("status", new StatusCommand(player));
@@ -34,22 +36,83 @@ public class Game
         commands.put("a", new MoveCommand("west", player, rooms));
         commands.put("s", new MoveCommand("south", player, rooms));
         commands.put("d", new MoveCommand("east", player, rooms));
+        commands.put("answer", new AnswerCommand(player, rooms));
 
+        // Create the starting room (always open from the start).
+        // Example insertion in your map-building logic:
+        StartingRoom startRoom = new StartingRoom(0, "Welcome ...");
+        startRoom.setDisplayOrder(1);
         List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
-        for (RoomWithQuestion room : roomList) {
-            rooms.put(room.getId(), room); // ID is still 1–4 but position is shuffled
+
+        // Assume you want the remaining rooms to display in fixed order (2, 3, 4, …):
+        for (int i = 0; i < roomList.size(); i++) {
+            roomList.get(i).setDisplayOrder(i + 2);
         }
 
-        // Link the rooms linearly according to shuffled order
-        for (int i = 0; i < roomList.size() - 1; i++) {
-            roomList.get(i).setNeighbours("east", roomList.get(i + 1));
-            roomList.get(i + 1).setNeighbours("west", roomList.get(i));
+
+        // Build the map.
+        RoomMapBuilder builder = new RoomMapBuilder()
+                .addRoom(startRoom)
+                .addRooms(roomList);
+
+        // Connect the starting room to the first Question room with an unlocked door:
+        builder.connectDirect(startRoom.getId(), "east", roomList.get(0).getId());
+
+        // Connect the remaining rooms with locked doors. For example:
+        builder.connectLocked(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connectLocked(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connectLocked(roomList.get(2).getId(), "south", roomList.get(3).getId());
+
+        // Finalize the map.
+        Game.rooms.clear();
+        Game.rooms.putAll(builder.build());
+
+        // Set initial player position and display the starting room.
+        player.setPosition(startRoom.getId());
+        startRoom.onEnter(player);
+    }
+
+
+    /**
+     * Resets the game when a question is answered wrong.
+     * This clears the current room map, re-shuffles the questions, and sends the
+     * player to the start room.
+     */
+    public static void resetGame() {
+        consoleWindow.printMessage("Wrong answer! The monster gets you! Resetting game...");
+        // Clear current game rooms.
+        rooms.clear();
+        // Re-create and shuffle the rooms.
+
+        StartingRoom startRoom = new StartingRoom(0, "Welcome ...");
+        startRoom.setDisplayOrder(1);
+        List<RoomWithQuestion> roomList = RoomFactory.createShuffledRooms();
+
+        // Assume you want the remaining rooms to display in fixed order (2, 3, 4, …):
+        for (int i = 0; i < roomList.size(); i++) {
+            roomList.get(i).setDisplayOrder(i + 2);
         }
 
-        // Start the game at the first room in the shuffled list
-        Room startingRoom = roomList.get(0);
-        player.setPosition(startingRoom.getId());
-        startingRoom.onEnter(player);
+        // Build the map.
+        RoomMapBuilder builder = new RoomMapBuilder()
+                .addRoom(startRoom)
+                .addRooms(roomList);
+
+        // Connect the starting room to the first Question room with an unlocked door:
+        builder.connectDirect(startRoom.getId(), "east", roomList.get(0).getId());
+
+        // Connect the remaining rooms with locked doors. For example:
+        builder.connectLocked(roomList.get(0).getId(), "south", roomList.get(1).getId());
+        builder.connectLocked(roomList.get(1).getId(), "east", roomList.get(2).getId());
+        builder.connectLocked(roomList.get(2).getId(), "south", roomList.get(3).getId());
+
+        // Finalize the map.
+        Game.rooms.clear();
+        Game.rooms.putAll(builder.build());
+
+        // Set initial player position and display the starting room.
+        player.setPosition(startRoom.getId());
+        startRoom.onEnter(player);
     }
 
     public static void handleCommand(String command) {
