@@ -206,5 +206,11 @@ public class ConsoleWindow extends JFrame {
     public String readLine(String prompt) {
         return JOptionPane.showInputDialog(this, prompt);
     }
+
+    public String readInput() {
+    }
+
+    public void setEngine(GameEngine engine) {
+    }
 }
 

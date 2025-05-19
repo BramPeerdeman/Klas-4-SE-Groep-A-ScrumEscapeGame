@@ -3,10 +3,12 @@ import java.util.List;
 import java.util.ArrayList;
 public interface AnswerObserver {
     void onCorrectAnswer(int roomId);
+
     void onWrongAnswer(int roomId);
+}
 
 
-public class AnswerSubject {
+class AnswerSubject {
     private List<AnswerObserver> observers = new ArrayList<>();
 
     public void addObserver(AnswerObserver o) {
