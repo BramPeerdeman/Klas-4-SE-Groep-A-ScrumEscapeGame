@@ -6,6 +6,7 @@ import org.ScrumEscapeGame.GameObjects.Room;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.ScrumEscapeGame.cli.Game.player;
@@ -15,7 +16,7 @@ public class ConsoleWindow extends JFrame {
     private final Game game;
     private CardLayout cards = new CardLayout();
     private JPanel panelContainer = new JPanel(cards);
-    private JLabel[] roomLabels;
+    private Map<Integer, JLabel> roomLabels;
     private JTextField inputField;
     private JTextArea outputArea; // Output area for game messages
 
@@ -59,20 +60,24 @@ public class ConsoleWindow extends JFrame {
         mapCard.setFocusable(true);
 
         // Create grid panel to display the room labels.
+        // Use the number of rooms as the grid dimension.
         JPanel grid = new JPanel(new GridLayout(1, rooms.size(), 5, 5));
-        roomLabels = new JLabel[rooms.size() + 1];
 
+        // Create a mapping from room id to label.
+        roomLabels = new HashMap<>();
+
+        // Iterate over each room id and create a label.
         for (Integer id : rooms.keySet()) {
             JLabel lbl = new JLabel("", SwingConstants.CENTER);
             lbl.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            roomLabels[id] = lbl;
+            roomLabels.put(id, lbl);
             grid.add(lbl);
         }
 
         updateMap(player, rooms);
         mapCard.add(grid, BorderLayout.NORTH);
 
-        // Set up output area for messages.
+        // Set up output area for game messages.
         outputArea = new JTextArea(8, 40);
         outputArea.setEditable(false);
         outputArea.setLineWrap(true);
@@ -100,6 +105,7 @@ public class ConsoleWindow extends JFrame {
         // Ensure the map panel is focused after it is displayed.
         SwingUtilities.invokeLater(() -> mapCard.requestFocusInWindow());
     }
+
 
     private void setupKeyBindings(JPanel panel) {
         InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -188,13 +194,27 @@ public class ConsoleWindow extends JFrame {
                 updateMap(player, rooms);
             }
         });
+
+        inputMap.put(KeyStroke.getKeyStroke("Q"), "answer");
+        actionMap.put("answer", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.handleCommand("answer");
+                updateMap(player, rooms);
+            }
+        });
     }
 
     public void updateMap(Player player, Map<Integer, Room> rooms) {
         for (Integer id : rooms.keySet()) {
-            roomLabels[id].setText(id == player.getPosition() ? "X" : id.toString());
+            JLabel label = roomLabels.get(id);
+            if (label != null) {
+                // Display an "X" for the player's current room or the room number otherwise.
+                label.setText(id.equals(player.getPosition()) ? "X" : id.toString());
+            }
         }
     }
+
 
     // Print a message to the output area.
     public void printMessage(String s) {
