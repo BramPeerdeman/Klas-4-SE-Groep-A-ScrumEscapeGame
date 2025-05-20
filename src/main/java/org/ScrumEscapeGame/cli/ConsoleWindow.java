@@ -17,23 +17,26 @@ public class ConsoleWindow extends JFrame {
     private CardLayout cards = new CardLayout();
     private JPanel panelContainer = new JPanel(cards);
     private Map<Integer, JLabel> roomLabels;
+    private MapPanel mapPanel;
+    private JTextArea outputArea;
     private JTextField inputField;
-    private JTextArea outputArea; // Output area for game messages
+    private JLabel statusLabel; // Shows player status.
 
     public ConsoleWindow(Game game) {
         super("Scrum Escape Game");
         this.game = game;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(600, 300);
+        setSize(900, 600);  // Increased size for a richer UI
         setLocationRelativeTo(null);
 
         initWelcomePanel();
-        initMapPanel(player, rooms);
+        initGamePanel();
 
         add(panelContainer);
     }
 
-    public void initWelcomePanel() {
+    // The welcome panel with a start message.
+    private void initWelcomePanel() {
         JPanel welcome = new JPanel(new BorderLayout());
         JLabel msg = new JLabel(
                 "<html><h1>Welcome to Scrum Escape Game</h1>"
@@ -42,10 +45,10 @@ public class ConsoleWindow extends JFrame {
         );
         JButton start = new JButton("START");
         start.addActionListener(e -> {
-            cards.show(panelContainer, "map");
-            Game game = new Game();
+            cards.show(panelContainer, "game");
             game.beginGame();
         });
+        // Set the default button so that ENTER starts the game.
         getRootPane().setDefaultButton(start);
 
         welcome.add(msg, BorderLayout.CENTER);
@@ -53,65 +56,91 @@ public class ConsoleWindow extends JFrame {
         panelContainer.add(welcome, "welcome");
     }
 
-    private void initMapPanel(Player player, Map<Integer, Room> rooms) {
-        JPanel mapCard = new JPanel(new BorderLayout(5, 5));
+    // The game UI panel, organized into left and main (right/center) sections.
+    private void initGamePanel() {
+    // The gamePanel holds all game-related UI components.
+    JPanel gamePanel = new JPanel(new BorderLayout());
 
-        // Ensure the panel can gain focus so that the keystroke bindings work.
-        mapCard.setFocusable(true);
+    // --- Left Side Panel: Status and Map ---
+    JPanel leftPanel = new JPanel(new BorderLayout());
 
-        // Create grid panel to display the room labels.
-        // Use the number of rooms as the grid dimension.
-        JPanel grid = new JPanel(new GridLayout(1, rooms.size(), 5, 5));
+    // Top (Status Panel)
+    JPanel statusPanel = new JPanel();
+    statusPanel.setPreferredSize(new Dimension(250, 150));
+    statusLabel = new JLabel("Player Status: " + Game.player.getStatus());
+    statusPanel.add(statusLabel);
+    leftPanel.add(statusPanel, BorderLayout.NORTH);
 
-        // Create a mapping from room id to label.
-        roomLabels = new HashMap<>();
+    // Bottom (Map Panel)
+    // Create your MapPanel using the rooms and player.
+    mapPanel = new MapPanel(Game.rooms, Game.player);
+    leftPanel.add(mapPanel, BorderLayout.CENTER);
 
-        // Iterate over each room id and create a label.
-        for (Integer id : rooms.keySet()) {
-            JLabel lbl = new JLabel("", SwingConstants.CENTER);
-            lbl.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            roomLabels.put(id, lbl);
-            grid.add(lbl);
-        }
+    // --- Right/Center Panel: Game Output and Input ---
+    JPanel mainPanel = new JPanel(new BorderLayout());
+    outputArea = new JTextArea(15, 40);
+    outputArea.setEditable(false);
+    outputArea.setLineWrap(true);
+    outputArea.setWrapStyleWord(true);
+    JScrollPane outputScroll = new JScrollPane(outputArea);
+    mainPanel.add(outputScroll, BorderLayout.CENTER);
 
-        updateMap(player, rooms);
-        mapCard.add(grid, BorderLayout.NORTH);
+    // Input field for text commands.
+    inputField = new JTextField();
+    inputField.addActionListener(e -> {
+        String cmd = inputField.getText().trim().toLowerCase();
+        Game.handleCommand(cmd);
+        inputField.setText("");
+    });
+    mainPanel.add(inputField, BorderLayout.SOUTH);
 
-        // Set up output area for game messages.
-        outputArea = new JTextArea(8, 40);
-        outputArea.setEditable(false);
-        outputArea.setLineWrap(true);
-        outputArea.setWrapStyleWord(true);
-        JScrollPane scrollPane = new JScrollPane(outputArea);
-        mapCard.add(scrollPane, BorderLayout.CENTER);
+    // Assemble the overall game UI.
+    JPanel overallGamePanel = new JPanel(new BorderLayout());
+    overallGamePanel.add(leftPanel, BorderLayout.WEST);
+    overallGamePanel.add(mainPanel, BorderLayout.CENTER);
 
-        // Input field remains (optional) for text commands.
-        inputField = new JTextField();
-        inputField.addActionListener(e -> {
-            String cmd = inputField.getText().trim().toLowerCase();
-            Game.handleCommand(cmd);
-            inputField.setText("");
-            updateMap(player, rooms);
-            // Return focus to the panel so that keystroke bindings remain active.
-            mapCard.requestFocusInWindow();
-        });
-        mapCard.add(inputField, BorderLayout.SOUTH);
+    // Add the game UI to the card layout.
+    panelContainer.add(overallGamePanel, "game");
 
-        // Set up keystroke bindings on the map panel.
-        setupKeyBindings(mapCard);
+    // Set up global key bindings on the overall game panel.
+    setupGlobalKeyBindings(overallGamePanel);
 
-        panelContainer.add(mapCard, "map");
+    // Optionally request focus on the overall panel
+    SwingUtilities.invokeLater(() -> overallGamePanel.requestFocusInWindow());
+}
 
-        // Ensure the map panel is focused after it is displayed.
-        SwingUtilities.invokeLater(() -> mapCard.requestFocusInWindow());
+
+    // Call this method after the room map has been built to update the status and map.
+    public void refreshUI() {
+        statusLabel.setText("Player Status: " + Game.player.getStatus());
+        // Recalculate room positions in the map.
+        mapPanel.refreshCoordinates();
     }
 
 
-    private void setupKeyBindings(JPanel panel) {
-        InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = panel.getActionMap();
 
-        /*
+    // Expose the MapPanel so that commands can refresh it if needed.
+    public MapPanel getMapPanel() {
+        return mapPanel;
+    }
+
+    // Optionally, a method to switch to the welcome screen.
+    public void showWelcomePanel() {
+        cards.show(panelContainer, "welcome");
+    }
+
+
+    // Add this at the end of initGamePanel() in ConsoleWindow (or call it from there)
+private void setupGlobalKeyBindings(JPanel gamePanel) {
+    // Ensure the panel is focusable and request focus for key events.
+    gamePanel.setFocusable(true);
+    gamePanel.requestFocusInWindow();
+
+    // Using the "WHEN_IN_FOCUSED_WINDOW" condition makes these bindings global.
+    InputMap inputMap = gamePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap actionMap = gamePanel.getActionMap();
+
+    /*
         Hoe moet je een keystroke input toevoegen?
         Dat doe je op de volgende manier:
           1. maak je command aan met een klasse, kijk naar hoe de andere klasses zijn aangemaakt
@@ -123,7 +152,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("map");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
           4. Verander de keystroke "M" naar de keystroke die je wilt, en verander "map" naar de command die
@@ -134,45 +164,66 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("status");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
          */
 
-        // Bind keystrokes for movement commands.
-        inputMap.put(KeyStroke.getKeyStroke("W"), "moveNorth");
-        actionMap.put("moveNorth", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("w");
-                updateMap(player, rooms);
-            }
-        });
+    // Example binding for "M" (refresh map) key:
+    inputMap.put(KeyStroke.getKeyStroke("M"), "map");
+    actionMap.put("map", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Refresh the map panel
+            Game.consoleWindow.getMapPanel().refreshCoordinates();
+            Game.consoleWindow.getMapPanel().repaint();
 
-        inputMap.put(KeyStroke.getKeyStroke("A"), "moveWest");
-        actionMap.put("moveWest", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("a");
-                updateMap(player, rooms);
-            }
-        });
+            // Optional message about current room
+            int currentRoomId = Game.player.getPosition();
+            String message = String.format("You are in room %d.", Game.rooms.get(currentRoomId).getDisplayOrder());
+            Game.consoleWindow.printMessage(message);
+        }
+    });
 
-        inputMap.put(KeyStroke.getKeyStroke("S"), "moveSouth");
-        actionMap.put("moveSouth", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("s");
-                updateMap(player, rooms);
-            }
-        });
+    // Example binding for movement keys:
+    inputMap.put(KeyStroke.getKeyStroke("W"), "moveNorth");
+    actionMap.put("moveNorth", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Game.handleCommand("w");
+            Game.consoleWindow.getMapPanel().refreshCoordinates();
+            Game.consoleWindow.getMapPanel().repaint();
+        }
+    });
+
+    inputMap.put(KeyStroke.getKeyStroke("A"), "moveWest");
+    actionMap.put("moveWest", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Game.handleCommand("a");
+            Game.consoleWindow.getMapPanel().refreshCoordinates();
+            Game.consoleWindow.getMapPanel().repaint();
+        }
+    });
+
+    inputMap.put(KeyStroke.getKeyStroke("S"), "moveSouth");
+    actionMap.put("moveSouth", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Game.handleCommand("s");
+            Game.consoleWindow.getMapPanel().refreshCoordinates();
+            Game.consoleWindow.getMapPanel().repaint();
+        }
+    });
 
         inputMap.put(KeyStroke.getKeyStroke("D"), "moveEast");
         actionMap.put("moveEast", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("d");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -182,7 +233,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("look");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -191,7 +243,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("map");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -200,7 +253,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("answer");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -209,7 +263,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("save");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -218,7 +273,8 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("load");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
 
@@ -228,19 +284,10 @@ public class ConsoleWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game.handleCommand("status");
-                updateMap(player, rooms);
+                Game.consoleWindow.getMapPanel().refreshCoordinates();
+                Game.consoleWindow.getMapPanel().repaint();
             }
         });
-    }
-
-    public void updateMap(Player player, Map<Integer, Room> rooms) {
-        for (Integer id : rooms.keySet()) {
-            JLabel label = roomLabels.get(id);
-            if (label != null) {
-                // Display an "X" for the player's current room or the room number otherwise.
-                label.setText(id.equals(player.getPosition()) ? "X" : id.toString());
-            }
-        }
     }
 
 

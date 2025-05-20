@@ -72,6 +72,9 @@ public class Game
         // Set initial player position and display the starting room.
         player.setPosition(startRoom.getId());
         startRoom.onEnter(player);
+
+        // IMPORTANT: Now that the rooms are built, refresh the UI:
+        Game.consoleWindow.refreshUI();
     }
 
 
@@ -115,6 +118,9 @@ public class Game
         // Set initial player position and display the starting room.
         player.setPosition(startRoom.getId());
         startRoom.onEnter(player);
+
+        // IMPORTANT: Now that the rooms are built, refresh the UI:
+        Game.consoleWindow.refreshUI();
     }
 
     public static void handleCommand(String command) {
