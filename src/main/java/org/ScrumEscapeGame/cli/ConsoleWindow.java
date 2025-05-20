@@ -204,6 +204,25 @@ public class ConsoleWindow extends JFrame {
             }
         });
 
+        inputMap.put(KeyStroke.getKeyStroke("F5"), "save");
+        actionMap.put("save", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.handleCommand("save");
+                updateMap(player, rooms);
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke("F9"), "load");
+        actionMap.put("load", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.handleCommand("load");
+                updateMap(player, rooms);
+            }
+        });
+
+
         inputMap.put(KeyStroke.getKeyStroke("K"), "status");
         actionMap.put("status", new AbstractAction() {
             @Override

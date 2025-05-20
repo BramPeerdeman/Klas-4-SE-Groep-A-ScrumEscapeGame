@@ -50,6 +50,7 @@ public class RoomWithQuestion extends Room implements Subject {
                 System.out.println("DEBUG: Question answered. Was the answer correct? " + correct);
             }
             if (correct) {
+                player.addSolvedRoom(getId());
                 notifyObservers();
             } else {
                 Game.resetGame();
