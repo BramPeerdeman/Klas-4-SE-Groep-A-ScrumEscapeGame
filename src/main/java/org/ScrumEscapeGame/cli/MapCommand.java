@@ -1,7 +1,6 @@
 package org.ScrumEscapeGame.cli;
 
 import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.GameObjects.Room;
 
 public class MapCommand implements Command {
     private Player player;
@@ -10,32 +9,24 @@ public class MapCommand implements Command {
         this.player = player;
     }
 
+    @Override
     public void execute() {
-        Game.consoleWindow.printMessage("Displaying map...");
-        displayMap();
-    }
+        // Inform the player that the graphical map is being refreshed.
+        Game.consoleWindow.printMessage("Refreshing graphical map view...");
 
-    public void displayMap() {
-        // Build the base ASCII art representing the static map layout.
-        String map = "Map of the game:\n"
-                + "  _______   _______   _______ \n"
-                + " |       | |       | |       |\n"
-                + " |   1   |-|   2   |-|   3   |\n"
-                + " |_______| |_______| |_______|\n";
+        // Refresh the map coordinates in case the room map has changed.
+        Game.consoleWindow.getMapPanel().refreshCoordinates();
 
-        // Retrieve the player's current room.
+        // Repaint the panel so the latest state (including the player's position) is drawn.
+        Game.consoleWindow.getMapPanel().repaint();
+
+        // Optionally, report the player's current room.
         int currentRoomId = player.getPosition();
-        Room currentRoom = Game.rooms.get(currentRoomId);
-
-        // Instead of using the room's internal id, use displayOrder.
-        if (currentRoom != null) {
-            map += String.format("\nYou are at room %s", currentRoom.getDisplayOrder());
-        } else {
-            map += "\nCurrent room not found in the map.";
-        }
-
-        // Print the map to the console window.
-        Game.consoleWindow.printMessage(map);
+        String message = String.format("You are in room %d.", Game.rooms.get(currentRoomId).getDisplayOrder());
+        Game.consoleWindow.printMessage(message);
     }
 }
+
+
+
 
