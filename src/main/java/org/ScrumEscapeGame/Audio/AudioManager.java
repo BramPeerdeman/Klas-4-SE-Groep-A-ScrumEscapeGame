@@ -5,7 +5,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
 /*
-    Call audio with: AudioManager name = new AudioManager;
+    Use AudioManager with: AudioManager name = new AudioManager;
 */
 
 public class AudioManager {
