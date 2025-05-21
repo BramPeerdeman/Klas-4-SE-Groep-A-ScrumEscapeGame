@@ -12,6 +12,14 @@ import java.util.Map;
 import static org.ScrumEscapeGame.cli.Game.player;
 import static org.ScrumEscapeGame.cli.Game.rooms;
 
+/*
+Weet je niet waar je aan moet werken?
+Je kan dan mee helpen door onze code te optimaliseren.
+Bijvoorbeeld we kunnen proberen zoveel mogelijke klassen aan te maken die maar 1 ding doen in plaats van
+dat alles in de ConsoleWindow en Game klasse zitten. Denk aan de beginGame() en resetGame() methodes, die
+kunnen dus hun eigen klassen hebben.
+ */
+
 public class ConsoleWindow extends JFrame {
     private final Game game;
     private CardLayout cards = new CardLayout();

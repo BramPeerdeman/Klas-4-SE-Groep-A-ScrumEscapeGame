@@ -28,6 +28,16 @@ public class Game
     }
 
     public void beginGame() {
+
+        /*
+        BELANGRIJK:
+        Als je de Map bouwt via de builder, vergeet niet om de RoomFactory klasse in de Room package aan te passen.
+        Waarom? Want de huidige Roomfactory bepaalt de inhoud van de vragen door gebruik te maken van vooraf
+        aangegeven Room ID's.
+        Als we willen gebruik maken van zone's, dan moeten we een een nieuwe List<RoomWithQuestion> object aanmaken
+        EN we moeten dan ook dus een nieuwe createShuffledRooms2() methode aanmaken met nieuwe id's
+         */
+
         // Set up commands (look, map, status, move commands, answer command, etc.)
         commands.put("look", new LookCommand(player));
         commands.put("map", new MapCommand(player));
