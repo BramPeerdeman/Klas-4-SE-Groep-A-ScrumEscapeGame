@@ -12,6 +12,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/*
+    RELEVANTE LINKS:
+    javax.swing - https://docs.oracle.com/en/java/javase/24/docs/api/java.desktop/javax/swing/package-summary.html
+    javax.swing.Jcomponent - https://docs.oracle.com/en/java/javase/24/docs/api/java.desktop/javax/swing/JComponent.html
+
+    java.awt - https://docs.oracle.com/en/java/javase/24/docs/api/java.desktop/java/awt/package-summary.html
+    java.awt.Graphics2D - https://docs.oracle.com/en/java/javase/24/docs/api/java.desktop/java/awt/Graphics2D.html
+    java.awt.FontMetrics - https://docs.oracle.com/en/java/javase/24/docs/api/java.desktop/java/awt/FontMetrics.html
+
+    Kijk vooral naar method summary, "Modifier and Type" is de objecttype die de methode returned.
+    Vraag een chatbot voor specifieke hulp.
+ */
+
 
 public class MapPanel extends JPanel {
     private Map<Integer, Room> rooms;
