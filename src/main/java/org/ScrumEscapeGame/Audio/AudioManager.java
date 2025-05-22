@@ -3,17 +3,22 @@ package org.ScrumEscapeGame.Audio;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
     Use AudioManager with: AudioManager name = new AudioManager;
 */
 
 public class AudioManager {
+    private List<AudioPlayer> audioPlayers = new ArrayList<AudioPlayer>();
+
     private AudioPlayer bossmusic;
     private AudioPlayer monsterappears;
     private AudioPlayer monsterdeath;
     private AudioPlayer questioncorrect;
     private AudioPlayer questionincorrect;
+    private AudioPlayer swordhit;
     private AudioPlayer victory;
 
     public AudioManager() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
@@ -23,16 +28,22 @@ public class AudioManager {
         questioncorrect = new AudioPlayer("SoundFX/questioncorrectsound.wav");
         questionincorrect = new AudioPlayer("SoundFX/questionincorrectsound.wav");
         victory = new AudioPlayer("SoundFX/victorysound.wav");
+        swordhit = new AudioPlayer("SoundFX/swordhitsound.wav");
+
+        audioPlayers.add(bossmusic);
+        audioPlayers.add(monsterappears);
+        audioPlayers.add(monsterdeath);
+        audioPlayers.add(questioncorrect);
+        audioPlayers.add(questionincorrect);
+        audioPlayers.add(swordhit);
+        audioPlayers.add(victory);
     }
 
     public void stopAllAudio() {
         try {
-            bossmusic.stop();
-            monsterappears.stop();
-            monsterdeath.stop();
-            questioncorrect.stop();
-            questionincorrect.stop();
-            victory.stop();
+            for (AudioPlayer audio : audioPlayers) {
+                audio.stop();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,25 +51,19 @@ public class AudioManager {
 
     public void pauseAllAudio() {
         try {
-            bossmusic.pause();
-            monsterappears.pause();
-            monsterdeath.pause();
-            questioncorrect.pause();
-            questionincorrect.pause();
-            victory.pause();
+            for (AudioPlayer audio : audioPlayers) {
+                audio.pause();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void resumeAllAudio () throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+    public void resumeAllAudio () {
         try {
-            bossmusic.resumeAudio();
-            monsterappears.resumeAudio();
-            monsterdeath.resumeAudio();
-            questioncorrect.resumeAudio();
-            questionincorrect.resumeAudio();
-            victory.resumeAudio();
+            for (AudioPlayer audio : audioPlayers) {
+                audio.resume();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +84,9 @@ public class AudioManager {
     }
     public void playQuestionIncorrect () {
         questionincorrect.play();
+    }
+    public void playSwordHit () {
+        swordhit.play();
     }
     public void playVictory () {
         victory.play();

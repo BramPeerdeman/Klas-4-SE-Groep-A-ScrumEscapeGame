@@ -1,7 +1,6 @@
 package org.ScrumEscapeGame.Audio;
 import java.io.File;
 import java.io.IOException;
-import java.util.Scanner;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -51,7 +50,7 @@ public class AudioPlayer {
         }
     }
 
-    public void resumeAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public void resume() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         if ("paused".equals(status)) {
             clip.close();
             resetAudioStream();
