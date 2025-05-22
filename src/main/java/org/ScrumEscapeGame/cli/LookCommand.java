@@ -2,7 +2,7 @@ package org.ScrumEscapeGame.cli;
 
 import org.ScrumEscapeGame.GameObjects.Player;
 
-class LookCommand implements Command {
+public class LookCommand implements Command {
     private Player player;
     public LookCommand(Player player) {
         this.player = player;

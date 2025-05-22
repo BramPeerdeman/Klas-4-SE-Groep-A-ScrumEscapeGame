@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.cli.GameCycleManager;
 
 // RoomWithQuestion.java
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class RoomWithQuestion extends Room implements Subject {
                 player.addSolvedRoom(getId());
                 notifyObservers();
             } else {
-                Game.resetGame();
+                GameCycleManager.resetGame();
             }
         }
     }
