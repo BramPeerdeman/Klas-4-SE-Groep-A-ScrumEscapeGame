@@ -44,6 +44,8 @@ public class Game
         commands.put("status", new StatusCommand(player));
         commands.put("save", new SaveCommand(player));
         commands.put("load", new LoadCommand(player));
+
+
         commands.put("w", new MoveCommand("north", player, rooms));
         commands.put("a", new MoveCommand("west", player, rooms));
         commands.put("s", new MoveCommand("south", player, rooms));
