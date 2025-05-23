@@ -1,4 +1,4 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAGame;
 
 public interface GameMediator
 {

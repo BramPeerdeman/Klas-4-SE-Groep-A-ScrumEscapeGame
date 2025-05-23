@@ -1,5 +1,7 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAUserInterface;
 
+import org.ScrumEscapeGame.AAGame.Game;
+import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.*;
 
 import javax.swing.*;
@@ -9,7 +11,6 @@ import java.util.Map;
 public class GameUIService {
     private final GameContext context;
     private final ConsoleWindow console;
-    private Game game;
     private CardLayout cards = new CardLayout();
     private JPanel panelContainer = new JPanel(cards);
     private Map<Integer, JLabel> roomLabels;
@@ -18,11 +19,10 @@ public class GameUIService {
     private JTextField inputField;
     private JLabel statusLabel; // Shows player status.
 
-    public GameUIService(GameContext context, ConsoleWindow console, Game game, CardLayout cards, JPanel panelContainer, MapPanel mapPanel
+    public GameUIService(GameContext context, ConsoleWindow console, CardLayout cards, JPanel panelContainer, MapPanel mapPanel
             , JTextArea outputArea, JTextField inputField, JLabel statusLabel) {
         this.context = context;
         this.console = console;
-        this.game = game;
         this.cards = cards;
         this.panelContainer = panelContainer;
         this.mapPanel = mapPanel;
@@ -48,13 +48,15 @@ public class GameUIService {
         return context.getRoomManager().getRooms();
     }
 
-    public void beginGame() {
-        game.beginGame();
-    }
-
     public Player getPlayer() {
         return context.getPlayer();
     }
+
+    public void refreshMapView() {
+        mapPanel.refreshCoordinates();
+        mapPanel.repaint();
+    }
+
 
 
     // Additional methods to control UI behavior.

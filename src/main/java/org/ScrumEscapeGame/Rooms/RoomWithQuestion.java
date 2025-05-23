@@ -6,18 +6,14 @@ import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
-import javax.swing.*; // only needed for demo fallback input
 import java.util.List;
-import java.util.Scanner;
 
-import org.ScrumEscapeGame.cli.Game;
-import org.ScrumEscapeGame.cli.GameCycleManager;
+import org.ScrumEscapeGame.AAGame.GameCycleManager;
 
 // RoomWithQuestion.java
 import java.util.ArrayList;
-import java.util.List;
 
 public class RoomWithQuestion extends Room implements Subject {
     private Question question;

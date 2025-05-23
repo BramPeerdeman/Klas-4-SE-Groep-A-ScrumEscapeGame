@@ -1,4 +1,4 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.Commands;
 
 public interface Command {
     void execute();

@@ -1,6 +1,6 @@
 package org.ScrumEscapeGame.Handlers;
 
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

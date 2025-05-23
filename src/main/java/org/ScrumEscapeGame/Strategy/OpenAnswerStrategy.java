@@ -2,7 +2,7 @@ package org.ScrumEscapeGame.Strategy;
 
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
 public class OpenAnswerStrategy implements QuestionStrategy {
     @Override

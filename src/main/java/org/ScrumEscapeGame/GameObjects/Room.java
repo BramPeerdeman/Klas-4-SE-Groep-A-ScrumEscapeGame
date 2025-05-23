@@ -1,7 +1,10 @@
 package org.ScrumEscapeGame.GameObjects;
 
+import org.ScrumEscapeGame.AAEvents.EventPublisher;
+import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
 import org.ScrumEscapeGame.Rooms.Connection;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +40,10 @@ abstract public class Room {
         return Optional.ofNullable(neighbours.get(direction.toLowerCase()));
     }
 
-    public void onEnter(Player player) {
+
+    public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
         player.setPosition(this.id);
-        Game.consoleWindow.printMessage(description);
+        publisher.publish(new RoomEnteredEvent(description));
     }
 
     // New getters and setters:

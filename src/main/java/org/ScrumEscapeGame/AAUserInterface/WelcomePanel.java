@@ -1,10 +1,7 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAUserInterface;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
-
-import static javax.swing.SwingUtilities.getRootPane;
 
 public class WelcomePanel {
     private final GameUIService uiService;

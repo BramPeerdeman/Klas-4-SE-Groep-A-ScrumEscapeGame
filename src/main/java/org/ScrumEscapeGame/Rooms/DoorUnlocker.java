@@ -1,7 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.Observer.Observer;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
 // DoorUnlocker.java
 public class DoorUnlocker implements Observer {

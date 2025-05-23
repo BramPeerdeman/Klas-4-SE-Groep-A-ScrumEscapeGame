@@ -1,4 +1,4 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAUserInterface;
 
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;

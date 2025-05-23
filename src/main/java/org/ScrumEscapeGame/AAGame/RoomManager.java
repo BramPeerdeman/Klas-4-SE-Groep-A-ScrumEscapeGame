@@ -1,4 +1,4 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAGame;
 
 import org.ScrumEscapeGame.GameObjects.Room;
 
@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RoomManager {
-    private final Map<Integer, Room> rooms = new HashMap<>();
+    private final HashMap<Integer, Room> rooms = new HashMap<>();
 
-    public Map<Integer, Room> getRooms() {
+    public HashMap<Integer, Room> getRooms() {
         return rooms;
     }
 

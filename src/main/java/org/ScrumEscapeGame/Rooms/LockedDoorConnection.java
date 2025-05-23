@@ -1,8 +1,6 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.Observer.Observer;
-import org.ScrumEscapeGame.cli.Game;
 
 // A locked door connection awaits an event (such as solving a challenge).
 // LockedDoorConnection.java

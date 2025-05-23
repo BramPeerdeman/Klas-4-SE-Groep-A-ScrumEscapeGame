@@ -1,10 +1,7 @@
 package org.ScrumEscapeGame;
 
 
-import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.cli.Game;
-
-import java.util.HashMap;
+import org.ScrumEscapeGame.AAGame.Game;
 
 public class Main
 {

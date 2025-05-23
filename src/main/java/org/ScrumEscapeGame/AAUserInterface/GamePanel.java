@@ -1,11 +1,10 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAUserInterface;
 
 
 import org.ScrumEscapeGame.Handlers.KeyBindSetup;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
 
 public class GamePanel extends JPanel {
     private final GameUIService uiService;

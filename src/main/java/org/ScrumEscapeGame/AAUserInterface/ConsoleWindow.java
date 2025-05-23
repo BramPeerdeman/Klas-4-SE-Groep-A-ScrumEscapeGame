@@ -1,14 +1,11 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAUserInterface;
 
-import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.AAGame.Game;
+import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.Handlers.KeyBindSetup;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
 Weet je niet waar je aan moet werken?
@@ -20,7 +17,7 @@ kunnen dus hun eigen klassen hebben.
 
 public class ConsoleWindow extends JFrame {
     // Main game reference.
-    private final Game game;
+    private final GameContext context;
 
     // UI Components for managing panels.
     private final CardLayout cards;
@@ -35,29 +32,28 @@ public class ConsoleWindow extends JFrame {
     // The GameUIService that offers common UI operations.
     private final GameUIService uiService;
 
-    public ConsoleWindow(Game game) {
+    public ConsoleWindow(GameContext context) {
         super("Scrum Escape Game");
-        this.game = game;
+        this.context = context;
 
         // Initialize layout and shared UI components.
         this.cards = new CardLayout();
         this.panelContainer = new JPanel(cards);
 
         // Initialize the Swing components that will be shared.
-        this.mapPanel = new MapPanel(game.getGameContext().getRoomManager().getRooms(),
-                game.getGameContext().getPlayer());
+        this.mapPanel = new MapPanel(context.getRoomManager().getRooms(),
+                context.getPlayer());
         this.outputArea = new JTextArea(15, 40);
         outputArea.setEditable(false);
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
         this.inputField = new JTextField();
-        this.statusLabel = new JLabel("Player Status: " + game.getGameContext().getPlayer().getStatus());
+        this.statusLabel = new JLabel("Player Status: " + context.getPlayer().getStatus());
 
         // Create the UI service by injecting the required dependencies.
         this.uiService = new GameUIService(
-                game.getGameContext(),
+                context,
                 this, // Pass ConsoleWindow as it implements behaviors like printMessage.
-                game,
                 cards,
                 panelContainer,
                 mapPanel,
@@ -101,7 +97,7 @@ public class ConsoleWindow extends JFrame {
      * This method is called whenever the game state changes.
      */
     public void refreshUI() {
-        statusLabel.setText("Player Status: " + game.getGameContext().getPlayer().getStatus());
+        statusLabel.setText("Player Status: " + context.getPlayer().getStatus());
         mapPanel.refreshCoordinates();
     }
 

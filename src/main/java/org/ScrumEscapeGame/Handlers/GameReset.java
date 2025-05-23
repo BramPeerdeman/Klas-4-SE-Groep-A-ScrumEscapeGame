@@ -1,7 +1,6 @@
 package org.ScrumEscapeGame.Handlers;
 
-import org.ScrumEscapeGame.cli.Game;
-import org.ScrumEscapeGame.cli.GameContext;
+import org.ScrumEscapeGame.AAGame.GameContext;
 
 public class GameReset {
     MapBuilder mapBuilder = new MapBuilder();

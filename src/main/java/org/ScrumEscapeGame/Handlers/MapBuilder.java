@@ -1,13 +1,11 @@
 package org.ScrumEscapeGame.Handlers;
 
-import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
 import org.ScrumEscapeGame.Rooms.RoomMapBuilder;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.Rooms.StartingRoom;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class MapBuilder {

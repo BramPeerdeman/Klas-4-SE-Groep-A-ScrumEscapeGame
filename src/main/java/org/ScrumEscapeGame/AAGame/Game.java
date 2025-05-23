@@ -1,17 +1,10 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.AAGame;
 
+import org.ScrumEscapeGame.AAEvents.EventPublisher;
+import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAUserInterface.ConsoleWindow;
+import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.Handlers.GameReset;
-import org.ScrumEscapeGame.Handlers.GameStart;
-import org.ScrumEscapeGame.Rooms.RoomFactory;
-import org.ScrumEscapeGame.Rooms.RoomMapBuilder;
-import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
-import org.ScrumEscapeGame.Rooms.StartingRoom;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class Game
 {
@@ -30,6 +23,7 @@ public class Game
     private final GameContext gameContext;
     private final Player player;
     private final ConsoleWindow consoleWindow;
+    private final EventPublisher<GameEvent> publisher;
 
 
     public Game()
@@ -37,9 +31,10 @@ public class Game
         this.player = new Player();
         this.roomManager = new RoomManager();
         this.commandManager = new CommandManager();
-        this.gameContext = new GameContext(player, roomManager);
-        this.consoleWindow = new ConsoleWindow(this);
-        this.cycleManager = new GameCycleManager(gameContext, consoleWindow);
+        this.publisher = new EventPublisher<>();
+        this.gameContext = new GameContext(player, roomManager, publisher);
+        this.consoleWindow = new ConsoleWindow(gameContext);
+        this.cycleManager = new GameCycleManager(gameContext, consoleWindow, commandManager, publisher);
     }
 
     public void start()
@@ -49,7 +44,7 @@ public class Game
 
     public void beginGame()
     {
-        cycleManager.beginGame(commandManager);
+        cycleManager.beginGame();
     }
 
     /**

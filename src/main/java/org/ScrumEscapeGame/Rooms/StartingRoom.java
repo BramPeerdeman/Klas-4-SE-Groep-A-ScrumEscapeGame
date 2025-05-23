@@ -2,7 +2,7 @@ package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.cli.Game;
+import org.ScrumEscapeGame.AAGame.Game;
 
 public class StartingRoom extends Room {
     public StartingRoom(int id, String explanation) {

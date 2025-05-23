@@ -1,32 +1,35 @@
 package org.ScrumEscapeGame.Handlers;
 
-import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.cli.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.ScrumEscapeGame.AAEvents.EventPublisher;
+import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.Commands.*;
+import org.ScrumEscapeGame.AAGame.*;
 
 public class GameStart {
-    private Map<String, Command> commands;
-    private MapBuilder mapBuilder = new MapBuilder();
+    private final CommandManager commandManager;
+    private final GameContext gameContext;
+    private final EventPublisher<GameEvent> eventPublisher;
 
-    public GameStart(Map<String, Command> commands) {
-        this.commands = commands;
+    public GameStart(CommandManager commandManager, GameContext gameContext, EventPublisher<GameEvent> eventPublisher) {
+        this.commandManager = commandManager;
+        this.gameContext = gameContext;
+        this.eventPublisher = eventPublisher;
     }
 
     public void initialise() {
-        // Set up commands (look, map, status, move commands, answer command, etc.)
-        commands.put("look", new LookCommand(Game.player));
-        commands.put("map", new MapCommand(Game.player));
-        commands.put("status", new StatusCommand(Game.player));
-        commands.put("save", new SaveCommand(Game.player));
-        commands.put("load", new LoadCommand(Game.player));
-        commands.put("w", new MoveCommand("north", Game.player, Game.rooms));
-        commands.put("a", new MoveCommand("west", Game.player, Game.rooms));
-        commands.put("s", new MoveCommand("south", Game.player, Game.rooms));
-        commands.put("d", new MoveCommand("east", Game.player, Game.rooms));
-        commands.put("answer", new AnswerCommand(Game.player, Game.rooms));
-        mapBuilder.build();
+        // Register commands with their dependencies, not using static globals.
+        commandManager.register("look", new LookCommand(gameContext, eventPublisher));
+        commandManager.register("map", new MapCommand(gameContext, eventPublisher));
+        commandManager.register("status", new StatusCommand(gameContext, eventPublisher));
+        commandManager.register("save", new SaveCommand(gameContext, eventPublisher));
+        commandManager.register("load", new LoadCommand(gameContext, eventPublisher));
+        commandManager.register("w", new MoveCommand("north", gameContext, eventPublisher));
+        commandManager.register("a", new MoveCommand("west", gameContext, eventPublisher));
+        commandManager.register("s", new MoveCommand("south", gameContext, eventPublisher));
+        commandManager.register("d", new MoveCommand("east", gameContext, eventPublisher));
+        commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher));
+        // Build the map as needed.
+        new MapBuilder().build();
     }
 }
+

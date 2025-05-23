@@ -1,8 +1,7 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.Commands;
 
-import org.ScrumEscapeGame.cli.Command;
-import org.ScrumEscapeGame.cli.ConsoleWindow;
-import org.ScrumEscapeGame.cli.GameContext;
+import org.ScrumEscapeGame.AAUserInterface.ConsoleWindow;
+import org.ScrumEscapeGame.AAGame.GameContext;
 
 import java.util.HashMap;
 import java.util.Map;

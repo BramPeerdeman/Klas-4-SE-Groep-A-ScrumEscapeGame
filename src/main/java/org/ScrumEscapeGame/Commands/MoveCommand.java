@@ -1,6 +1,9 @@
-package org.ScrumEscapeGame.cli;
+package org.ScrumEscapeGame.Commands;
 
-import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.AAEvents.EventPublisher;
+import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.NotificationEvent;
+import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.Connection;
 
@@ -9,19 +12,20 @@ import java.util.Optional;
 
 public class MoveCommand implements Command {
     private String direction;
-    private Player player;
-    private HashMap<Integer, Room> rooms;
+    private GameContext context;
     private static final boolean DEBUG = true; // set true for debug logging
 
-    public MoveCommand(String direction, Player player, HashMap<Integer, Room> rooms) {
+    private EventPublisher<GameEvent> publisher;
+
+    public MoveCommand(String direction, GameContext context, EventPublisher<GameEvent> publisher) {
         this.direction = direction;
-        this.player = player;
-        this.rooms = rooms;
+        this.context = context;
+        this.publisher = publisher;
     }
 
     @Override
     public void execute() {
-        Room currentRoom = rooms.get(player.getPosition());
+        Room currentRoom = context.getRoomManager().getRooms().get(context.getPlayer().getPosition());
         if (DEBUG) {
             System.out.println("DEBUG: Current room id: " + currentRoom.getId() +
                     " | Description: " + currentRoom.getDescription());
@@ -33,7 +37,7 @@ public class MoveCommand implements Command {
             if (DEBUG) {
                 System.out.println("DEBUG: There is no neighbor connection in the direction: " + direction);
             }
-            Game.consoleWindow.printMessage("You can't go " + direction + " from here.");
+            publisher.publish(new NotificationEvent("You can't go " + direction + " from here."));
             return;
         }
 
@@ -44,17 +48,19 @@ public class MoveCommand implements Command {
         }
 
         if (!connection.canPass()) {
-            Game.consoleWindow.printMessage("The door in the " + direction +
-                    " direction is locked. Answer the challenge to unlock it.");
+            publisher.publish(new NotificationEvent("The door in the " + direction +
+                    " direction is locked. Answer the challenge to unlock it."));
         } else {
             Room nextRoom = connection.getDestination();
             if (DEBUG) {
                 System.out.println("DEBUG: Next room id: " + nextRoom.getId());
             }
-            player.setPosition(nextRoom.getId());
-            nextRoom.onEnter(player);
+            context.getPlayer().setPosition(nextRoom.getId());
+            // Note: the onEnter method should also use the publisher rather than directly printing.
+            nextRoom.onEnter(context.getPlayer(), publisher);
         }
     }
 }
+
 
 
