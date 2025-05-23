@@ -10,18 +10,8 @@ public class RoomQuestions {
 
     private static final Map<Integer, Question> QUESTIONS = new HashMap<>();
 
-    static {
-        QUESTIONS.put(1, new Question(
-                "What is the purpose of backlog refinement in Scrum?",
-                "To ensure the backlog is ready for future sprints"
-        ));
-
-        QUESTIONS.put(2, new Question(
-                "Who is responsible for managing the Product Backlog?",
-                "Product Owner"
-        ));
-
-        // Add more questions
+    public static void registerQuestion(int roomId, Question question) {
+        QUESTIONS.put(roomId, question);
     }
 
     public static Question getQuestionForRoom(int roomId) {
@@ -32,3 +22,4 @@ public class RoomQuestions {
         return Collections.unmodifiableMap(QUESTIONS);
     }
 }
+

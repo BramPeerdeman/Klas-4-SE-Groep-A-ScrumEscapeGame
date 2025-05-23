@@ -8,18 +8,18 @@ import java.util.*;
 
 public class RoomFactory {
 
-    public static List<RoomWithQuestion> createRandomizedRooms() {
+    public static List<RoomWithQuestion> createShuffledRooms() {
         List<RoomWithQuestion> rooms = new ArrayList<>();
 
-        for (Map.Entry<Integer, Question> entry : RoomQuestions.getAll().entrySet()) {
-            int id = entry.getKey();
-            Question question = entry.getValue();
-            String description = "You are in room " + id;
+        rooms.add(new RoomBacklogRefinement(1)); // Question 1
+        rooms.add(new RoomSprintBacklog(2));     // Question 2
+        rooms.add(new RoomDailyScrum(3));        // Question 3
+        rooms.add(new RoomSprintReview(4));      // Question 4
 
-            rooms.add(new RoomWithQuestion(id, description, question));
-        }
-
+        // Shuffle the room list randomly
         Collections.shuffle(rooms);
+
         return rooms;
     }
+
 }

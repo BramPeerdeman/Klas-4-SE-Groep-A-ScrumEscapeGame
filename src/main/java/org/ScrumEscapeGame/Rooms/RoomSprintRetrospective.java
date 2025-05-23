@@ -1,9 +1,10 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 public class RoomSprintRetrospective extends RoomWithQuestion {
-    public RoomSprintRetrospective() {
+    public RoomSprintRetrospective(int id) {
         super(
                 8,
                 """
@@ -13,7 +14,8 @@ public class RoomSprintRetrospective extends RoomWithQuestion {
                 op de grond. Iets fluistert iets onverstaanbaars,
                 net buiten gehoorsafstand.
                 """,
-                RoomQuestions.getQuestionForRoom(8)
+                RoomQuestions.getQuestionForRoom(id),
+                new MultipleChoiceStrategy()
         );
     }
 }

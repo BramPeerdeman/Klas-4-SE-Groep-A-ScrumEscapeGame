@@ -1,19 +1,36 @@
 package org.ScrumEscapeGame.GameObjects;
 
-public class Question {
-    private final String prompt;
-    private final String answer;
+import java.util.List;
 
-    public Question(String prompt, String answer) {
+public class Question {
+    private String prompt;
+    private List<String> choices;
+    private String correctAnswer;
+
+    public Question(String prompt, List<String> choices, String correctAnswer) {
         this.prompt = prompt;
-        this.answer = answer;
+        this.choices = choices;
+        this.correctAnswer = correctAnswer;
     }
 
     public String getPrompt() {
         return prompt;
     }
 
-    public boolean isCorrect(String userAnswer) {
-        return answer.equalsIgnoreCase(userAnswer.trim());
+    public List<String> getChoices() {
+        return choices;
     }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public boolean isCorrect(String userInputLetter) {
+        int index = userInputLetter.toLowerCase().charAt(0) - 'a';
+        if (index >= 0 && index < choices.size()) {
+            return choices.get(index).equalsIgnoreCase(correctAnswer);
+        }
+        return false;
+    }
+
 }
