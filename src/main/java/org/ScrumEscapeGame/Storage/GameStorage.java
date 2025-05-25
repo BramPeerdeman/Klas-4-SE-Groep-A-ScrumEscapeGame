@@ -2,12 +2,11 @@ package org.ScrumEscapeGame.Storage;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.ScrumEscapeGame.GameObjects.GameState;
-import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Player;
 
 import java.io.*;
 import java.util.List;
+
 
 public class GameStorage {
     private static final String SAVE_FILE = "savegame.json";

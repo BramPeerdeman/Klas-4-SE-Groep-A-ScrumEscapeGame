@@ -1,8 +1,5 @@
 {
-  "playerPosition": 1,
-  "solvedRooms": [
-    7,
-    1
-  ],
+  "playerPosition": 0,
+  "solvedRooms": [],
   "inventoryItems": []
 }
