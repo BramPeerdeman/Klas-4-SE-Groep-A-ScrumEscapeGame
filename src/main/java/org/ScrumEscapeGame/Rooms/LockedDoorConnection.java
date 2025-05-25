@@ -1,16 +1,23 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.Observer.Observer;
-import org.ScrumEscapeGame.cli.Game;
 
-// A locked door connection awaits an event (such as solving a challenge).
-// LockedDoorConnection.java
+/**
+ * LockedDoorConnection represents a door connection that can be either locked or unlocked.
+ * It uses a shared LockedDoor instance to determine whether passage is allowed.
+ */
 public class LockedDoorConnection implements Connection {
     private Room destination;
     private LockedDoor door;
+    // Set DEBUG to true for logging; false for production.
     private static final boolean DEBUG = true;
 
+    /**
+     * Constructs a LockedDoorConnection.
+     *
+     * @param destination the room this connection leads to.
+     * @param door        the shared LockedDoor instance controlling passage.
+     */
     public LockedDoorConnection(Room destination, LockedDoor door) {
         this.destination = destination;
         this.door = door;
@@ -19,6 +26,11 @@ public class LockedDoorConnection implements Connection {
         }
     }
 
+    /**
+     * Indicates whether passage is possible.
+     *
+     * @return true if the door is unlocked; false otherwise.
+     */
     @Override
     public boolean canPass() {
         boolean passable = !door.isLocked();
@@ -28,11 +40,17 @@ public class LockedDoorConnection implements Connection {
         return passable;
     }
 
+    /**
+     * Returns the destination room.
+     *
+     * @return the destination Room.
+     */
     @Override
     public Room getDestination() {
         return destination;
     }
 }
+
 
 
 
