@@ -1,67 +1,102 @@
 package org.ScrumEscapeGame.AAUserInterface;
 
 
+import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Handlers.KeyBindSetup;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
+/**
+ * The GamePanel is the main in-game UI. It composes the left panel (the map plus a status area)
+ * and the right panel (containing output messages and a command input). It also delegates the
+ * map operations to the shared MapPanel instance.
+ */
 public class GamePanel extends JPanel {
     private final GameUIService uiService;
     private final KeyBindSetup keyBindSetup;
-    private MapPanel mapPanel;
+    // Do not create a new MapPanel; reuse the one passed in from UIService.
+    private final MapPanel mapPanel;
     private JTextField inputField;
+    private final JTextArea outputArea;  // Shared output area.
 
-    public GamePanel(GameUIService uiService, KeyBindSetup keyBindSetup) {
+    /**
+     * Constructs the GamePanel.
+     *
+     * @param uiService        The UI service providing operations and shared components.
+     * @param keyBindSetup     The key binding configuration.
+     * @param sharedOutputArea The shared output text area.
+     * @param rooms            The map of rooms.
+     * @param player           The current player.
+     */
+    public GamePanel(GameUIService uiService, KeyBindSetup keyBindSetup,
+                     JTextArea sharedOutputArea, Map<Integer, Room> rooms, Player player) {
         this.uiService = uiService;
         this.keyBindSetup = keyBindSetup;
-        // Initialize your components, potentially using information from uiService.
+        this.outputArea = sharedOutputArea;
+        // Reuse the shared MapPanel managed by the UI service.
+        this.mapPanel = uiService.getMapPanel();
         initGamePanel();
     }
 
+    /**
+     * Initializes the UI layout of the GamePanel by composing the left and right panels.
+     */
     private void initGamePanel() {
         setLayout(new BorderLayout());
 
-        // --- Left Side: Status and Map ---
+        // ---------------------- Left Panel ----------------------
+        // Left panel will contain the map and a top status area.
         JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setPreferredSize(new Dimension(400, 400));
+
+        // Status panel (optional).
         JPanel statusPanel = new JPanel();
-        statusPanel.setPreferredSize(new Dimension(250, 150));
+        statusPanel.setPreferredSize(new Dimension(400, 50)); // fixed height.
         JLabel statusLabel = new JLabel("Player Status: " + uiService.getPlayer().getStatus());
         statusPanel.add(statusLabel);
         leftPanel.add(statusPanel, BorderLayout.NORTH);
 
-        // Initialize MapPanel with required data (passed directly from the uiService if necessary)
-        mapPanel = new MapPanel(uiService.getRooms(), uiService.getPlayer());
+        // Add the shared MapPanel.
         leftPanel.add(mapPanel, BorderLayout.CENTER);
 
-        // --- Right/Center: Output and Input ---
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JTextArea outputArea = new JTextArea(15, 40);
-        outputArea.setEditable(false);
-        outputArea.setLineWrap(true);
-        outputArea.setWrapStyleWord(true);
+        // ---------------------- Right Panel ----------------------
+        // Right panel will contain the output area and command input field.
+        JPanel rightPanel = new JPanel(new BorderLayout());
         JScrollPane outputScroll = new JScrollPane(outputArea);
-        mainPanel.add(outputScroll, BorderLayout.CENTER);
+        rightPanel.add(outputScroll, BorderLayout.CENTER);
 
         inputField = new JTextField();
         inputField.addActionListener(e -> {
             String cmd = inputField.getText().trim().toLowerCase();
-            // Now you can delegate command handling via a controller or even uiService if it knows about it.
-            // For example: uiService.processCommand(cmd);
+            uiService.handle(cmd);
             inputField.setText("");
         });
-        mainPanel.add(inputField, BorderLayout.SOUTH);
+        rightPanel.add(inputField, BorderLayout.SOUTH);
 
-        // Assemble overall UI
-        JPanel overallGamePanel = new JPanel(new BorderLayout());
-        overallGamePanel.add(leftPanel, BorderLayout.WEST);
-        overallGamePanel.add(mainPanel, BorderLayout.CENTER);
+        // ---------------------- Assemble Overall Layout ----------------------
+        // Use a JSplitPane to separate the left (map) and right (output/input) regions.
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+        splitPane.setDividerLocation(400);
+        add(splitPane, BorderLayout.CENTER);
 
-        // Setup key bindings using the provided service/method.
-        keyBindSetup.setupGlobalKeyBindings(overallGamePanel);
+        // Set up global key bindings.
+        keyBindSetup.setupGlobalKeyBindings(this);
+        // Request focus for key events.
+        SwingUtilities.invokeLater(() -> requestFocusInWindow());
+    }
 
-        add(overallGamePanel);
-        SwingUtilities.invokeLater(() -> overallGamePanel.requestFocusInWindow());
+    /**
+     * Allows external callers to refresh the MapPanel.
+     */
+    public void refreshMapPanel() {
+        mapPanel.refreshCoordinates();
     }
 }
+
+
+
+
 

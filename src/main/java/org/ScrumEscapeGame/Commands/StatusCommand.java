@@ -2,28 +2,36 @@ package org.ScrumEscapeGame.Commands;
 
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.AAGame.Game;
 
-public class StatusCommand implements Command
-{
+/**
+ * Executes the "status" command.
+ * It informs the player of their current room (by room ID) and their overall status.
+ */
+public class StatusCommand implements Command {
     private GameContext context;
     private EventPublisher<GameEvent> publisher;
 
-    public StatusCommand(GameContext context, EventPublisher<GameEvent> publisher)
-    {
+    /**
+     * Constructs a StatusCommand.
+     *
+     * @param context   the current game context.
+     * @param publisher the event publisher for notifications.
+     */
+    public StatusCommand(GameContext context, EventPublisher<GameEvent> publisher) {
         this.context = context;
         this.publisher = publisher;
     }
 
-    // When player executes status command, you want to see in which room he/she is and what your status is
     @Override
-    public void execute()
-    {
-        Game.consoleWindow.printMessage("You are currently in room number: " + context.getPlayer().getPosition());
-        Game.consoleWindow.printMessage("Your current status is: " + context.getPlayer().getStatus());
+    public void execute() {
+        // Notify the player of the current room number.
+        publisher.publish(new NotificationEvent("You are currently in room number: " + context.getPlayer().getPosition()));
+        // Notify the player of their current status.
+        publisher.publish(new NotificationEvent("Your current status is: " + context.getPlayer().getStatus()));
     }
-
-
 }
+

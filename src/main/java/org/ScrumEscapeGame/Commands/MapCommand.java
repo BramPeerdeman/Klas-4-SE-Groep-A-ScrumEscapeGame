@@ -9,10 +9,21 @@ import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.GameObjects.Room;
 
+/**
+ * Executes the "map" command.
+ * This command refreshes the graphical map view and notifies the player
+ * of their current room (by display order).
+ */
 public class MapCommand implements Command {
     private final GameContext context;
     private final EventPublisher<GameEvent> publisher;
 
+    /**
+     * Constructs a MapCommand.
+     *
+     * @param context   the current game context.
+     * @param publisher the event publisher for broadcasting notifications.
+     */
     public MapCommand(GameContext context, EventPublisher<GameEvent> publisher) {
         this.context = context;
         this.publisher = publisher;
@@ -20,13 +31,12 @@ public class MapCommand implements Command {
 
     @Override
     public void execute() {
-        // Publish a notification event indicating the refresh action.
+        // Publish a notification about refreshing the map view.
         publisher.publish(new NotificationEvent("Refreshing graphical map view..."));
-
-        // Publish an event signalling that the map should be refreshed.
+        // Trigger a map refresh.
         publisher.publish(new RefreshMapEvent());
 
-        // Optionally, report the player's current room.
+        // Optionally notify the player of their current room.
         int currentRoomId = context.getPlayer().getPosition();
         Room currentRoom = context.getRoomManager().getRooms().get(currentRoomId);
         if (currentRoom != null) {
@@ -35,6 +45,7 @@ public class MapCommand implements Command {
         }
     }
 }
+
 
 
 

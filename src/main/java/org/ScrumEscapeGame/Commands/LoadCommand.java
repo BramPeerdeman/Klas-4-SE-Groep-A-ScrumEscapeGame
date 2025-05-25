@@ -7,16 +7,16 @@ import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.Storage.GameStorage;
 
 public class LoadCommand implements Command {
-    private final Player player;
+    private final GameContext context;
     private EventPublisher<GameEvent> publisher;
 
-    public LoadCommand(GameContext player, EventPublisher<GameEvent> publisher) {
-        this.player = player;
+    public LoadCommand(GameContext context, EventPublisher<GameEvent> publisher) {
+        this.context = context;
         this.publisher = publisher;
     }
 
     @Override
     public void execute() {
-        GameStorage.loadGame(player);
+        GameStorage.loadGame(context.getPlayer());
     }
 }

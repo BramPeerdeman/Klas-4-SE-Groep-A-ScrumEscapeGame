@@ -4,8 +4,12 @@ import org.ScrumEscapeGame.GameObjects.Question;
 
 import java.util.*;
 
+/**
+ * Stores predefined questions for rooms based on their IDs.
+ * Allows retrieval of a question for a specific room.
+ */
 public class RoomQuestions {
-
+    // Stores predefined questions for room IDs.
     private static final Map<Integer, Question> QUESTIONS = new HashMap<>();
 
     static {
@@ -52,15 +56,25 @@ public class RoomQuestions {
                 ),
                 "15 minutes"
         ));
-
-        // Add more questions similarly...
     }
 
+    /**
+     * Retrieves the question assigned to a specific room ID.
+     *
+     * @param roomId The ID of the room.
+     * @return The question assigned to the room.
+     */
     public static Question getQuestionForRoom(int roomId) {
         return QUESTIONS.get(roomId);
     }
 
+    /**
+     * Returns all predefined questions.
+     *
+     * @return An unmodifiable map of all room questions.
+     */
     public static Map<Integer, Question> getAll() {
         return Collections.unmodifiableMap(QUESTIONS);
     }
 }
+

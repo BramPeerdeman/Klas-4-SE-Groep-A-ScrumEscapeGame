@@ -1,75 +1,71 @@
 package org.ScrumEscapeGame.Handlers;
 
 import org.ScrumEscapeGame.AAGame.Game;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * KeyBindSetup is responsible for configuring global key bindings on a given game panel.
+ * It uses Swing’s InputMap and ActionMap to define actions for specific keystrokes.
+ * These key bindings are set to use the WHEN_IN_FOCUSED_WINDOW condition,
+ * meaning they will be active even if the panel itself does not have focus.
+ */
 public class KeyBindSetup {
+    private final GameUIService uiService;
 
+    /**
+     * Constructs a KeyBindSetup instance using the provided GameUIService,
+     * which is used to delegate command handling and UI refreshing.
+     *
+     * @param uiService the service offering common UI operations.
+     */
+    public KeyBindSetup(GameUIService uiService) {
+        this.uiService = uiService;
+    }
+
+    /**
+     * Configures global key bindings on the given gamePanel.
+     *
+     * Example:
+     * - Pressing "M" refreshes the map, prints a message on the current room,
+     *   and calls the appropriate UIService methods.
+     * - Movement keys "W", "A", "S", "D" are registered to handle directional commands.
+     * - Other keys such as "L", "Q", "F5", "F9", and "K" are also set up.
+     *
+     * Any new key bindings can be added here using:
+     *   inputMap.put(KeyStroke.getKeyStroke("KEY"), "commandName");
+     *   actionMap.put("commandName", new AbstractAction() { ... });
+     *
+     * @param gamePanel the panel on which key bindings are to be set.
+     */
     public void setupGlobalKeyBindings(JPanel gamePanel) {
-        // Ensure the panel is focusable and request focus for key events.
+        // Ensure that the game panel can receive key events.
         gamePanel.setFocusable(true);
         gamePanel.requestFocusInWindow();
 
-        // Using the "WHEN_IN_FOCUSED_WINDOW" condition makes these bindings global.
+        // Use WHEN_IN_FOCUSED_WINDOW to allow keybindings even when other components have focus.
         InputMap inputMap = gamePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = gamePanel.getActionMap();
 
-    /*
-        Hoe moet je een keystroke input toevoegen?
-        Dat doe je op de volgende manier:
-          1. maak je command aan met een klasse, kijk naar hoe de andere klasses zijn aangemaakt
-          2. stop het in de commands map in de klasse game als volgt:
-               commands.put("status", new StatusCommand(player));
-          3. Stop de volgende code onderin deze methode:
+        // Example key binding: "M" to refresh map and print the current room's display order.
         inputMap.put(KeyStroke.getKeyStroke("M"), "map");
         actionMap.put("map", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("map");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
-            }
-        });
-          4. Verander de keystroke "M" naar de keystroke die je wilt, en verander "map" naar de command die
-             je wilt, bijvoorbeeld "status"
-          5. dit is hoe het uitziet:
-        inputMap.put(KeyStroke.getKeyStroke("P"), "status");
-        actionMap.put("status", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("status");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
-            }
-        });
-         */
-
-        // Example binding for "M" (refresh map) key:
-        inputMap.put(KeyStroke.getKeyStroke("M"), "map");
-        actionMap.put("map", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Refresh the map panel
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
-
-                // Optional message about current room
-                int currentRoomId = Game.player.getPosition();
-                String message = String.format("You are in room %d.", Game.rooms.get(currentRoomId).getDisplayOrder());
-                Game.consoleWindow.printMessage(message);
+                uiService.handle("map");
+                uiService.refreshMapView();
             }
         });
 
-        // Example binding for movement keys:
+        // Movement bindings: 'W' for north, 'A' for west, 'S' for south, 'D' for east.
         inputMap.put(KeyStroke.getKeyStroke("W"), "moveNorth");
         actionMap.put("moveNorth", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("w");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("w");
+                uiService.refreshMapView();
             }
         });
 
@@ -77,9 +73,8 @@ public class KeyBindSetup {
         actionMap.put("moveWest", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("a");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("a");
+                uiService.refreshMapView();
             }
         });
 
@@ -87,9 +82,8 @@ public class KeyBindSetup {
         actionMap.put("moveSouth", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("s");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("s");
+                uiService.refreshMapView();
             }
         });
 
@@ -97,50 +91,38 @@ public class KeyBindSetup {
         actionMap.put("moveEast", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("d");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("d");
+                uiService.refreshMapView();
             }
         });
 
-        // Optionally, add other key bindings—for example, 'L' for "look".
+        // Additional binding: "L" for look command.
         inputMap.put(KeyStroke.getKeyStroke("L"), "look");
         actionMap.put("look", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("look");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("look");
+                uiService.refreshMapView();
             }
         });
 
-        inputMap.put(KeyStroke.getKeyStroke("M"), "map");
-        actionMap.put("map", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("map");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
-            }
-        });
-
+        // Binding: "Q" to trigger the answer command (for questions in rooms).
         inputMap.put(KeyStroke.getKeyStroke("Q"), "answer");
         actionMap.put("answer", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("answer");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("answer");
+                uiService.refreshMapView();
             }
         });
 
+        // Bind F5 to save the game, and F9 to load.
         inputMap.put(KeyStroke.getKeyStroke("F5"), "save");
         actionMap.put("save", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("save");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("save");
+                uiService.refreshMapView();
             }
         });
 
@@ -148,21 +130,20 @@ public class KeyBindSetup {
         actionMap.put("load", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("load");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("load");
+                uiService.refreshMapView();
             }
         });
 
-
+        // Bind "K" to check the current status.
         inputMap.put(KeyStroke.getKeyStroke("K"), "status");
         actionMap.put("status", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game.handleCommand("status");
-                Game.consoleWindow.getMapPanel().refreshCoordinates();
-                Game.consoleWindow.getMapPanel().repaint();
+                uiService.handle("status");
+                uiService.refreshMapView();
             }
         });
     }
 }
+

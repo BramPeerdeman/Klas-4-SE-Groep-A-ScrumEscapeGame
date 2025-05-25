@@ -1,5 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
+import org.ScrumEscapeGame.AAEvents.*;
+import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
@@ -15,69 +17,90 @@ import org.ScrumEscapeGame.AAGame.GameCycleManager;
 // RoomWithQuestion.java
 import java.util.ArrayList;
 
-public class RoomWithQuestion extends Room implements Subject {
+/**
+ * A room that presents a question or challenge to the player.
+ * When the room is entered, if the question has not been asked,
+ * it prompts the player to attempt the challenge. If answered correctly,
+ * the associated door is unlocked.
+ */
+public class RoomWithQuestion extends Room {
+    // The question to be presented.
     private Question question;
+    // The strategy used to ask the question (e.g., MultipleChoiceStrategy).
     private QuestionStrategy strategy;
+    // Tracks whether the question has been asked already to prevent repeat prompting.
     private boolean questionAsked = false;
-    private List<Observer> observers = new ArrayList<>();
-    private static final boolean DEBUG = true; // debug flag
+    // Holds the door associated with the room (shared between connected rooms).
+    private LockedDoor sharedDoor;
+    // Flag for debugging purposes.
+    private static final boolean DEBUG = true;
 
+    /**
+     * Constructs a new RoomWithQuestion.
+     *
+     * @param id          the room identifier.
+     * @param description a description of the room.
+     * @param question    the question or challenge associated with the room.
+     * @param strategy    the strategy to use when asking the question.
+     */
     public RoomWithQuestion(int id, String description, Question question, QuestionStrategy strategy) {
         super(id, description);
         this.question = question;
         this.strategy = strategy;
     }
 
+    /**
+     * Sets the locked door associated with this room.
+     *
+     * @param door the LockedDoor to associate.
+     */
+    public void setAssociatedDoor(LockedDoor door) {
+        this.sharedDoor = door;
+    }
+
+    /**
+     * Invoked when the player enters the room.
+     * First calls the superclass onEnter to update the player's position,
+     * then publishes a notification if a challenge is available and has not yet been triggered.
+     */
     @Override
-    public void onEnter(Player player) {
-        super.onEnter(player);
+    public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
+        super.onEnter(player, publisher);
         if (question != null && strategy != null && !questionAsked) {
-            Game.consoleWindow.printMessage("A challenge awaits in this room. Enter 'Q' to attempt the question.");
+            publisher.publish(new NotificationEvent("A challenge awaits in this room. Enter 'Q' to attempt the question."));
         }
     }
 
-    public void triggerQuestion(Player player) {
+    /**
+     * Triggers the room's question using the specified strategy.
+     * If the player answers correctly, the room records the success
+     * and publishes an event to unlock the associated door. Otherwise,
+     * the game resets.
+     *
+     * @param player          the current player.
+     * @param publisher       the publisher for game events.
+     * @param displayService  the service used to display messages.
+     */
+    public void triggerQuestion(Player player, EventPublisher<GameEvent> publisher, DisplayService displayService) {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }
         if (question != null && strategy != null && !questionAsked) {
-            boolean correct = strategy.ask(player, question);
+            boolean correct = strategy.ask(player, question, publisher, displayService);
             questionAsked = true;
             if (DEBUG) {
                 System.out.println("DEBUG: Question answered. Was the answer correct? " + correct);
             }
             if (correct) {
                 player.addSolvedRoom(getId());
-                notifyObservers();
+                publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
-                GameCycleManager.resetGame();
+                publisher.publish(new GameResetEvent("Incorrect answer; resetting game."));
             }
         }
     }
-
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-        if (DEBUG) {
-            System.out.println("DEBUG: Observer added to RoomWithQuestion id: " + getId());
-        }
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        if (DEBUG) {
-            System.out.println("DEBUG: notifyObservers() called in RoomWithQuestion id: " + getId());
-        }
-        for (Observer observer : observers) {
-            observer.update();
-        }
-    }
 }
+
 
 
 

@@ -15,34 +15,44 @@ dat alles in de ConsoleWindow en Game klasse zitten. Denk aan de beginGame() en 
 kunnen dus hun eigen klassen hebben.
  */
 
+/**
+ * The main game window. It organizes the UI using a CardLayout,
+ * creating and sharing key components (e.g., the MapPanel, output area,
+ * input field, and status label) and wiring them into the GameUIService.
+ */
 public class ConsoleWindow extends JFrame {
-    // Main game reference.
+    // Main game context (rooms, player, command manager, etc.)
     private final GameContext context;
 
-    // UI Components for managing panels.
+    // For switching between panels (like a welcome panel and a game panel)
     private final CardLayout cards;
     private final JPanel panelContainer;
 
-    // Shared UI components.
+    // Shared UI components
     private final MapPanel mapPanel;
     private final JTextArea outputArea;
     private final JTextField inputField;
     private final JLabel statusLabel;
 
-    // The GameUIService that offers common UI operations.
+    // Service that provides methods to update the UI, print messages, etc.
     private final GameUIService uiService;
 
+    /**
+     * Constructs the main game window.
+     *
+     * @param context the game context (state, rooms, player, etc.)
+     */
     public ConsoleWindow(GameContext context) {
         super("Scrum Escape Game");
         this.context = context;
 
-        // Initialize layout and shared UI components.
+        // Initialize the CardLayout and container for panels.
         this.cards = new CardLayout();
         this.panelContainer = new JPanel(cards);
 
-        // Initialize the Swing components that will be shared.
-        this.mapPanel = new MapPanel(context.getRoomManager().getRooms(),
-                context.getPlayer());
+        // Create shared UI components.
+        // The MapPanel is created once using the RoomManager's current room map and player reference.
+        this.mapPanel = new MapPanel(context.getRoomManager().getRooms(), context.getPlayer());
         this.outputArea = new JTextArea(15, 40);
         outputArea.setEditable(false);
         outputArea.setLineWrap(true);
@@ -53,7 +63,7 @@ public class ConsoleWindow extends JFrame {
         // Create the UI service by injecting the required dependencies.
         this.uiService = new GameUIService(
                 context,
-                this, // Pass ConsoleWindow as it implements behaviors like printMessage.
+                this,
                 cards,
                 panelContainer,
                 mapPanel,
@@ -62,10 +72,10 @@ public class ConsoleWindow extends JFrame {
                 statusLabel
         );
 
-        // Build and set up the panels.
+        // Build and set up the panels (e.g. welcome and game panels) and add them to the container.
         initPanels();
 
-        // Set up ConsoleWindow frame properties.
+        // Add the panel container to the frame.
         add(panelContainer);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(900, 600);
@@ -73,28 +83,29 @@ public class ConsoleWindow extends JFrame {
     }
 
     /**
-     * Creates the panels (welcome panel, game panel, etc.) and adds them to the card layout.
+     * Initializes the panels used in the application.
+     * Creates and adds a welcome panel and a game panel to the CardLayout container.
      */
     private void initPanels() {
-        // Initialize WelcomePanel with the GameUIService.
+        // Initialize the welcome panel.
         WelcomePanel welcomePanel = new WelcomePanel(uiService);
         JPanel welcomeContainer = new JPanel(new BorderLayout());
         welcomePanel.initWelcomePanel(welcomeContainer);
         panelContainer.add(welcomeContainer, "welcome");
 
-        // Initialize GamePanel with the GameUIService.
-        // For example, if your GamePanel now accepts a GameUIService and key binding setup.
-        KeyBindSetup keyBindSetup = new KeyBindSetup();
-        GamePanel gamePanel = new GamePanel(uiService, keyBindSetup);
+        // Initialize the game panel.
+        KeyBindSetup keyBindSetup = new KeyBindSetup(uiService);
+        GamePanel gamePanel = new GamePanel(uiService, keyBindSetup, outputArea,
+                uiService.getRooms(), uiService.getPlayer());
         panelContainer.add(gamePanel, "game");
 
-        // Optionally, show the welcome panel by default.
+        // Show the welcome panel initially.
         cards.show(panelContainer, "welcome");
     }
 
     /**
-     * Allows the UI service to update the status and map.
-     * This method is called whenever the game state changes.
+     * Refreshes parts of the UI based on the current game state.
+     * Called when the game state changes.
      */
     public void refreshUI() {
         statusLabel.setText("Player Status: " + context.getPlayer().getStatus());
@@ -102,7 +113,9 @@ public class ConsoleWindow extends JFrame {
     }
 
     /**
-     * Serves as a helper method for the GameUIService to print messages.
+     * Prints a message to the shared output area.
+     *
+     * @param message the message to print
      */
     public void printMessage(String message) {
         outputArea.append(message + "\n");
@@ -110,11 +123,28 @@ public class ConsoleWindow extends JFrame {
     }
 
     /**
-     * Provides blocking input to answer synchronous questions.
+     * Blocks for user input by showing a dialog prompt.
+     *
+     * @param prompt the prompt message to show
+     * @return the user input as a String
      */
     public String readLine(String prompt) {
         return JOptionPane.showInputDialog(this, prompt);
     }
+
+    public GameUIService getUiService() {
+        return uiService;
+    }
+
+    /**
+     * Returns the shared MapPanel.
+     *
+     * @return the MapPanel instance
+     */
+    public MapPanel getMapPanel() {
+        return mapPanel;
+    }
 }
+
 
 

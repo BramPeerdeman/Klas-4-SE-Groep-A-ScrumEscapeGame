@@ -1,78 +1,104 @@
 package org.ScrumEscapeGame.AAGame;
 
-import org.ScrumEscapeGame.AAEvents.EventPublisher;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.AAUserInterface.ConsoleWindow;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.GameObjects.Room;
 
-public class Game
-{
-//    private static Map<String, Command> commands = new HashMap<>();
-//    public static ConsoleWindow consoleWindow;
-//
-//    public static Player player = new Player();
-//    /*Huidig gebruikt elke command de spelerspositie en dus elke command heeft een spelerconstructor.
-//    Kan iemand vinden of dat beter behandelt kan worden?*/
-//
-//    public static HashMap<Integer, Room> rooms = new HashMap<>(); //Hiermee kunnen we in main de map aanmaken.
-
+/**
+ * The main game entry point.
+ * This class manages command execution, UI control, and game lifecycle events.
+ */
+public class Game {
     private final CommandManager commandManager;
     private final RoomManager roomManager;
-    private final GameCycleManager cycleManager;
-    private final GameContext gameContext;
     private final Player player;
-    private final ConsoleWindow consoleWindow;
     private final EventPublisher<GameEvent> publisher;
+    private final GameContext gameContext;
+    private final ConsoleWindow consoleWindow;
+    private final GameCycleManager cycleManager;
+    private final GameUIService uiService;  // Implements DisplayService and handles UI events.
 
+    /**
+     * Constructs the game instance using provided dependencies.
+     * All objects are passed via constructor to facilitate clean dependency injection.
+     *
+     * @param gameContext    The game context containing player, rooms, and event handling.
+     * @param consoleWindow  The main console window for UI interactions.
+     * @param cycleManager   The game cycle manager responsible for starting and resetting the game.
+     */
+    public Game(GameContext gameContext, ConsoleWindow consoleWindow, GameCycleManager cycleManager) {
+        this.gameContext = gameContext;
+        this.consoleWindow = consoleWindow;
+        this.cycleManager = cycleManager;
 
-    public Game()
-    {
-        this.player = new Player();
-        this.roomManager = new RoomManager();
-        this.commandManager = new CommandManager();
-        this.publisher = new EventPublisher<>();
-        this.gameContext = new GameContext(player, roomManager, publisher);
-        this.consoleWindow = new ConsoleWindow(gameContext);
-        this.cycleManager = new GameCycleManager(gameContext, consoleWindow, commandManager, publisher);
+        // Extract dependencies from the game context.
+        this.player = gameContext.getPlayer();
+        this.roomManager = gameContext.getRoomManager();
+        this.publisher = gameContext.getEventPublisher();
+        this.commandManager = gameContext.getCommandManager();
+        this.uiService = consoleWindow.getUiService();
+
+        // Debugging - Print out rooms at startup.
+        for (Room room : roomManager.getRooms().values()) {
+            System.out.printf("Room ID: %d, Display Order: %d%n", room.getId(), room.getDisplayOrder());
+        }
+        System.out.println("Game initialized.");
     }
 
-    public void start()
-    {
+    /**
+     * Launches the game by making the console window visible.
+     */
+    public void start() {
         consoleWindow.setVisible(true);
     }
 
-    public void beginGame()
-    {
+    /**
+     * Begins the game using the game cycle manager.
+     */
+    public void beginGame() {
         cycleManager.beginGame();
     }
 
     /**
-     * Resets the game when a question is answered wrong.
-     * This clears the current room map, re-shuffles the questions, and sends the
-     * player to the start room.
+     * Resets the game via the game cycle manager.
      */
-    public void resetGame()
-    {
+    public void resetGame() {
         cycleManager.resetGame();
     }
 
+    /**
+     * Handles a player command and executes the corresponding action.
+     *
+     * @param command The command string inputted by the player.
+     */
     public void handleCommand(String command) {
         commandManager.handle(command, gameContext, consoleWindow);
     }
 
-//    public HashMap<Integer, Room> getRooms() {
-//        return rooms;
-//    }
-
+    /**
+     * Retrieves the console window instance.
+     *
+     * @return The ConsoleWindow.
+     */
     public ConsoleWindow getConsoleWindow() {
         return consoleWindow;
     }
 
+    /**
+     * Retrieves the GameContext containing core game data.
+     *
+     * @return The GameContext instance.
+     */
     public GameContext getGameContext() {
         return gameContext;
     }
 }
+
+
+
 
 
 
