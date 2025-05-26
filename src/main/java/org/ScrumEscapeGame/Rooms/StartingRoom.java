@@ -3,6 +3,7 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
+import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.AAGame.Game;
@@ -13,6 +14,7 @@ import org.ScrumEscapeGame.AAGame.Game;
  * displays game controls, and sets the initial player position.
  */
 public class StartingRoom extends Room {
+    private Inventory startingInventory;
 
     /**
      * Constructs a new StartingRoom.
@@ -46,6 +48,17 @@ public class StartingRoom extends Room {
                 "D - Move east         Q - Attempt the room's question\n" +
                 "SAVE - Type save to save the game\n"));
         publisher.publish(new NotificationEvent("NOTE: Currently only hardcore mode is functional, the monster instakills!"));
+    }
+
+    @Override
+    public Inventory getInventory() {
+        // Return the preset starting inventory instead of lazily initializing a new one.
+        return startingInventory != null ? startingInventory : super.getInventory();
+    }
+
+    public void setStartingInventory(Inventory startingInventory) {
+        // Set a preconfigured inventory:
+        this.startingInventory = startingInventory;
     }
 }
 

@@ -2,6 +2,8 @@ package org.ScrumEscapeGame.Storage;
 
 
 import com.google.gson.annotations.SerializedName;
+import org.ScrumEscapeGame.Items.Item;
+
 import java.util.List;
 
 public class GameState {
@@ -12,11 +14,11 @@ public class GameState {
     private List<Integer> solvedRooms;
 
     @SerializedName("inventoryItems")
-    private List<String> inventoryItems;
+    private List<Item> inventoryItems;
 
     public GameState() { }
 
-    public GameState(int playerPosition, List<Integer> solvedRooms, List<String> inventoryItems) {
+    public GameState(int playerPosition, List<Integer> solvedRooms, List<Item> inventoryItems) {
         this.playerPosition = playerPosition;
         this.solvedRooms = solvedRooms;
         this.inventoryItems = inventoryItems;
@@ -28,8 +30,8 @@ public class GameState {
     public List<Integer> getSolvedRooms() { return solvedRooms; }
     public void setSolvedRooms(List<Integer> solvedRooms) { this.solvedRooms = solvedRooms; }
 
-    public List<String> getInventoryItems() { return inventoryItems; }
-    public void setInventoryItems(List<String> inventoryItems) { this.inventoryItems = inventoryItems; }
+    public List<Item> getInventoryItems() { return inventoryItems; }
+    public void setInventoryItems(List<Item> inventoryItems) { this.inventoryItems = inventoryItems; }
 }
 
 
