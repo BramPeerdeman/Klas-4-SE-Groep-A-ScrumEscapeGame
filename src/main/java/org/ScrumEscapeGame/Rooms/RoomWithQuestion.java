@@ -7,6 +7,7 @@ import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
+import org.ScrumEscapeGame.Providers.HintProviderSelector;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -34,6 +35,7 @@ public class RoomWithQuestion extends Room {
     private LockedDoor sharedDoor;
     // Flag for debugging purposes.
     private static final boolean DEBUG = true;
+    private final HintProviderSelector hintSelector;
 
     /**
      * Constructs a new RoomWithQuestion.
@@ -43,10 +45,11 @@ public class RoomWithQuestion extends Room {
      * @param question    the question or challenge associated with the room.
      * @param strategy    the strategy to use when asking the question.
      */
-    public RoomWithQuestion(int id, String description, Question question, QuestionStrategy strategy) {
+    public RoomWithQuestion(int id, String description, Question question, QuestionStrategy strategy, HintProviderSelector hintSelector) {
         super(id, description);
         this.question = question;
         this.strategy = strategy;
+        this.hintSelector = hintSelector;
     }
 
     /**
@@ -85,20 +88,39 @@ public class RoomWithQuestion extends Room {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }
+
         if (question != null && strategy != null && !questionAsked) {
             boolean correct = strategy.ask(player, question, publisher, displayService);
             questionAsked = true;
+
             if (DEBUG) {
                 System.out.println("DEBUG: Question answered. Was the answer correct? " + correct);
             }
+
             if (correct) {
                 player.addSolvedRoom(getId());
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
-                publisher.publish(new GameResetEvent("Incorrect answer; resetting game."));
+                // 1st incorrect answer → show hint
+                String normalHint = hintSelector.selectHintProvider().getHint();
+//                String funnyHint = hintSelector.getHintProvider(getId()).getFunnyHint();
+
+                publisher.publish(new NotificationEvent("Here's a hint to help you: " + normalHint));
+//                publisher.publish(new NotificationEvent("Also, a funny hint: " + funnyHint));
+
+                // Retry the same question once
+                boolean retryCorrect = strategy.ask(player, question, publisher, displayService);
+
+                if (retryCorrect) {
+                    player.addSolvedRoom(getId());
+                    publisher.publish(new DoorUnlockedEvent(sharedDoor));
+                } else {
+                    publisher.publish(new GameResetEvent("Still incorrect! Restarting the game."));
+                }
             }
         }
     }
+
 }
 
 

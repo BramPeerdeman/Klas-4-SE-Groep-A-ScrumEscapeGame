@@ -1,21 +1,11 @@
 package org.ScrumEscapeGame.Rooms;
 
-import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
+import org.ScrumEscapeGame.GameObjects.Question;
+import org.ScrumEscapeGame.Providers.HintProviderSelector;
+import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 
 public class RoomSprintRetrospective extends RoomWithQuestion {
-    public RoomSprintRetrospective(int id) {
-        super(
-                8,
-                """
-                Een dikke mist kronkelt over de vloer. Aan de muren hangen
-                bordjes met cryptische aantekeningen in bloedrode inkt.
-                Er ligt een verzameling kapotgeslagen projectieschermen
-                op de grond. Iets fluistert iets onverstaanbaars,
-                net buiten gehoorsafstand.
-                """,
-                RoomQuestions.getQuestionForRoom(id),
-                new MultipleChoiceStrategy()
-        );
+    public RoomSprintRetrospective(int id, String description, Question question, QuestionStrategy strategy, HintProviderSelector hintProviderSelector) {
+        super(id, description, question, strategy, hintProviderSelector);
     }
 }
