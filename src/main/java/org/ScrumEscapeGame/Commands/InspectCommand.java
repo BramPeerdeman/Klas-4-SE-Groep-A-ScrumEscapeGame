@@ -25,7 +25,7 @@ public class InspectCommand implements Command{
         var room = context.getRoomManager()
                 .getRoom(context.getPlayer().getPosition());
         // Loop door alle items en inspecteer alleen de Inspectable-items
-        for (Item item : room.getItems()) {
+        for (Item item : room.getInventory().getItems()) {
             if (item instanceof Inspectable) {
                 ((Inspectable) item).inspect(context.getPlayer(), publisher);
             }

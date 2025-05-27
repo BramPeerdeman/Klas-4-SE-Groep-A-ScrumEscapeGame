@@ -61,7 +61,7 @@ public class GameStart {
         commandManager.register("s", new MoveCommand("south", gameContext, eventPublisher));
         commandManager.register("d", new MoveCommand("east", gameContext, eventPublisher));
         commandManager.register("inspect", new InspectCommand(gameContext, eventPublisher));
-        eventPublisher.subscribe(new ItemObserver());
+
         // The displayService is passed to the AnswerCommand (to be used by room strategies).
         commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, displayService));
 

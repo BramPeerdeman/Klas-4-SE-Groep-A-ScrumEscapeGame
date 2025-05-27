@@ -19,6 +19,6 @@ public class Key extends Item implements Unlockable, Inspectable{
     }
     @Override
     public boolean unlock(String doorId) {
-        // jullie bestaande unlock-logica
+        return false;
     }
 }

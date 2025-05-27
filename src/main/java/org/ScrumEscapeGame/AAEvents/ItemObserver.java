@@ -1,15 +1,23 @@
 package org.ScrumEscapeGame.AAEvents;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.EventObserver;
-import org.ScrumEscapeGame.AAEvents.ItemInspectEvent;
 
 
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 
-public class ItemObserver implements EventObserver {
+public class ItemObserver implements EventObserver<GameEvent> {
+    private final GameUIService uiService;
+
+    /**
+     * Constructs a ItemObserver.
+     *
+     * @param uiService The UI service to interact with game events.
+     */
+    public ItemObserver(GameUIService uiService) {
+        this.uiService = uiService;
+    }
     @Override
-    public void onEvent(GameEvent e) {
+    public void update(GameEvent e) {
         if (e instanceof ItemInspectEvent inspect) {
-            System.out.println(
+            uiService.printMessage(
                     "Inspectie van " + inspect.getItemId() + ": " +
                             inspect.getDescription()
             );
