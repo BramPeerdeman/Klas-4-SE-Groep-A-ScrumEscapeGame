@@ -20,6 +20,9 @@ abstract public class Room {
     private Map<String, Connection> neighbours; // Stores connections to neighboring rooms.
     private int displayOrder;              // Defines the order in which the room is displayed.
 
+    // Inventory is left uninitialized eagerly to save resources:
+    private Inventory inventory;
+
     /**
      * Constructs a room with an ID and description.
      *
@@ -101,6 +104,14 @@ abstract public class Room {
      */
     public void setDisplayOrder(int displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    // Lazy getter:
+    public Inventory getInventory() {
+        if (inventory == null) {
+            inventory = new Inventory();
+        }
+        return inventory;
     }
 }
 

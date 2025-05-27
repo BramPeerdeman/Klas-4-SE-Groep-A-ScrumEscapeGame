@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.AAEvents;
 
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
+import org.ScrumEscapeGame.Audio.AudioManager;
 
 /**
  * Represents a game reset event (triggered by incorrect answers or other failures).
@@ -21,6 +22,6 @@ public class GameResetEvent implements GameEvent {
     @Override
     public void apply(GameUIService uiService) {
         uiService.printMessage(message);
+        AudioManager.playSound().questionIncorrect();
     }
 }
-

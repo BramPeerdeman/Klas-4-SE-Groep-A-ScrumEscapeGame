@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.AAEvents;
 
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
+import org.ScrumEscapeGame.Audio.AudioManager;
 import org.ScrumEscapeGame.Rooms.LockedDoor;
 
 /**
@@ -30,6 +31,7 @@ public class DoorUnlockedEvent implements GameEvent {
     @Override
     public void apply(GameUIService uiService) {
         uiService.printMessage("The door unlocks with a satisfying click!");
+        AudioManager.playSound().doorUnlocks();
         uiService.refreshMapView();
     }
 }
