@@ -5,7 +5,7 @@ import org.ScrumEscapeGame.Items.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory {
+public abstract class Inventory {
     private List<Item> items; // Consider using an Item object for richer data
 
     public Inventory() {

@@ -1,6 +1,7 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.Items.RoomInventoryProvider;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.GameObjects.Question;
@@ -18,6 +19,8 @@ public class RoomFactory {
     private final ZoneConfig zoneConfig;
     // A display service that can be used by room strategies if needed.
     private final DisplayService displayService;
+    // New dependency: the inventory provider determines which Inventory to assign.
+    private final RoomInventoryProvider roomInventoryProvider;
 
     /**
      * Constructs the RoomFactory.
@@ -25,9 +28,10 @@ public class RoomFactory {
      * @param zoneConfig     holds the list of room definitions.
      * @param displayService allows strategies to output messages if needed.
      */
-    public RoomFactory(ZoneConfig zoneConfig, DisplayService displayService) {
+    public RoomFactory(ZoneConfig zoneConfig, DisplayService displayService, RoomInventoryProvider roomInventoryProvider) {
         this.zoneConfig = zoneConfig;
         this.displayService = displayService;
+        this.roomInventoryProvider = roomInventoryProvider;
     }
 
     /**
@@ -41,7 +45,10 @@ public class RoomFactory {
 
         // Create a room for each definition.
         for (RoomDefinition def : zoneConfig.getRoomDefinitions()) {
-            rooms.add(createRoom(def));
+            RoomWithQuestion room = createRoom(def);
+            // Assign an appropriate inventory via the provider.
+            room.setInventory(roomInventoryProvider.getInventoryFor(room));
+            rooms.add(room);
         }
 
         // Shuffle rooms to randomize their order.

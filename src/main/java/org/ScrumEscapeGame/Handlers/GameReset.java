@@ -5,6 +5,7 @@ import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.RoomInventoryProvider;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
 import org.ScrumEscapeGame.Rooms.ZoneConfig;
@@ -36,23 +37,27 @@ public class GameReset {
 
     /**
      * Resets the game. This method clears the current room map, creates a new ZoneConfig (e.g., from sample definitions),
-     * instantiates a new RoomFactory, and rebuilds the map via a MapBuilder. Finally, any reset-specific events
+     * instantiates a new RoomFactory with RoomInventoryProvider, and rebuilds the map via a MapBuilder. Finally, any reset-specific events
      * (like returning the player to the starting room) are published.
      */
     public void reset() {
         // Clear the current room map.
         context.getRoomManager().clearRooms();
 
-        // Create a new zone configuration using sample definitions (or a dedicated zone).
+        // Create a new zone configuration using sample definitions.
         ZoneConfig zone = new ZoneConfig("Scrum Zone", RoomDefinition.sampleDefinitions());
 
-        // Create a new RoomFactory with the provided DisplayService.
-        RoomFactory roomFactory = new RoomFactory(zone, displayService);
+        // Create and configure a new RoomInventoryProvider.
+        RoomInventoryProvider roomInventoryProvider = new RoomInventoryProvider();
+
+        // Create a new RoomFactory with the provided DisplayService and RoomInventoryProvider.
+        RoomFactory roomFactory = new RoomFactory(zone, displayService, roomInventoryProvider);
 
         // Build a new map based on the current context and new room definitions.
         MapBuilder mapBuilder = new MapBuilder(context, eventPublisher, roomFactory);
         mapBuilder.build();
     }
+
 }
 
 

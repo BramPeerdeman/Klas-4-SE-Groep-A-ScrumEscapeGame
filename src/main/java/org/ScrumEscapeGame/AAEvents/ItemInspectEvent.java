@@ -2,17 +2,19 @@ package org.ScrumEscapeGame.AAEvents;
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 
 public class ItemInspectEvent implements GameEvent {
-    private final String itemId;
+    private final int itemId;
+    private final String name;
     private final String description;
 
-    public ItemInspectEvent(String itemId, String description) {
+    public ItemInspectEvent(int itemId, String name, String description) {
         this.itemId = itemId;
+        this.name = name;
         this.description = description;
     }
 
 
 
-    public String getItemId() {
+    public int getItemId() {
         return itemId;
     }
 

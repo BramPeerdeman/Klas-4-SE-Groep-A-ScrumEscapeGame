@@ -3,6 +3,7 @@ package org.ScrumEscapeGame.GameObjects;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
+import org.ScrumEscapeGame.Items.BasicInventory;
 import org.ScrumEscapeGame.Rooms.Connection;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -74,6 +75,10 @@ abstract public class Room {
         return Optional.ofNullable(neighbours.get(direction.toLowerCase()));
     }
 
+    public Map<String, Connection> getNeighbours() {
+        return neighbours;
+    }
+
     /**
      * Handles logic when the player enters this room.
      * - Updates the player's position.
@@ -106,12 +111,20 @@ abstract public class Room {
         this.displayOrder = displayOrder;
     }
 
-    // Lazy getter:
+    /**
+     * Lazy getter for the room’s inventory.
+     * If no inventory exists, a new BasicInventory is instantiated.
+     */
     public Inventory getInventory() {
         if (inventory == null) {
-            inventory = new Inventory();
+            inventory = new BasicInventory();
         }
         return inventory;
+    }
+
+    // Optionally, you might provide a setter for inventory as well.
+    public void setInventory(Inventory inventory) {
+        this.inventory = (inventory != null) ? inventory : new BasicInventory();
     }
 }
 

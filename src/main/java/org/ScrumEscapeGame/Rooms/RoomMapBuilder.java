@@ -1,10 +1,12 @@
 package org.ScrumEscapeGame.Rooms;
 
+import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * RoomMapBuilder constructs the overall map layout.
@@ -127,6 +129,32 @@ public class RoomMapBuilder {
     public Map<Integer, Room> build() {
         return roomMap;
     }
+
+    public RoomMapBuilder connectBossLocked(int roomId1, String direction, int roomId2, Player player) {
+        Room room1 = roomMap.get(roomId1);
+        Room room2 = roomMap.get(roomId2);
+
+        if (room1 == null || room2 == null) {
+            throw new IllegalArgumentException("Invalid room IDs provided for boss connection.");
+        }
+
+        // Create a shared locked door instance.
+        LockedDoor sharedBossDoor = new LockedDoor();
+
+        // Create connections for both directions.
+        BossLockedDoorConnection connection1to2 = new BossLockedDoorConnection(room2, sharedBossDoor, player);
+        BossLockedDoorConnection connection2to1 = new BossLockedDoorConnection(room1, sharedBossDoor, player);
+
+        // Set neighbors.
+        room1.setNeighbour(direction, connection1to2);
+        String reverseDir = getReverseDirection(direction);
+        if (reverseDir != null) {
+            room2.setNeighbour(reverseDir, connection2to1);
+        }
+
+        return this;
+    }
+
 }
 
 
