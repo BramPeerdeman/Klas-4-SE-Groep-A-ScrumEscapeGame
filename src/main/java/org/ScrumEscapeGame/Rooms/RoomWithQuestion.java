@@ -8,6 +8,8 @@ import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Providers.RandomHintProviderSelector;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -26,7 +28,7 @@ import java.util.ArrayList;
  */
 public class RoomWithQuestion extends Room {
     // The question to be presented.
-    private Question question;
+    private QuestionWithHints questionWithHints;
     // The strategy used to ask the question (e.g., MultipleChoiceStrategy).
     private QuestionStrategy strategy;
     // Tracks whether the question has been asked already to prevent repeat prompting.
@@ -45,11 +47,11 @@ public class RoomWithQuestion extends Room {
      * @param question    the question or challenge associated with the room.
      * @param strategy    the strategy to use when asking the question.
      */
-    public RoomWithQuestion(int id, String description, Question question, QuestionStrategy strategy, HintProviderSelector hintSelector) {
+    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector) {
         super(id, description);
-        this.question = question;
+        this.questionWithHints = questionWithHints;
         this.strategy = strategy;
-        this.hintSelector = hintSelector;
+        this.hintSelector = new RandomHintProviderSelector(questionWithHints.getHintProviders());
     }
 
     /**
