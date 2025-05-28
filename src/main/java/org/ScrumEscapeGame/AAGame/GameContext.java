@@ -4,6 +4,7 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.Items.InventoryManager;
 
 /**
  * Encapsulates the overall state of the game.
@@ -15,6 +16,7 @@ public class GameContext {
     private final RoomManager roomManager;
     private final EventPublisher<GameEvent> publisher;
     private final CommandManager commandManager;
+    private final InventoryManager inventoryManager;
 
     /**
      * Constructs a new GameContext.
@@ -24,11 +26,12 @@ public class GameContext {
      * @param publisher      the event publisher for game events.
      * @param commandManager the command manager for handling player input.
      */
-    public GameContext(Player player, RoomManager roomManager, EventPublisher<GameEvent> publisher, CommandManager commandManager) {
+    public GameContext(Player player, RoomManager roomManager, EventPublisher<GameEvent> publisher, CommandManager commandManager, InventoryManager inventoryManager) {
         this.player = player;
         this.roomManager = roomManager;
         this.publisher = publisher;
         this.commandManager = commandManager;
+        this.inventoryManager = inventoryManager;
     }
 
     /**
@@ -65,6 +68,15 @@ public class GameContext {
      */
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    /**
+     * Returns the inventory manager.
+     *
+     * @return the InventoryManager.
+     */
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 }
 

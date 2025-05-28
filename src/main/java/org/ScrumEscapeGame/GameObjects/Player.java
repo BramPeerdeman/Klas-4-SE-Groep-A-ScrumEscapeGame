@@ -1,7 +1,11 @@
 package org.ScrumEscapeGame.GameObjects;
 
+import org.ScrumEscapeGame.Items.BasicInventory;
+import org.ScrumEscapeGame.Items.Key;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents the player character in the game.
@@ -23,7 +27,8 @@ public class Player {
     public Player() {
         this.position = 1;
         this.status = "BEGINNING";
-        this.inventory = new Inventory();
+        // Use the concrete BasicInventory rather than attempting to instantiate an abstract class.
+        this.inventory = new BasicInventory();
         this.solvedRooms = new ArrayList<>();
     }
 
@@ -74,12 +79,12 @@ public class Player {
 
     /**
      * Updates the player's inventory.
-     * If `inventory` is null, initializes a new empty inventory.
+     * If the provided inventory is null, initializes a new empty BasicInventory.
      *
      * @param inventory The new inventory to assign.
      */
     public void setInventory(Inventory inventory) {
-        this.inventory = (inventory != null) ? inventory : new Inventory();
+        this.inventory = (inventory != null) ? inventory : new BasicInventory();
     }
 
     /**
@@ -111,6 +116,15 @@ public class Player {
         if (!solvedRooms.contains(roomId)) {
             solvedRooms.add(roomId);
         }
+
+    }
+
+    // Helper to get only keys from the generic inventory:
+    public List<Key> getCollectedKeys() {
+        return inventory.getItems().stream()
+                .filter(item -> item instanceof Key)
+                .map(item -> (Key) item)
+                .collect(Collectors.toList());
     }
 }
 

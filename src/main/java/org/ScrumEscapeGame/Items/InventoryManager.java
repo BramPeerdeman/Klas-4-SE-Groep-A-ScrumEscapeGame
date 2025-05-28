@@ -1,30 +1,29 @@
 package org.ScrumEscapeGame.Items;
 
+import org.ScrumEscapeGame.AAEvents.EventPublisher;
+import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.GameObjects.Inventory;
 
 public class InventoryManager {
-    private PickupStrategy pickupStrategy;
-
-    public InventoryManager(PickupStrategy strategy) {
-        this.pickupStrategy = strategy;
-    }
+    private PickupStrategy pickupStrategy = new DefaultPickupStrategy();
 
     public void setPickupStrategy(PickupStrategy strategy) {
         this.pickupStrategy = strategy;
     }
 
     /**
-     * Attempts to transfer an item from one inventory to another.
+     * Transferring an item between inventories.
      */
-    public boolean transferItem(Item item, Inventory from, Inventory to) {
+    public boolean transferItem(Item item, Inventory from, Inventory to, EventPublisher<GameEvent> publisher) {
         if (pickupStrategy.canPickup(item, from, to)) {
             from.removeItem(item);
             to.addItem(item);
-            // Notify the event system about the change
-            // EventSystem.notify("ItemTransferred", item);
+            publisher.publish(new NotificationEvent(item.getName() + " was transferred."));
             return true;
         }
         return false;
     }
 }
+
 
