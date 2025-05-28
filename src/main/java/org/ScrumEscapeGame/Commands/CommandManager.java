@@ -21,6 +21,8 @@ public class CommandManager {
      */
     public void register(String key, Command command) {
         commands.put(key, command);
+
+
     }
 
     /**

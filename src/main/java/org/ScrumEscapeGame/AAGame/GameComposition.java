@@ -60,6 +60,7 @@ public class GameComposition {
         publisher.addObserver(new ResetObserver(cycleManager));
         publisher.addObserver(new GlobalDoorUnlockObserver(uiService));
         publisher.addObserver(new GameBeginObserver(cycleManager));
+        publisher.addObserver(new ItemObserver(uiService));
     }
 
     /**

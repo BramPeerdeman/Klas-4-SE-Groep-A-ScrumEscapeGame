@@ -2,6 +2,7 @@ package org.ScrumEscapeGame.Handlers;
 
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.ItemObserver;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.Commands.*;
 import org.ScrumEscapeGame.AAGame.*;
@@ -59,6 +60,8 @@ public class GameStart {
         commandManager.register("a", new MoveCommand("west", gameContext, eventPublisher));
         commandManager.register("s", new MoveCommand("south", gameContext, eventPublisher));
         commandManager.register("d", new MoveCommand("east", gameContext, eventPublisher));
+        commandManager.register("inspect", new InspectCommand(gameContext, eventPublisher));
+
         // The displayService is passed to the AnswerCommand (to be used by room strategies).
         commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, displayService));
 
