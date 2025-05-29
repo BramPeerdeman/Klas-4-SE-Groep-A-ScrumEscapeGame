@@ -2,8 +2,11 @@ package org.ScrumEscapeGame.AAUserInterface;
 
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
+import org.ScrumEscapeGame.AAEvents.InventoryClosedEvent;
+import org.ScrumEscapeGame.AAEvents.InventoryOpenedEvent;
 import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAGame.GameContext;
+import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.*;
 
 import javax.swing.*;
@@ -25,6 +28,10 @@ public class GameUIService implements DisplayService {
     private JTextArea outputArea;
     private JTextField inputField;
     private JLabel statusLabel; // Displays player status.
+
+    // New: Inventory panel reference and visibility flag.
+    private InventoryPanel inventoryPanel;
+    private boolean inventoryVisible = false;
 
     /**
      * Constructs the UI service necessary for handling UI behavior.
@@ -53,8 +60,13 @@ public class GameUIService implements DisplayService {
 
     @Override
     public void printMessage(String message) {
-        console.printMessage(message);
+        if(isInventoryVisible() && getInventoryPanel() != null) {
+            getInventoryPanel().appendMessage(message);
+        } else {
+            console.printMessage(message);
+        }
     }
+
 
     @Override
     public String readLine(String prompt) {
@@ -66,6 +78,7 @@ public class GameUIService implements DisplayService {
      */
     public void showGamePanel() {
         cards.show(panelContainer, "game");
+        inventoryVisible = false;
     }
 
     /**
@@ -101,11 +114,17 @@ public class GameUIService implements DisplayService {
     /**
      * Handles a command received from the user.
      *
-     * @param command the command string.
+     * @param commandLine the command string.
      */
-    public void handle(String command) {
-        context.getCommandManager().handle(command, context, console);
+    public void handle(String commandLine) {
+        // Split the command line into the command key and everything else as arguments.
+        String[] parts = commandLine.trim().split("\\s+", 2);
+        String commandKey = parts[0];
+        String args = (parts.length > 1) ? parts[1] : "";
+
+        context.getCommandManager().handle(commandKey, context, console, args);
     }
+
 
     /**
      * Returns the event publisher for game events.
@@ -120,6 +139,55 @@ public class GameUIService implements DisplayService {
     public MapPanel getMapPanel() {
         return mapPanel;
     }
+    /**
+     * Toggles the inventory panel on or off.
+     */
+    public void toggleInventoryPanel() {
+        if (inventoryVisible) {
+            cards.show(panelContainer, "game");
+            inventoryVisible = false;
+            printMessage("Closing inventory...");
+            // Publish event indicating the inventory has been closed.
+            context.getEventPublisher().publish(new InventoryClosedEvent());
+        } else {
+            if (inventoryPanel == null) {
+                inventoryPanel = new InventoryPanel(context, this);
+                panelContainer.add(inventoryPanel, "inventory");
+            }
+            inventoryPanel.refresh();
+            cards.show(panelContainer, "inventory");
+            inventoryVisible = true;
+            System.out.println("DEBUG: Inventory Opened");
+            printMessage("Inventory opened.");
+            // Publish event indicating the inventory is open.
+            context.getEventPublisher().publish(new InventoryOpenedEvent());
+        }
+        inventoryPanel.refresh();
+    }
+
+    public boolean isInventoryVisible() {
+        return inventoryVisible;
+    }
+
+    public InventoryPanel getInventoryPanel() {
+        return inventoryPanel;
+    }
+
+    public CommandManager getCommandManager() {
+        return context.getCommandManager();
+    }
+
+    public void refreshInventory() {
+        inventoryPanel.refresh();
+    }
+
+    //We'll probably use this method, to update the status on the sidebar.
+    public void updateStatus(String statusMessage) {
+        // For example, if you have a status label, update it:
+        statusLabel.setText(statusMessage);
+        // Otherwise, do nothing or log minimally.
+    }
+
 }
 
 

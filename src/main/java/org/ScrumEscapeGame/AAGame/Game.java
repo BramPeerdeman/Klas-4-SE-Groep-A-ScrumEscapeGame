@@ -69,14 +69,6 @@ public class Game {
         cycleManager.resetGame();
     }
 
-    /**
-     * Handles a player command and executes the corresponding action.
-     *
-     * @param command The command string inputted by the player.
-     */
-    public void handleCommand(String command) {
-        commandManager.handle(command, gameContext, consoleWindow);
-    }
 
     /**
      * Retrieves the console window instance.

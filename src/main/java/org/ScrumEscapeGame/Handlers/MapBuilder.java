@@ -2,6 +2,8 @@ package org.ScrumEscapeGame.Handlers;
 
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.PresetInventory;
+import org.ScrumEscapeGame.Items.TestItem;
 import org.ScrumEscapeGame.Rooms.*;
 import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAEvents.*;
@@ -51,6 +53,12 @@ public class MapBuilder {
          */
         StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape!");
         startRoom.setDisplayOrder(1);
+        // Configure the starting room's inventory differently.
+        PresetInventory startingInventory = new PresetInventory();
+        startingInventory.addItem(new TestItem(301, "Beginner's Key", "A key that starts your journey."));
+        startingInventory.addItem(new TestItem(302, "Intro Scroll", "Instructions for your escape."));
+        startRoom.setStartingInventory(startingInventory);
+
 
         /*
          * STEP 2: CREATE ADDITIONAL ROOMS

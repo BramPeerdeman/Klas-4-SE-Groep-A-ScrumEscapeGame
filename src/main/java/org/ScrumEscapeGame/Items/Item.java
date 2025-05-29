@@ -20,5 +20,11 @@ public abstract class Item {
     public String getDescription() { return description; }
 
     public abstract boolean isStackable();
+
+    @Override
+    public String toString() {
+        return getName(); // Optionally, you could return: getName() + " - " + getDescription();
+    }
+
 }
 
