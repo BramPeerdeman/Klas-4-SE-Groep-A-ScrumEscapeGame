@@ -8,31 +8,42 @@ import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.Item;  // zorg dat je Item importeert
 
+import java.util.List;
+
 public class PickUpCommand implements Command {
     private final GameContext context;
     private final EventPublisher<GameEvent> publisher;
-    private final String targetName;
 
-    public PickUpCommand(GameContext context, EventPublisher<GameEvent> publisher, String targetName) {
+    public PickUpCommand(GameContext context, EventPublisher<GameEvent> publisher) {
         this.context = context;
         this.publisher = publisher;
-        this.targetName = targetName;
     }
 
     @Override
-    public void execute() {
-        // Get the current room’s inventory using the room inventory provider.
+    public void execute(String args) {
+        String argument = args.trim();
         Room currentRoom = context.getRoomManager().getRoom(context.getPlayer().getPosition());
         Inventory roomInv = currentRoom.getInventory();
+        Item found = null;
+        List<Item> items = roomInv.getItems();
 
-        // Find the item in the room's inventory.
-        Item found = roomInv.getItems().stream()
-                .filter(i -> i.getName().equalsIgnoreCase(targetName))
-                .findFirst()
-                .orElse(null);
+        // Attempt to treat the argument as an index.
+        try {
+            int index = Integer.parseInt(argument) - 1; // assuming user inputs 1-based index
+            if (index >= 0 && index < items.size()) {
+                found = items.get(index);
+            } else {
+                publisher.publish(new NotificationEvent("Index out of bounds in room inventory."));
+                return;
+            }
+        } catch (NumberFormatException nfe) {
+            // Fallback: use a name-based lookup
+            found = items.stream()
+                    .filter(i -> i.getName().equalsIgnoreCase(argument))
+                    .findFirst().orElse(null);
+        }
 
         if (found != null) {
-            // Use the InventoryManager to transfer the item.
             boolean transferred = context.getInventoryManager().transferItem(
                     found, roomInv, context.getPlayer().getInventory(), publisher
             );
@@ -44,4 +55,5 @@ public class PickUpCommand implements Command {
         }
     }
 }
+
 

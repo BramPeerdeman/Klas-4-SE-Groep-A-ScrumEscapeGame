@@ -7,7 +7,6 @@ import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.Connection;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -35,7 +34,7 @@ public class MoveCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         // Retrieve the current room based on player position.
         Room currentRoom = context.getRoomManager().getRooms().get(context.getPlayer().getPosition());
         if (DEBUG) {

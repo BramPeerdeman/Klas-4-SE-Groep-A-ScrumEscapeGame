@@ -3,7 +3,6 @@ package org.ScrumEscapeGame.Commands;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
-import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.Storage.GameStorage;
 
 public class LoadCommand implements Command {
@@ -16,7 +15,7 @@ public class LoadCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         GameStorage.loadGame(context.getPlayer());
     }
 }

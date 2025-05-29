@@ -64,6 +64,8 @@ public class GameComposition {
         publisher.addObserver(new GlobalDoorUnlockObserver(uiService));
         publisher.addObserver(new GameBeginObserver(cycleManager));
         publisher.addObserver(new ItemObserver(uiService));
+        publisher.addObserver(new InventoryObserver(uiService));
+        publisher.addObserver(new InventoryItemActionObserver(gameContext, uiService));
     }
 
 

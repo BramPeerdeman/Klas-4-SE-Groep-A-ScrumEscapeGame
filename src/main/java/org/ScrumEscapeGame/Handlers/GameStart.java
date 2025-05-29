@@ -4,6 +4,7 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.ItemObserver;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.Commands.*;
 import org.ScrumEscapeGame.AAGame.*;
 import org.ScrumEscapeGame.GameObjects.Room;
@@ -63,10 +64,13 @@ public class GameStart {
         commandManager.register("d", new MoveCommand("east", gameContext, eventPublisher));
         commandManager.register("inspect", new InspectCommand(gameContext, eventPublisher));
         //Placeholder for the pickup command, we will need to refactor the command system so that it can take arguments!
-        commandManager.register("pickup",    new PickUpCommand(gameContext, eventPublisher, ""));
+        commandManager.register("pickup",    new PickUpCommand(gameContext, eventPublisher));
 
         // The displayService is passed to the AnswerCommand (to be used by room strategies).
         commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, displayService));
+
+        commandManager.register("toggleInventory", new ToggleInventoryCommand((GameUIService) displayService));
+
 
         // Build the map:
         // Within GameStart:
