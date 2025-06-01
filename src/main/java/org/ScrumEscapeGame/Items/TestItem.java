@@ -25,7 +25,7 @@ public class TestItem extends Item implements Usable, Inspectable {
 
     @Override
     public void inspect(Player player, EventPublisher<GameEvent> publisher) {
-        publisher.publish(new ItemInspectEvent(getId(), getName(), "An intriguing test item."));
+        publisher.publish(new ItemInspectEvent(getId(), getName(), getDescription()));
     }
 }
 

@@ -64,9 +64,11 @@ public class RoomDefinition {
         definitions.add(new RoomDefinition(2, "Planning", "A cold planning room filled with old files and dim lights."));
         definitions.add(new RoomDefinition(3, "SprintBacklog", "A bright room with plexiglass cabinets and a mysterious photo."));
         definitions.add(new RoomDefinition(4, "SprintReview", "A server-filled room where ventilation roars like beastly lungs."));
-        // The "ProductBacklog" definition has been removed.
+        definitions.add(new RoomDefinition(5, "Penultimate", "A shadowy chamber rumored to yield hidden keys."));  // New definition.
+        definitions.add(new RoomDefinition(6, "Boss", "The final challenge room, with a door that can only be unlocked with keys.")); // New definition.
         return definitions;
     }
+
 }
 
 

@@ -47,6 +47,7 @@ public class StartingRoom extends Room {
                 "S - Move south        K - Check the status of the game\n" +
                 "D - Move east         Q - Attempt the room's question\n" +
                 "SAVE - Type save to save the game\n"));
+        publisher.publish(new NotificationEvent("I - Open/close your inventory (uses mouse controls)"));
         publisher.publish(new NotificationEvent("NOTE: Currently only hardcore mode is functional, the monster instakills!"));
     }
 

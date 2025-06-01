@@ -14,9 +14,10 @@ import java.util.Set;
 
 
 /**
- * The BossDoorUnlockHandler mediates boss door unlocking.
- * It listens for an UnlockAttemptEvent, checks for a boss door in the current room,
- * and delegates unlocking to the BossLockedDoorConnection.
+ * BossDoorUnlockHandler mediates boss door unlocking.
+ * It listens for an UnlockAttemptEvent, checks for a BossLockedDoorConnection
+ * among the current room's neighbor connections, and, if one is found,
+ * attempts to unlock the boss door.
  */
 public class BossDoorUnlockHandler implements EventObserver<GameEvent> {
     private final GameContext context;
@@ -41,8 +42,8 @@ public class BossDoorUnlockHandler implements EventObserver<GameEvent> {
             if (bossConnOpt.isPresent()) {
                 BossLockedDoorConnection bossConn = bossConnOpt.get();
                 if (bossConn.canPass()) {
-                    // If canPass() returns true, the door is now unlocked.
-                    context.getEventPublisher().publish(new DoorUnlockedEvent(bossConn.getDoor())); //get door might be empty?
+                    // The door is now unlocked.
+                    context.getEventPublisher().publish(new DoorUnlockedEvent(bossConn.getDoor()));
                 } else {
                     // Not enough keys to unlock the door.
                     context.getEventPublisher().publish(new NotificationEvent("Not enough keys to unlock the boss room."));
@@ -53,5 +54,6 @@ public class BossDoorUnlockHandler implements EventObserver<GameEvent> {
         }
     }
 }
+
 
 

@@ -2,6 +2,8 @@ package org.ScrumEscapeGame.Items;
 
 import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Rooms.BossRoom;
+import org.ScrumEscapeGame.Rooms.PenultimateRoom;
 import org.ScrumEscapeGame.Rooms.RoomWithPresetItems;
 
 import java.util.ArrayList;
@@ -58,6 +60,15 @@ public class RoomInventoryProvider {
                     preset.addItem(new TestItem(201, "Special Key", "A default special key."));
                     break;
             }
+            return preset;
+        } else if (room instanceof BossRoom) {
+            PresetInventory preset = new PresetInventory();
+            // For stackable keys, a single Key item with quantity = 6 could suffice.
+            preset.addItem(new Key(300, "Boss Key", "A mighty key for unlocking the boss door.", 6));
+            return preset;
+        } else if (room instanceof PenultimateRoom) {
+            PresetInventory preset = new PresetInventory();
+            preset.addItem(new Key(400, "Penultimate Key", "A key from the penultimate chamber.", 6));
             return preset;
         } else {
             // For generic rooms, generate a BasicInventory and add a random set of items.

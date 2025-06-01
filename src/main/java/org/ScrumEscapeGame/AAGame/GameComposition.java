@@ -7,6 +7,7 @@ import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Handlers.BossDoorUnlockHandler;
 import org.ScrumEscapeGame.Handlers.MapBuilder;
 import org.ScrumEscapeGame.Items.InventoryManager;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
@@ -66,6 +67,7 @@ public class GameComposition {
         publisher.addObserver(new ItemObserver(uiService));
         publisher.addObserver(new InventoryObserver(uiService));
         publisher.addObserver(new InventoryItemActionObserver(gameContext, uiService));
+        publisher.addObserver(new BossDoorUnlockHandler(gameContext));
     }
 
 
