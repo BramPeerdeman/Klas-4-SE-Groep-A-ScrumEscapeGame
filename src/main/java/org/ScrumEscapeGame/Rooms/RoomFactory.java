@@ -101,7 +101,9 @@ public class RoomFactory {
                 new BossRoom(
                         def.getId(),
                         def.getDescription(),
-                        new LockedDoor() // May later be replaced with a more advanced boss door.
+                        new LockedDoor(),
+                        new MultipleChoiceStrategy()
+
                 )
         );
         // New room type: Penultimate.

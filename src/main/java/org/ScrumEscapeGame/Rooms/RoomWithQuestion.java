@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * it prompts the player to attempt the challenge. If answered correctly,
  * the associated door is unlocked.
  */
-public class RoomWithQuestion extends Room {
+public class RoomWithQuestion extends Room implements HasQuestions {
     // The question to be presented.
     private Question question;
     // The strategy used to ask the question (e.g., MultipleChoiceStrategy).

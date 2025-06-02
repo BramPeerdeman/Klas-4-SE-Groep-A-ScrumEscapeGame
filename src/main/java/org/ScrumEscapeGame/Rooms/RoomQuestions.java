@@ -11,6 +11,7 @@ import java.util.*;
 public class RoomQuestions {
     // Stores predefined questions for room IDs.
     private static final Map<Integer, Question> QUESTIONS = new HashMap<>();
+    private static final List<Question> QUESTIONBOSS = new ArrayList<>();
 
     static {
         QUESTIONS.put(1, new Question(
@@ -56,6 +57,40 @@ public class RoomQuestions {
                 ),
                 "15 minutes"
         ));
+
+        // Boss-level questions (no integer key)
+        QUESTIONBOSS.add(new Question(
+                "What should the Scrum Team do if the Sprint Goal becomes obsolete due to changes in market conditions mid-Sprint?",
+                List.of(
+                        "The Product Owner cancels the Sprint and refines the Product Backlog",
+                        "The Scrum Master extends the Sprint to accommodate new requirements",
+                        "The Development Team continues with the remaining work and ignores the change",
+                        "The Scrum Master calls an emergency Sprint Review to redefine the Sprint Goal"
+                ),
+                "The Product Owner cancels the Sprint and refines the Product Backlog"
+        ));
+
+        QUESTIONBOSS.add(new Question(
+                "How should emergent technical debt be handled if it does not jeopardize the current Sprint Goal?",
+                List.of(
+                        "The Development Team should immediately fix it within the current Sprint",
+                        "The Scrum Master should escalate it to stakeholders for resolution",
+                        "The Product Owner should add it to the Product Backlog for future prioritization",
+                        "It should be documented in the Definition of Done"
+                ),
+                "The Product Owner should add it to the Product Backlog for future prioritization"
+        ));
+
+        QUESTIONBOSS.add(new Question(
+                "During Sprint Planning, what are the two questions the Development Team must answer?",
+                List.of(
+                        "What can be done this Sprint and how will the chosen work get done?",
+                        "Who will be the Product Owner and Scrum Master for the Sprint?",
+                        "How many hours each member will work and what tools they will use",
+                        "Which stakeholders will be invited to the Sprint Review and Retrospective"
+                ),
+                "What can be done this Sprint and how will the chosen work get done?"
+        ));
     }
 
     /**
@@ -76,5 +111,13 @@ public class RoomQuestions {
     public static Map<Integer, Question> getAll() {
         return Collections.unmodifiableMap(QUESTIONS);
     }
-}
 
+    /**
+     * Returns all boss-level questions.
+     *
+     * @return An unmodifiable list of boss questions.
+     */
+    public static List<Question> getBossQuestions() {
+        return Collections.unmodifiableList(QUESTIONBOSS);
+    }
+}
