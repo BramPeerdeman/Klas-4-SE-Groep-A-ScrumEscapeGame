@@ -51,7 +51,7 @@ public class RoomWithQuestion extends Room {
         super(id, description);
         this.questionWithHints = questionWithHints;
         this.strategy = strategy;
-        this.hintSelector = new RandomHintProviderSelector(questionWithHints.getHintProviders());
+        this.hintSelector = hintSelector;
     }
 
     /**
@@ -104,7 +104,8 @@ public class RoomWithQuestion extends Room {
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
                 // 1st incorrect answer → show hint
-                String normalHint = hintSelector.selectHintProvider().getHint();
+                String normalHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+
 //                String funnyHint = hintSelector.getHintProvider(getId()).getFunnyHint();
 
                 publisher.publish(new NotificationEvent("Here's a hint to help you: " + normalHint));

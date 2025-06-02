@@ -3,6 +3,7 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.RoomInventoryProvider;
+import org.ScrumEscapeGame.Providers.*;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.GameObjects.Question;
@@ -31,6 +32,8 @@ public class RoomFactory {
     // A registry mapping room type strings (from RoomDefinition) to creator functions.
     private final Map<String, RoomCreator> roomCreators = new HashMap<>();
 
+    private final HintProviderSelector hintProviderSelector;
+
     /**
      * Constructs the RoomFactory.
      *
@@ -38,10 +41,11 @@ public class RoomFactory {
      * @param displayService        used by room strategies to output messages.
      * @param roomInventoryProvider used to assign Inventories to created rooms.
      */
-    public RoomFactory(ZoneConfig zoneConfig, DisplayService displayService, RoomInventoryProvider roomInventoryProvider) {
+    public RoomFactory(ZoneConfig zoneConfig, DisplayService displayService, RoomInventoryProvider roomInventoryProvider, HintProviderSelector hintProviderSelector) {
         this.zoneConfig = zoneConfig;
         this.displayService = displayService;
         this.roomInventoryProvider = roomInventoryProvider;
+        this.hintProviderSelector = hintProviderSelector;
         // Register default room types.
         registerDefaultRoomCreators();
     }
@@ -51,64 +55,42 @@ public class RoomFactory {
      * New room types (e.g., "Boss", "Penultimate", etc.) can be added here.
      */
     private void registerDefaultRoomCreators() {
-        // Standard room: BacklogRefinement.
-        roomCreators.put("BacklogRefinement", (def, ds) ->
-                new RoomWithQuestion(
-                        def.getId(),
-                        def.getDescription(),
-                        RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()  // Using a multiple choice strategy.
-                )
-        );
-        // Standard room: Planning.
-        roomCreators.put("Planning", (def, ds) ->
-                new RoomWithQuestion(
-                        def.getId(),
-                        def.getDescription(),
-                        RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
-                )
-        );
-        // Standard room: SprintBacklog.
-        roomCreators.put("SprintBacklog", (def, ds) ->
-                new RoomWithQuestion(
-                        def.getId(),
-                        def.getDescription(),
-                        RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
-                )
-        );
-        // Standard room: SprintReview.
-        roomCreators.put("SprintReview", (def, ds) ->
-                new RoomWithQuestion(
-                        def.getId(),
-                        def.getDescription(),
-                        RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
-                )
-        );
-        // Standard room: ProductBacklog.
-        roomCreators.put("ProductBacklog", (def, ds) ->
-                new RoomWithQuestion(
-                        def.getId(),
-                        def.getDescription(),
-                        RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
-                )
-        );
-        // New room type: Boss. A new BossRoom type already in your system.
+        roomCreators.put("BacklogRefinement", (def, ds) -> {
+            QuestionWithHints qwh = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+            return new RoomWithQuestion(
+                    def.getId(),
+                    def.getDescription(),
+                    qwh,
+                    new MultipleChoiceStrategy(),
+                    new RoomHintProviderSelector(qwh.getHintProviders())
+            );
+        });
+
+        // Do the same for other room types that have questions with hints:
+        roomCreators.put("Planning", (def, ds) -> {
+            QuestionWithHints qwh = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+            return new RoomWithQuestion(
+                    def.getId(),
+                    def.getDescription(),
+                    qwh,
+                    new MultipleChoiceStrategy(),
+                    new RoomHintProviderSelector(qwh.getHintProviders())
+            );
+        });
+
+        // Boss and Penultimate rooms unchanged
         roomCreators.put("Boss", (def, ds) ->
                 new BossRoom(
                         def.getId(),
                         def.getDescription(),
-                        new LockedDoor() // May later be replaced with a more advanced boss door.
+                        new LockedDoor()
                 )
         );
-        // New room type: Penultimate.
         roomCreators.put("Penultimate", (def, ds) ->
                 new PenultimateRoom(def.getId(), def.getDescription())
         );
     }
+
 
     /**
      * Creates a shuffled list of Room objects based on the RoomDefinitions
@@ -151,6 +133,24 @@ public class RoomFactory {
         // Use the creator function to instantiate a new Room.
         return creator.create(def, displayService);
     }
+
+    private RoomWithQuestion createRoomWithQuestion(RoomDefinition def, String helpHint, String funnyHint) {
+        Question question = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+        List<HintProvider> hintProviders = List.of(
+                new HelpHintProvider(helpHint),
+                new FunnyHintProvider(funnyHint)
+        );
+        QuestionWithHints qwh = new QuestionWithHints(question, hintProviders);
+
+        return new RoomWithQuestion(
+                def.getId(),
+                def.getDescription(),
+                qwh,
+                new MultipleChoiceStrategy(),
+                hintProviderSelector
+        );
+    }
+
 }
 
 
