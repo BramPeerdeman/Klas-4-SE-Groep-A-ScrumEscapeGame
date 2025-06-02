@@ -4,8 +4,6 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
-import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.AAGame.Game;
 
 /**
  * Executes the "status" command.
@@ -27,7 +25,7 @@ public class StatusCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         // Notify the player of the current room number.
         publisher.publish(new NotificationEvent("You are currently in room number: " + context.getPlayer().getPosition()));
         // Notify the player of their current status.

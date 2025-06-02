@@ -7,7 +7,9 @@ import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Handlers.BossDoorUnlockHandler;
 import org.ScrumEscapeGame.Handlers.MapBuilder;
+import org.ScrumEscapeGame.Items.InventoryManager;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
 import org.ScrumEscapeGame.Rooms.ZoneConfig;
@@ -24,6 +26,7 @@ public class GameComposition {
     private final Player player;
     private final RoomManager roomManager;
     private final CommandManager commandManager;
+    private final InventoryManager inventoryManager;
     private final GameContext gameContext;
     private final ConsoleWindow consoleWindow;
     private final GameUIService uiService;
@@ -39,8 +42,9 @@ public class GameComposition {
         this.player = new Player();
         this.roomManager = new RoomManager();
         this.commandManager = new CommandManager();
+        this.inventoryManager = new InventoryManager();
         this.publisher = new EventPublisher<>();
-        this.gameContext = new GameContext(player, roomManager, publisher, commandManager);
+        this.gameContext = new GameContext(player, roomManager, publisher, commandManager, inventoryManager);
 
         // UI components setup
         this.consoleWindow = new ConsoleWindow(gameContext);
@@ -61,22 +65,11 @@ public class GameComposition {
         publisher.addObserver(new GlobalDoorUnlockObserver(uiService));
         publisher.addObserver(new GameBeginObserver(cycleManager));
         publisher.addObserver(new ItemObserver(uiService));
+        publisher.addObserver(new InventoryObserver(uiService));
+        publisher.addObserver(new InventoryItemActionObserver(gameContext, uiService));
+        publisher.addObserver(new BossDoorUnlockHandler(gameContext));
     }
 
-    /**
-     * Builds the game map by configuring room definitions and using a RoomFactory.
-     * This method initializes all rooms and connects them using MapBuilder.
-     *
-     * @return A map containing all generated rooms.
-     */
-    public Map<Integer, Room> buildGameMap() {
-        ZoneConfig zone = new ZoneConfig("Scrum Zone", RoomDefinition.sampleDefinitions());
-        RoomFactory roomFactory = new RoomFactory(zone, uiService);
-        MapBuilder mapBuilder = new MapBuilder(gameContext, publisher, roomFactory);
-        mapBuilder.build();  // Builds and wires rooms into RoomManager.
-
-        return gameContext.getRoomManager().getRooms();
-    }
 
     /**
      * Retrieves the game cycle manager responsible for starting and resetting the game.
@@ -105,14 +98,6 @@ public class GameComposition {
         return gameContext;
     }
 
-    /**
-     * Resets the game by clearing rooms and rebuilding the game map.
-     */
-    public void resetGame() {
-        roomManager.clearRooms();
-        buildGameMap();
-        cycleManager.resetGame();
-    }
 }
 
 

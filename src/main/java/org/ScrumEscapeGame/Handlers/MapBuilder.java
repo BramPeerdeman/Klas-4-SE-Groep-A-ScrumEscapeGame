@@ -2,21 +2,23 @@ package org.ScrumEscapeGame.Handlers;
 
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.PresetInventory;
+import org.ScrumEscapeGame.Items.TestItem;
 import org.ScrumEscapeGame.Rooms.*;
 import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAEvents.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * MapBuilder creates the game map by:
  * <ol>
  *   <li>Creating a starting room.</li>
  *   <li>Creating additional rooms via the RoomFactory (shuffled for randomness).</li>
+ *   <li>Separating the standard rooms from the special rooms (Penultimate and Boss).</li>
+ *   <li>Ordering the rooms so that any PenultimateRoom comes immediately before any BossRoom.</li>
  *   <li>Assigning display orders to all rooms.</li>
- *   <li>Connecting rooms using direct and locked door connections.</li>
+ *   <li>Connecting rooms using direct and locked door connections (and using special connectors for unique links).</li>
  *   <li>Injecting the final room map into the RoomManager.</li>
  *   <li>Setting the initial player position and triggering a UI refresh event.</li>
  * </ol>
@@ -43,77 +45,89 @@ public class MapBuilder {
      * Builds the game map by creating and connecting rooms.
      */
     public void build() {
-        /*
-         * STEP 1: CREATE THE STARTING ROOM
-         * ---------------------------------
-         * This is the initial room where the player begins.
-         * It must have an ID of 0 and be directly accessible.
-         */
+        // STEP 1: Create the starting room.
+        // The StartingRoom (which extends Room) is explicitly created.
         StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape!");
         startRoom.setDisplayOrder(1);
+        // Configure a specialized inventory for the starting room.
+        PresetInventory startingInventory = new PresetInventory();
+        startingInventory.addItem(new TestItem(301, "Beginner's Key", "A key that starts your journey."));
+        startingInventory.addItem(new TestItem(302, "Intro Scroll", "Instructions for your escape."));
+        startRoom.setStartingInventory(startingInventory);
 
-        /*
-         * STEP 2: CREATE ADDITIONAL ROOMS
-         * ---------------------------------
-         * Each RoomWithQuestion is generated using RoomFactory, ensuring
-         * that all rooms defined in RoomDefinition are correctly instantiated.
-         * The number of definitions in RoomDefinition must match what we expect here.
-         */
-        List<RoomWithQuestion> roomList = roomFactory.createShuffledRooms();
+        // STEP 2: Create additional rooms via the RoomFactory.
+        // Our refactored factory returns a List<Room> containing various room types.
+        List<Room> roomList = roomFactory.createShuffledRooms();
 
-        // Assign display orders starting from 2
-        for (int i = 0; i < roomList.size(); i++) {
-            roomList.get(i).setDisplayOrder(i + 2);
+        // STEP 3: Separate standard rooms from special rooms.
+        List<Room> standardRooms = new ArrayList<>();
+        Room penultimateRoom = null;
+        Room bossRoom = null;
+        for (Room room : roomList) {
+            if (room instanceof BossRoom) {
+                bossRoom = room;
+            } else if (room instanceof PenultimateRoom) {
+                penultimateRoom = room;
+            } else {
+                standardRooms.add(room);
+            }
+        }
+        // Optionally, shuffle the standard rooms again to randomize their order.
+        Collections.shuffle(standardRooms);
+
+        // STEP 4: Assemble the final ordered list.
+        // The order will be: standardRooms, then penultimateRoom (if present), then bossRoom (if present).
+        List<Room> orderedRooms = new ArrayList<>();
+        orderedRooms.addAll(standardRooms);
+        if (penultimateRoom != null) {
+            orderedRooms.add(penultimateRoom);
+        }
+        if (bossRoom != null) {
+            orderedRooms.add(bossRoom);
+        }
+        // Note: If no special rooms exist, then orderedRooms simply equals standardRooms.
+
+        // STEP 5: Assign display orders.
+        // The starting room is order 1, then assign orders sequentially to the rest.
+        for (int i = 0; i < orderedRooms.size(); i++) {
+            orderedRooms.get(i).setDisplayOrder(i + 2);
         }
 
-        /*
-         * STEP 3: INITIALIZE ROOM MAP
-         * ---------------------------------
-         * This step registers all rooms into the RoomMapBuilder.
-         */
+        // STEP 6: Initialize the room map using RoomMapBuilder.
         RoomMapBuilder builder = new RoomMapBuilder()
                 .addRoom(startRoom)
-                .addRooms(roomList);
+                .addRooms(orderedRooms);
 
-        /*
-         * STEP 4: CONNECT ROOMS TO DEFINE NAVIGATION
-         * ---------------------------------
-         * This is where we **design** the actual playable map.
-         * Rooms are connected using direct or locked connections.
-         * Adjust these relationships carefully to create the intended level design.
-         *
-         * ---> Game Map Layout Example <---
-         *
-         *       (START) → [Room 1] → [Room 2] → [Room 3]
-         *                     ↓           ↓
-         *                 [Room 4]    [Room 5]
-         *
-         * - Direct Connections allow free passage (e.g., from the start to Room 1).
-         * - LockedDoorConnections require solving challenges before passage is allowed.
-         */
+        // STEP 7: Connect rooms to define navigation.
+        // Here we connect adjacent rooms with either direct or locked connections.
+        // We assume that a standard locked door connection is used between most rooms.
+        // Additionally, if the penultimate and boss rooms are present,
+        // you might use a specialized connection between them.
+        // Connect the starting room to the first room in orderedRooms.
+        if (!orderedRooms.isEmpty()) {
+            builder.connectDirect(startRoom.getId(), "east", orderedRooms.get(0).getId());
+        }
+        // Connect all adjacent rooms in the ordered list using locked door connections.
+        for (int i = 0; i < orderedRooms.size() - 1; i++) {
+            Room current = orderedRooms.get(i);
+            Room next = orderedRooms.get(i + 1);
+            // If connecting penultimateRoom to bossRoom, you might want to call a special connection.
+            if (current instanceof PenultimateRoom && next instanceof BossRoom) {
+                // Use a special method for boss door connections if available.
+                // For example, we can use a method called connectBossLocked.
+                // Otherwise, default to a standard locked connection.
+                builder.connectBossLocked(current.getId(), "east", next.getId(), context.getPlayer());
+                System.out.println("DEBUG: Boss connection should've been made!");
+            } else {
+                builder.connectLocked(current.getId(), "east", next.getId());
+            }
+        }
 
-        // Connect the starting room to the first room.
-        builder.connectDirect(startRoom.getId(), "east", roomList.get(0).getId());
-
-        // Connect subsequent rooms using LockedDoorConnections.
-        builder.connectLocked(roomList.get(0).getId(), "south", roomList.get(1).getId());
-        builder.connectLocked(roomList.get(1).getId(), "east", roomList.get(2).getId());
-        builder.connectLocked(roomList.get(2).getId(), "south", roomList.get(3).getId());
-
-        /*
-         * STEP 5: FINALIZE ROOM REGISTRATION
-         * ---------------------------------
-         * Before assigning the map to the game, clear previous rooms
-         * and register the newly built map in the RoomManager.
-         */
+        // STEP 8: Finalize room registration.
         context.getRoomManager().clearRooms();
         context.getRoomManager().getRooms().putAll(builder.build());
 
-        /*
-         * STEP 6: PRINT DEBUG INFORMATION (Optional)
-         * ---------------------------------
-         * Prints the final room layout with connections. This is useful for testing.
-         */
+        // STEP 9: (Optional) Print debug information about the room layout.
         for (Room r : builder.build().values()) {
             System.out.printf("Room id: %d, display order: %d%n", r.getId(), r.getDisplayOrder());
             for (String dir : new String[]{"north", "south", "east", "west"}) {
@@ -124,23 +138,16 @@ public class MapBuilder {
             }
         }
 
-        /*
-         * STEP 7: SET PLAYER STARTING POSITION
-         * ---------------------------------
-         * The player's position is set to the starting room.
-         */
+        // STEP 10: Set the player's starting position.
         context.getPlayer().setPosition(startRoom.getId());
         startRoom.onEnter(context.getPlayer(), publisher);
 
-        /*
-         * STEP 8: TRIGGER UI REFRESH EVENT
-         * ---------------------------------
-         * After initializing the game world, an event is fired to update the map view.
-         */
+        // STEP 11: Trigger a UI refresh event to update the map view.
         publisher.publish(new RefreshMapEvent());
     }
-
 }
+
+
 
 
 

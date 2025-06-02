@@ -7,7 +7,6 @@ import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
-import org.ScrumEscapeGame.AAGame.Game;
 
 /**
  * Executes the "answer" command.
@@ -15,7 +14,7 @@ import org.ScrumEscapeGame.AAGame.Game;
  * triggers the room’s challenge. Otherwise, notifies the player that
  * there is no challenge in the current room.
  */
-public class AnswerCommand implements Command {
+public class    AnswerCommand implements Command {
     private final GameContext context;
     private final EventPublisher<GameEvent> publisher;
     private final DisplayService displayService; // Used by room strategies
@@ -34,7 +33,7 @@ public class AnswerCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         // Get the current room based on the player's position.
         int pos = context.getPlayer().getPosition();
         Room currentRoom = context.getRoomManager().getRooms().get(pos);

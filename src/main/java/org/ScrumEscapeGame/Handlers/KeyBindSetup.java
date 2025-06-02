@@ -144,6 +144,17 @@ public class KeyBindSetup {
                 uiService.refreshMapView();
             }
         });
+
+        inputMap.put(KeyStroke.getKeyStroke("I"), "toggleInventory");
+        actionMap.put("toggleInventory", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                uiService.toggleInventoryPanel();
+                uiService.refreshMapView();
+            }
+        });
+
+
     }
 }
 

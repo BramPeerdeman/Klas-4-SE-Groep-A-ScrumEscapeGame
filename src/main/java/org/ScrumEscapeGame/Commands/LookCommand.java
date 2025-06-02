@@ -4,9 +4,6 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
-import org.ScrumEscapeGame.AAGame.RoomManager;
-import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.GameObjects.Room;
 
 /**
@@ -30,7 +27,7 @@ public class LookCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         // Retrieve the current room via the player's position.
         Room currentRoom = context.getRoomManager().getRoom(context.getPlayer().getPosition());
         // Publish the room's description.

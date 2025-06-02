@@ -4,14 +4,27 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.GameObjects.Player;
 
-abstract public class Item {
-    String Id;
+public abstract class Item {
+    protected int id;
+    protected String name;
+    protected String description;
 
-    public String getId(){
-        return Id;
+    public Item(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
-    public abstract void inspect(Player player, EventPublisher<GameEvent> publisher);
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
 
-    public abstract boolean unlock(String doorId);
+    public abstract boolean isStackable();
+
+    @Override
+    public String toString() {
+        return getName(); // Optionally, you could return: getName() + " - " + getDescription();
+    }
+
 }
+

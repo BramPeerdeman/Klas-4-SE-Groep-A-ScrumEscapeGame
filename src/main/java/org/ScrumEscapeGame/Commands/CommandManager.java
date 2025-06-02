@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class CommandManager {
     private final Map<String, Command> commands = new HashMap<>();
+    private boolean enabled = true; // by default, commands are enabled
 
     /**
      * Registers a command under a specified key.
@@ -25,6 +26,14 @@ public class CommandManager {
 
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     /**
      * Retrieves and executes the command associated with the key.
      * If no command is found, prints an error message via the console.
@@ -33,14 +42,20 @@ public class CommandManager {
      * @param context the game context.
      * @param console the console window used to output messages.
      */
-    public void handle(String key, GameContext context, ConsoleWindow console) {
+    public void handle(String key, GameContext context, ConsoleWindow console, String args) {
+        // Always allow the toggleInventory command.
+        if (!enabled && !key.equalsIgnoreCase("toggleInventory")) {
+            console.printMessage("Commands disabled while inventory is open.");
+            return;
+        }
         Command cmd = commands.get(key);
         if (cmd != null) {
-            cmd.execute();
+            cmd.execute(args);
         } else {
             console.printMessage("Unknown command: " + key);
         }
     }
+
 
     /**
      * Returns the mapping of registered commands.

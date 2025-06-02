@@ -5,8 +5,6 @@ import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAEvents.RefreshMapEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
-import org.ScrumEscapeGame.GameObjects.Player;
-import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.GameObjects.Room;
 
 /**
@@ -30,7 +28,7 @@ public class MapCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String args) {
         // Publish a notification about refreshing the map view.
         publisher.publish(new NotificationEvent("Refreshing graphical map view..."));
         // Trigger a map refresh.
