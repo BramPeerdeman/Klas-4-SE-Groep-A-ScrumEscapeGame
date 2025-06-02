@@ -71,7 +71,7 @@ public class RoomWithQuestion extends Room {
     @Override
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
         super.onEnter(player, publisher);
-        if (question != null && strategy != null && !questionAsked) {
+        if (questionWithHints != null && strategy != null && !questionAsked) {
             publisher.publish(new NotificationEvent("A challenge awaits in this room. Enter 'Q' to attempt the question."));
         }
     }
@@ -91,8 +91,8 @@ public class RoomWithQuestion extends Room {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }
 
-        if (question != null && strategy != null && !questionAsked) {
-            boolean correct = strategy.ask(player, question, publisher, displayService);
+        if (questionWithHints != null && strategy != null && !questionAsked) {
+            boolean correct = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
             questionAsked = true;
 
             if (DEBUG) {
@@ -111,7 +111,7 @@ public class RoomWithQuestion extends Room {
 //                publisher.publish(new NotificationEvent("Also, a funny hint: " + funnyHint));
 
                 // Retry the same question once
-                boolean retryCorrect = strategy.ask(player, question, publisher, displayService);
+                boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
 
                 if (retryCorrect) {
                     player.addSolvedRoom(getId());
