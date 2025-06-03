@@ -9,7 +9,6 @@ import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
-import org.ScrumEscapeGame.Providers.RandomHintProviderSelector;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -104,12 +103,8 @@ public class RoomWithQuestion extends Room implements HasQuestions {
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
                 // 1st incorrect answer → show hint
-                String normalHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
-
-//                String funnyHint = hintSelector.getHintProvider(getId()).getFunnyHint();
-
-                publisher.publish(new NotificationEvent("Here's a hint to help you: " + normalHint));
-//                publisher.publish(new NotificationEvent("Also, a funny hint: " + funnyHint));
+                String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+                publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
 
                 // Retry the same question once
                 boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);

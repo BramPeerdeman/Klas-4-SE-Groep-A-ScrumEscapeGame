@@ -1,8 +1,10 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.RoomInventoryProvider;
+import org.ScrumEscapeGame.Providers.RoomHintProviderSelector;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.GameObjects.Question;
@@ -25,7 +27,7 @@ public class RoomFactory {
     // Holds the configuration containing all room definitions.
     private final ZoneConfig zoneConfig;
     // A display service that can be used by room strategies if needed.
-    private final DisplayService displayService;
+    private final GameUIService uiService;
     // The inventory provider used to assign inventories to created rooms.
     private final RoomInventoryProvider roomInventoryProvider;
     // A registry mapping room type strings (from RoomDefinition) to creator functions.
@@ -38,9 +40,9 @@ public class RoomFactory {
      * @param displayService        used by room strategies to output messages.
      * @param roomInventoryProvider used to assign Inventories to created rooms.
      */
-    public RoomFactory(ZoneConfig zoneConfig, DisplayService displayService, RoomInventoryProvider roomInventoryProvider) {
+    public RoomFactory(ZoneConfig zoneConfig, GameUIService displayService, RoomInventoryProvider roomInventoryProvider) {
         this.zoneConfig = zoneConfig;
-        this.displayService = displayService;
+        this.uiService = displayService;
         this.roomInventoryProvider = roomInventoryProvider;
         // Register default room types.
         registerDefaultRoomCreators();
@@ -57,7 +59,9 @@ public class RoomFactory {
                         def.getId(),
                         def.getDescription(),
                         RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()  // Using a multiple choice strategy.
+                        new MultipleChoiceStrategy(),  // Using a multiple choice strategy.
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders())
+
                 )
         );
         // Standard room: Planning.
@@ -66,7 +70,8 @@ public class RoomFactory {
                         def.getId(),
                         def.getDescription(),
                         RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
+                        new MultipleChoiceStrategy(),
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders())
                 )
         );
         // Standard room: SprintBacklog.
@@ -75,7 +80,8 @@ public class RoomFactory {
                         def.getId(),
                         def.getDescription(),
                         RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
+                        new MultipleChoiceStrategy(),
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders())
                 )
         );
         // Standard room: SprintReview.
@@ -84,7 +90,8 @@ public class RoomFactory {
                         def.getId(),
                         def.getDescription(),
                         RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
+                        new MultipleChoiceStrategy(),
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders())
                 )
         );
         // Standard room: ProductBacklog.
@@ -93,7 +100,8 @@ public class RoomFactory {
                         def.getId(),
                         def.getDescription(),
                         RoomQuestions.getQuestionForRoom(def.getId()),
-                        new MultipleChoiceStrategy()
+                        new MultipleChoiceStrategy(),
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders())
                 )
         );
         // New room type: Boss. A new BossRoom type already in your system.
@@ -151,7 +159,7 @@ public class RoomFactory {
             throw new IllegalArgumentException("Unsupported room type: " + def.getType());
         }
         // Use the creator function to instantiate a new Room.
-        return creator.create(def, displayService);
+        return creator.create(def, uiService);
     }
 }
 
