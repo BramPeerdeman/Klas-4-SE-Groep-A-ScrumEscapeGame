@@ -80,7 +80,7 @@ public class GameStart {
         RoomInventoryProvider roomInventoryProvider = new RoomInventoryProvider();
 
         // Create a RoomFactory that now also receives a RoomInventoryProvider.
-        RoomFactory roomFactory = new RoomFactory(zone, displayService, roomInventoryProvider);
+        RoomFactory roomFactory = new RoomFactory(zone, (GameUIService) displayService, roomInventoryProvider);
 
         // Use the MapBuilder to generate the room map.
         MapBuilder mapBuilder = new MapBuilder(gameContext, eventPublisher, roomFactory);

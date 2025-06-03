@@ -1,6 +1,9 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Question;
+import org.ScrumEscapeGame.Providers.FunnyHintProvider;
+import org.ScrumEscapeGame.Providers.HelpHintProvider;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
 
 import java.util.*;
 
@@ -10,11 +13,12 @@ import java.util.*;
  */
 public class RoomQuestions {
     // Stores predefined questions for room IDs.
-    private static final Map<Integer, Question> QUESTIONS = new HashMap<>();
+    private static final Map<Integer, QuestionWithHints> QUESTIONS = new HashMap<>();
     private static final List<Question> QUESTIONBOSS = new ArrayList<>();
 
     static {
-        QUESTIONS.put(1, new Question(
+        QUESTIONS.put(1, new QuestionWithHints(
+                new Question(
                 "What is the purpose of backlog refinement in Scrum?",
                 List.of(
                         "To assign tasks to team members",
@@ -23,9 +27,15 @@ public class RoomQuestions {
                         "To define the team structure"
                 ),
                 "To ensure the backlog is ready for future sprints"
+                ),
+                List.of(
+                        new HelpHintProvider("Focus on preparing future work."),
+                        new FunnyHintProvider("Backlog refinement = Scrum’s spring cleaning!")
+                )
         ));
 
-        QUESTIONS.put(2, new Question(
+        QUESTIONS.put(2, new QuestionWithHints(
+                new Question(
                 "Who is responsible for managing the Product Backlog?",
                 List.of(
                         "Scrum Master",
@@ -34,9 +44,15 @@ public class RoomQuestions {
                         "Stakeholders"
                 ),
                 "Product Owner"
+                ),
+                List.of(
+                        new HelpHintProvider("It’s someone who sets priorities."),
+                        new FunnyHintProvider("Not the Scrum Master, they’re too busy facilitating!")
+                )
         ));
 
-        QUESTIONS.put(3, new Question(
+        QUESTIONS.put(3, new QuestionWithHints(
+                new Question(
                 "How long is a typical Sprint in Scrum?",
                 List.of(
                         "1 to 2 days",
@@ -45,9 +61,15 @@ public class RoomQuestions {
                         "4 to 6 weeks"
                 ),
                 "2 to 4 weeks"
+                ),
+                List.of(
+                        new HelpHintProvider("Not implemented"),
+                        new FunnyHintProvider("Not implemented")
+                )
         ));
 
-        QUESTIONS.put(4, new Question(
+        QUESTIONS.put(4, new QuestionWithHints(
+                new Question(
                 "What is the maximum timebox for the Daily Scrum?",
                 List.of(
                         "5 minutes",
@@ -56,6 +78,11 @@ public class RoomQuestions {
                         "30 minutes"
                 ),
                 "15 minutes"
+                ),
+                List.of(
+                        new HelpHintProvider("Not implemented"),
+                        new FunnyHintProvider("Not implemented")
+                )
         ));
 
         // Boss-level questions (no integer key)
@@ -99,7 +126,7 @@ public class RoomQuestions {
      * @param roomId The ID of the room.
      * @return The question assigned to the room.
      */
-    public static Question getQuestionForRoom(int roomId) {
+    public static QuestionWithHints getQuestionForRoom(int roomId) {
         return QUESTIONS.get(roomId);
     }
 
@@ -108,7 +135,7 @@ public class RoomQuestions {
      *
      * @return An unmodifiable map of all room questions.
      */
-    public static Map<Integer, Question> getAll() {
+    public static Map<Integer, QuestionWithHints> getAll() {
         return Collections.unmodifiableMap(QUESTIONS);
     }
 

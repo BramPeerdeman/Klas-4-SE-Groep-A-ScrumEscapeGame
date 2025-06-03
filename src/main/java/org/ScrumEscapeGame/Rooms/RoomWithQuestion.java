@@ -7,6 +7,8 @@ import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
+import org.ScrumEscapeGame.Providers.HintProviderSelector;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -25,7 +27,7 @@ import java.util.ArrayList;
  */
 public class RoomWithQuestion extends Room implements HasQuestions {
     // The question to be presented.
-    private Question question;
+    private QuestionWithHints questionWithHints;
     // The strategy used to ask the question (e.g., MultipleChoiceStrategy).
     private QuestionStrategy strategy;
     // Tracks whether the question has been asked already to prevent repeat prompting.
@@ -34,6 +36,7 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     private LockedDoor sharedDoor;
     // Flag for debugging purposes.
     private static final boolean DEBUG = true;
+    private final HintProviderSelector hintSelector;
 
     /**
      * Constructs a new RoomWithQuestion.
@@ -43,10 +46,11 @@ public class RoomWithQuestion extends Room implements HasQuestions {
      * @param question    the question or challenge associated with the room.
      * @param strategy    the strategy to use when asking the question.
      */
-    public RoomWithQuestion(int id, String description, Question question, QuestionStrategy strategy) {
+    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector) {
         super(id, description);
-        this.question = question;
+        this.questionWithHints = questionWithHints;
         this.strategy = strategy;
+        this.hintSelector = hintSelector;
     }
 
     /**
@@ -66,7 +70,7 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     @Override
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
         super.onEnter(player, publisher);
-        if (question != null && strategy != null && !questionAsked) {
+        if (questionWithHints != null && strategy != null && !questionAsked) {
             publisher.publish(new NotificationEvent("A challenge awaits in this room. Enter 'Q' to attempt the question."));
         }
     }
@@ -85,20 +89,36 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }
-        if (question != null && strategy != null && !questionAsked) {
-            boolean correct = strategy.ask(player, question, publisher, displayService);
+
+        if (questionWithHints != null && strategy != null && !questionAsked) {
+            boolean correct = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
             questionAsked = true;
+
             if (DEBUG) {
                 System.out.println("DEBUG: Question answered. Was the answer correct? " + correct);
             }
+
             if (correct) {
                 player.addSolvedRoom(getId());
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
-                publisher.publish(new GameResetEvent("Incorrect answer; resetting game."));
+                // 1st incorrect answer → show hint
+                String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+                publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
+
+                // Retry the same question once
+                boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
+
+                if (retryCorrect) {
+                    player.addSolvedRoom(getId());
+                    publisher.publish(new DoorUnlockedEvent(sharedDoor));
+                } else {
+                    publisher.publish(new GameResetEvent("Still incorrect! Restarting the game."));
+                }
             }
         }
     }
+
 }
 
 
