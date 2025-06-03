@@ -56,7 +56,7 @@ public class RoomFactory {
      */
     private void registerDefaultRoomCreators() {
         roomCreators.put("BacklogRefinement", (def, ds) -> {
-            QuestionWithHints qwh = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+            QuestionWithHints qwh = RoomQuestions.getQuestionForRoom(def.getId());
             return new RoomWithQuestion(
                     def.getId(),
                     def.getDescription(),
@@ -68,7 +68,7 @@ public class RoomFactory {
 
         // Do the same for other room types that have questions with hints:
         roomCreators.put("Planning", (def, ds) -> {
-            QuestionWithHints qwh = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+            QuestionWithHints qwh = RoomQuestions.getQuestionForRoom(def.getId());
             return new RoomWithQuestion(
                     def.getId(),
                     def.getDescription(),
@@ -135,7 +135,7 @@ public class RoomFactory {
     }
 
     private RoomWithQuestion createRoomWithQuestion(RoomDefinition def, String helpHint, String funnyHint) {
-        Question question = RoomQuestions.getQuestionWithHintsForRoom(def.getId());
+        Question question = RoomQuestions.getQuestionForRoom(def.getId());
         List<HintProvider> hintProviders = List.of(
                 new HelpHintProvider(helpHint),
                 new FunnyHintProvider(funnyHint)
