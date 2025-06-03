@@ -6,6 +6,7 @@ import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Rooms.BossRoom;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 
 /**
@@ -41,11 +42,19 @@ public class    AnswerCommand implements Command {
             // Trigger the question using the provided displayService.
             ((RoomWithQuestion) currentRoom)
                     .triggerQuestion(context.getPlayer(), context.getEventPublisher(), displayService);
+        } else if (currentRoom instanceof BossRoom) {
+            // Trigger the question using the provided displayService.
+            ((BossRoom) currentRoom)
+                    .triggerQuestion(context.getPlayer(), context.getEventPublisher(), displayService);
+
+
         } else {
             // Inform the player that no challenge exists in this room.
             publisher.publish(new NotificationEvent("There is no challenge to answer in this room."));
         }
+
     }
+
 }
 
 
