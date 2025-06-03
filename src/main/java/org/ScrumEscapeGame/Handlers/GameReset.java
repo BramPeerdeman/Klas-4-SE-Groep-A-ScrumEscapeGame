@@ -4,6 +4,7 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.RoomInventoryProvider;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
@@ -51,7 +52,7 @@ public class GameReset {
         RoomInventoryProvider roomInventoryProvider = new RoomInventoryProvider();
 
         // Create a new RoomFactory with the provided DisplayService and RoomInventoryProvider.
-        RoomFactory roomFactory = new RoomFactory(zone, displayService, roomInventoryProvider);
+        RoomFactory roomFactory = new RoomFactory(zone, (GameUIService) displayService, roomInventoryProvider);
 
         // Build a new map based on the current context and new room definitions.
         MapBuilder mapBuilder = new MapBuilder(context, eventPublisher, roomFactory);

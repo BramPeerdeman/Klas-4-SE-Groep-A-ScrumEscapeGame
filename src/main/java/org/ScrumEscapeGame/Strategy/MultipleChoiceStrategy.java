@@ -36,7 +36,7 @@ public class MultipleChoiceStrategy implements QuestionStrategy {
             displayService.printMessage("✅ Correct!");
             return true;
         } else {
-            displayService.printMessage("❌ Incorrect. Correct answer was: " + question.getCorrectAnswer());
+            displayService.printMessage("❌ Incorrect.");
             return false;
         }
     }
