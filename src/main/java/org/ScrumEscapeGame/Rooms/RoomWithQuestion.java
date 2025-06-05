@@ -5,6 +5,7 @@ import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.Joker;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
@@ -12,6 +13,7 @@ import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ScrumEscapeGame.AAGame.GameCycleManager;
@@ -37,6 +39,13 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     // Flag for debugging purposes.
     private static final boolean DEBUG = true;
     private final HintProviderSelector hintSelector;
+
+
+    // DIT MOET NOG WORDEN AANGEPAST ALS JE JOKERS IN DE ROOM WIL
+    @Override
+    public List<Joker> getAvailableJokers() {
+        return Collections.emptyList();
+    }
 
     /**
      * Constructs a new RoomWithQuestion.

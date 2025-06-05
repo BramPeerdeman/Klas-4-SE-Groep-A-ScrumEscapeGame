@@ -6,7 +6,10 @@ import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
-import org.ScrumEscapeGame.AAGame.Game;
+import org.ScrumEscapeGame.Items.Joker;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The starting room of the game.
@@ -15,6 +18,12 @@ import org.ScrumEscapeGame.AAGame.Game;
  */
 public class StartingRoom extends Room {
     private Inventory startingInventory;
+
+//PAS DIT AAN ALS JE JOKERS IN DE ROOM WIL 
+    @Override
+    public List<Joker> getAvailableJokers() {
+        return Collections.emptyList();
+    }
 
     /**
      * Constructs a new StartingRoom.

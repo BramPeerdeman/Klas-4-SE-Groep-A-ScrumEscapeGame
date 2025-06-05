@@ -8,8 +8,10 @@ import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.Joker;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +23,8 @@ public class BossRoom extends Room implements HasQuestions {
     private LockedDoor bossDoor;
     private static final boolean DEBUG = true;
     // Drie “boss‐level” vragen uit RoomQuestions.getBossQuestions()
+
+
     private final List<Question> questions = RoomQuestions.getBossQuestions();
 
     // Welke strategie we gebruiken om vragen te stellen (bijv. MultipleChoiceStrategy).
@@ -31,6 +35,12 @@ public class BossRoom extends Room implements HasQuestions {
 
     // Als de speler één vraag fout beantwoordt, zetten we deze flag en stoppen we verdere checks.
     private boolean failed = false;
+
+    // Dit zo laten als je geen jokers in boss room wil
+    @Override
+    public List<Joker> getAvailableJokers() {
+        return Collections.emptyList();
+    }
 
 
 

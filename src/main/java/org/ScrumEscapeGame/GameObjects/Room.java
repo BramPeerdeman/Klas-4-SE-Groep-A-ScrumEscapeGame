@@ -4,10 +4,12 @@ import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
 import org.ScrumEscapeGame.Items.BasicInventory;
+import org.ScrumEscapeGame.Items.Joker;
 import org.ScrumEscapeGame.Rooms.Connection;
 import org.ScrumEscapeGame.AAGame.Game;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -78,6 +80,7 @@ abstract public class Room {
     public Map<String, Connection> getNeighbours() {
         return neighbours;
     }
+    public abstract List<Joker> getAvailableJokers();
 
     /**
      * Handles logic when the player enters this room.

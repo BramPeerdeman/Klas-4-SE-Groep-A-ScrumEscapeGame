@@ -1,8 +1,18 @@
 package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.Joker;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RoomWithPresetItems extends Room {
+
+    //AANPASSEN ALS JE JOKERS IN DE ROOM WIL
+    @Override
+    public List<Joker> getAvailableJokers() {
+        return Collections.emptyList();
+    }
     /**
      * Constructs a room with an ID and description.
      *

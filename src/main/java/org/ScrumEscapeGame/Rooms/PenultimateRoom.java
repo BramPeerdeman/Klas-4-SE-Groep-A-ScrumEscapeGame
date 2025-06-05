@@ -5,12 +5,21 @@ import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.Items.Joker;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * PenultimateRoom represents a room preceding the final boss challenge.
  * It might, for example, be configured to provide a preset inventory containing 6 keys.
  */
 public class PenultimateRoom extends Room {
+    // MOET NOG WORDEN AANGEPAST ALS JE JOKERS IN DEZE ROOM WIL
+    @Override
+    public List<Joker> getAvailableJokers() {
+        return Collections.emptyList();
+    }
 
     /**
      * Constructs a PenultimateRoom with a given id and description.
