@@ -3,6 +3,7 @@ package org.ScrumEscapeGame.Storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.Items.Item;
 
 import java.io.*;
 import java.util.List;
@@ -13,7 +14,7 @@ public class GameStorage {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public static void saveGame(Player player) {
-        List<String> inventoryItems = player.getInventory().getItems();
+        List<Item> inventoryItems = player.getInventory().getItems();
         GameState state = new GameState(
                 player.getPosition(),
                 player.getSolvedRooms(),

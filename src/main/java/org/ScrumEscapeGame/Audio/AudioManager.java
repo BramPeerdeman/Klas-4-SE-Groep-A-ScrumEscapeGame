@@ -7,16 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-    Use AudioManager with: AudioManager name = new AudioManager;
+    Use AudioManager with: AudioManager.playSound().bossmusic();
 */
 
 public class AudioManager {
+    private static AudioManager instance;
+
     private List<AudioPlayer> audioPlayers = new ArrayList<AudioPlayer>();
 
     private AudioPlayer bossmusic;
     private AudioPlayer monsterappears;
     private AudioPlayer monsterdeath;
-    private AudioPlayer questioncorrect;
+    private AudioPlayer doorunlocks;
     private AudioPlayer questionincorrect;
     private AudioPlayer swordhit;
     private AudioPlayer victory;
@@ -25,7 +27,7 @@ public class AudioManager {
         bossmusic = new AudioPlayer("SoundFX/bossmusic.wav");
         monsterappears = new AudioPlayer("SoundFX/monsterappearssound.wav");
         monsterdeath = new AudioPlayer("SoundFX/monsterdeathsound.wav");
-        questioncorrect = new AudioPlayer("SoundFX/questioncorrectsound.wav");
+        doorunlocks = new AudioPlayer("SoundFX/doorunlockssound.wav");
         questionincorrect = new AudioPlayer("SoundFX/questionincorrectsound.wav");
         victory = new AudioPlayer("SoundFX/victorysound.wav");
         swordhit = new AudioPlayer("SoundFX/swordhitsound.wav");
@@ -33,10 +35,21 @@ public class AudioManager {
         audioPlayers.add(bossmusic);
         audioPlayers.add(monsterappears);
         audioPlayers.add(monsterdeath);
-        audioPlayers.add(questioncorrect);
+        audioPlayers.add(doorunlocks);
         audioPlayers.add(questionincorrect);
         audioPlayers.add(swordhit);
         audioPlayers.add(victory);
+    }
+
+    public static AudioManager playSound() {
+        if (instance == null) {
+            try {
+                instance = new AudioManager();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return instance;
     }
 
     public void stopAllAudio() {
@@ -70,25 +83,25 @@ public class AudioManager {
         }
     }
 
-    public void playBossmusic () {
+    public void bossmusic () {
         bossmusic.play();
     }
-    public void playMonsterAppears () {
+    public void monsterAppears () {
         monsterappears.play();
     }
-    public void playMonsterDeath () {
+    public void monsterDeath () {
         monsterdeath.play();
     }
-    public void playQuestionCorrect () {
-        questioncorrect.play();
+    public void doorUnlocks() {
+        doorunlocks.play();
     }
-    public void playQuestionIncorrect () {
+    public void questionIncorrect () {
         questionincorrect.play();
     }
-    public void playSwordHit () {
+    public void swordHit () {
         swordhit.play();
     }
-    public void playVictory () {
+    public void victory () {
         victory.play();
     }
 }
