@@ -86,13 +86,13 @@ public class RoomDefinition {
                         "KeyJoker",   // type
                         104,          // itemId
                         "KeyJoker",   // name
-                        "Geeft een extra sleutel in Daily Scrum."
+                        "Geeft een extra sleutel in SprintBacklog."
                 ),
                 new JokerDefinition(
                         "JokerHint",
                         105,
                         "HintJoker",
-                        "Geeft een hint bij de Daily Scrum-vraag."
+                        "Geeft een hint bij de SprintBacklog-vraag."
                 )
         )));
         definitions.add(new RoomDefinition(4, "SprintReview", "A server-filled room where ventilation roars like beastly lungs.", List.of()));

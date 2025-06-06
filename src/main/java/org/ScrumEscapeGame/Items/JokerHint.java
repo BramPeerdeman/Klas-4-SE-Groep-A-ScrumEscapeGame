@@ -1,12 +1,16 @@
 package org.ScrumEscapeGame.Items;
 
-import org.ScrumEscapeGame.AAEvents.EventPublisher;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.ItemInspectEvent;
-import org.ScrumEscapeGame.AAEvents.UseItemEvent;
+import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.Providers.HintProvider;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Rooms.RoomQuestions;
+
+import java.util.List;
+import java.util.Random;
 
 public class JokerHint extends Item implements Usable, Inspectable {
+
     public JokerHint(int id, String name, String description) {
         super(id, name, description);
     }
@@ -18,8 +22,26 @@ public class JokerHint extends Item implements Usable, Inspectable {
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
-        // In this test, we'll just publish an event indicating the item was used.
-        publisher.publish(new UseItemEvent(this.getId(), this.getName(), "You used your joker hint."));
+        int roomId = player.getPosition();  // Assume room ID is the player's current position
+        QuestionWithHints qwh = RoomQuestions.getQuestionForRoom(roomId);
+        String message;
+
+        if (qwh != null) {
+            List<HintProvider> hints = qwh.getHintProviders();
+            if (hints != null && !hints.isEmpty()) {
+                // Pick a random hint from the available hints.
+                Random rnd = new Random();
+                HintProvider selected = hints.get(rnd.nextInt(hints.size()));
+                message = "Joker Hint used: " + selected.getHint();
+            } else {
+                message = "This room doesn’t offer any hints.";
+            }
+        } else {
+            message = "There is no challenge in this room.";
+        }
+
+        // Publish an event to display the message.
+        publisher.publish(new JokerUsedEvent(getId(), getName(), message));
         return true;
     }
 
@@ -28,3 +50,4 @@ public class JokerHint extends Item implements Usable, Inspectable {
         publisher.publish(new ItemInspectEvent(getId(), getName(), getDescription()));
     }
 }
+

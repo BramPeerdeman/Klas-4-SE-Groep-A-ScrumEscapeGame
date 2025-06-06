@@ -1,14 +1,13 @@
 package org.ScrumEscapeGame.Items;
 
-import org.ScrumEscapeGame.AAEvents.EventPublisher;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.ItemInspectEvent;
-import org.ScrumEscapeGame.AAEvents.UseItemEvent;
+import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Rooms.RoomQuestions;
 
 public class JokerKey extends Item implements Usable, Inspectable {
-    private static final int GENERATED_KEY_ID = 999;
+
     public JokerKey(int id, String name, String description) {
         super(id, name, description);
     }
@@ -20,36 +19,24 @@ public class JokerKey extends Item implements Usable, Inspectable {
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
-        // 1) Maak een nieuw KeyItem aan (of verkrijg een bestaand key-object)
-        Key newKey = new Key(
-                GENERATED_KEY_ID,
-                "Sleutel",
-                "Een sleutel verkregen via KeyJoker",
-                1
-        );
+        int roomId = player.getPosition();
+        QuestionWithHints qwh = RoomQuestions.getQuestionForRoom(roomId);
+        String message;
 
-        // 2) Voeg de sleutel toe aan de inventaris van de speler
-        Inventory inv = player.getInventory();
-        inv.addItem(newKey);
+        if (qwh != null) {
+            // We assume the Question class provides a getter for the correct answer.
+            message = "Joker Key used: The correct answer is: " + qwh.getQuestion().getCorrectAnswer();
+        } else {
+            message = "There is no challenge in this room.";
+        }
 
-        // 3) Publiceer een UseItemEvent om het gebruik te melden
-        publisher.publish(new UseItemEvent(
-                this.getId(),
-                this.getName(),
-                "Je hebt een extra sleutel ontvangen en in je inventory geplaatst!"
-        ));
+        publisher.publish(new JokerUsedEvent(getId(), getName(), message));
         return true;
     }
 
     @Override
     public void inspect(Player player, EventPublisher<GameEvent> publisher) {
         publisher.publish(new ItemInspectEvent(getId(), getName(), getDescription()));
-        new ItemInspectEvent(
-                this.getId(),
-                this.getName(),
-                this.getDescription()
-        );
-
-
     }
 }
+
