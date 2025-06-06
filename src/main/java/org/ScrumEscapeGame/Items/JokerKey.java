@@ -6,7 +6,7 @@ import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 
-public class JokerKey extends Item implements Usable, Inspectable {
+public class JokerKey extends Joker implements Usable, Inspectable {
 
     public JokerKey(int id, String name, String description) {
         super(id, name, description);

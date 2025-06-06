@@ -9,7 +9,7 @@ import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import java.util.List;
 import java.util.Random;
 
-public class JokerHint extends Item implements Usable, Inspectable {
+public class JokerHint extends Joker implements Usable, Inspectable {
 
     public JokerHint(int id, String name, String description) {
         super(id, name, description);
