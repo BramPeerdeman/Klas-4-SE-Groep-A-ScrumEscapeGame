@@ -4,6 +4,7 @@ import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Providers.RoomHintProviderSelector;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import org.ScrumEscapeGame.Rooms.RoomWithPresetItems;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
@@ -29,7 +30,7 @@ class DummyPresetRoom extends RoomWithPresetItems {
 // A simple dummy room that does not have preset items.
 class DummyGenericRoom extends RoomWithQuestion {
     public DummyGenericRoom(int id, String description, QuestionWithHints question, QuestionStrategy strategy, HintProviderSelector hintProviderSelector) {
-        super(id, description, question, strategy, hintProviderSelector);
+        super(id, description, question, strategy, hintProviderSelector, true);
     }
 }
 
@@ -67,7 +68,8 @@ public class RoomInventoryProviderTest {
     @Test
     public void testGetInventoryForGenericRoom() {
         // Create a generic room.
-        DummyGenericRoom genericRoom = new DummyGenericRoom(2, "Generic room description", RoomQuestions.getQuestionForRoom(1), new MultipleChoiceStrategy());
+        DummyGenericRoom genericRoom = new DummyGenericRoom(2, "Generic room description", RoomQuestions.getQuestionForRoom(1), new MultipleChoiceStrategy(),
+                new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(2).getHintProviders()));
 
         // Get the inventory for the generic room.
         Inventory inventory = inventoryProvider.getInventoryFor(genericRoom);
