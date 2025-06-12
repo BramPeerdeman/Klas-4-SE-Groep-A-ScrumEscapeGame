@@ -14,8 +14,8 @@ public class Excalibur extends Item implements Weapon, Inspectable, Usable {
 
     public Excalibur(int id, String description ,int durability, int damage) {
         super(id, "Excalibur", description);
-        this.durability = 2;
-        this.damage = 1;
+        this.durability = 5;
+        this.damage = 10;
     }
 
     @Override
