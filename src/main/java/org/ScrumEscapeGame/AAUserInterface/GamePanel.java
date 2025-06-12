@@ -1,12 +1,14 @@
 package org.ScrumEscapeGame.AAUserInterface;
 
 
+import org.ScrumEscapeGame.AAEvents.QuestionOpenedEvent;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Handlers.KeyBindSetup;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Map;
 
 /**
@@ -81,6 +83,18 @@ public class GamePanel extends JPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
         splitPane.setDividerLocation(400);
         add(splitPane, BorderLayout.CENTER);
+
+        // ✅ Keybinding voor Q
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "openQuestionPanel");
+        this.getActionMap().put("openQuestionPanel", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                uiService.getEventPublisher().publish(new QuestionOpenedEvent());
+                JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(GamePanel.this);
+                QuestionPanel panel = new QuestionPanel(parent);
+                panel.setVisible(true);
+            }
+        });
 
         // Set up global key bindings.
         keyBindSetup.setupGlobalKeyBindings(this);

@@ -81,6 +81,12 @@ public class GameUIService implements DisplayService {
         inventoryVisible = false;
     }
 
+    public void showQuestionPanel()
+    {
+        cards.show(panelContainer, "question");
+        inventoryVisible = false;
+    }
+
     /**
      * Returns the room by its identifier from the context.
      */
