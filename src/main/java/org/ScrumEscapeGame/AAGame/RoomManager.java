@@ -27,7 +27,11 @@ public class RoomManager {
      * @param id The room ID.
      * @return The Room object corresponding to the ID, or null if not found.
      */
-    public Room getRoom(int id) {
+    public Room getRoom(int id)
+    {
+        if (!rooms.containsKey(id)) {
+            throw new IllegalArgumentException("Ongeldig kamernummer: " + id);
+        }
         return rooms.get(id);
     }
 
