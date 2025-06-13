@@ -2,11 +2,11 @@ package org.ScrumEscapeGame.AAEvents;
 
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 
-public class InventoryObserver implements EventObserver<GameEvent> {
-    private final GameUIService uiService;
+public class InventoryObserver extends UIObserverBase implements EventObserver<GameEvent> {
+
 
     public InventoryObserver(GameUIService uiService) {
-        this.uiService = uiService;
+        super(uiService); // oproep naar de constructor van UIObserverBase
     }
 
     @Override

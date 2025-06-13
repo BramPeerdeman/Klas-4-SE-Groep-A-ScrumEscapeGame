@@ -5,8 +5,8 @@ import org.ScrumEscapeGame.AAGame.GameCycleManager;
 /**
  * Observes game start events and triggers initialization.
  */
-public class GameBeginObserver implements EventObserver<GameEvent> {
-    private final GameCycleManager cycleManager;
+public class GameBeginObserver extends BaseCycleObserver implements EventObserver<GameEvent> {
+
 
     /**
      * Constructs a GameBeginObserver.
@@ -14,7 +14,7 @@ public class GameBeginObserver implements EventObserver<GameEvent> {
      * @param cycleManager The GameCycleManager that handles game initialization.
      */
     public GameBeginObserver(GameCycleManager cycleManager) {
-        this.cycleManager = cycleManager;
+        super(cycleManager);
     }
 
     @Override

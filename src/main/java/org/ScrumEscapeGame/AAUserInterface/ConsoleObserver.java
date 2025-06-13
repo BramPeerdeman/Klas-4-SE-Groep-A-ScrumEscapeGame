@@ -3,12 +3,13 @@ package org.ScrumEscapeGame.AAUserInterface;
 import org.ScrumEscapeGame.AAEvents.EventObserver;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
+import org.ScrumEscapeGame.AAEvents.UIObserverBase;
 
-public class ConsoleObserver implements EventObserver<GameEvent> {
-    private GameUIService uiService;
+public class ConsoleObserver extends UIObserverBase implements EventObserver<GameEvent> {
+
 
     public ConsoleObserver(GameUIService uiService) {
-        this.uiService = uiService;
+        super(uiService); // oproep naar de constructor van UIObserverBase
     }
 
     @Override

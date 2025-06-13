@@ -5,8 +5,8 @@ import org.ScrumEscapeGame.AAGame.GameCycleManager;
 /**
  * Observes reset events and triggers a game reset when needed.
  */
-public class ResetObserver implements EventObserver<GameEvent> {
-    private final GameCycleManager cycleManager;
+public class ResetObserver extends BaseCycleObserver implements EventObserver<GameEvent> {
+
 
     /**
      * Constructs a ResetObserver.
@@ -14,7 +14,7 @@ public class ResetObserver implements EventObserver<GameEvent> {
      * @param cycleManager The manager responsible for handling game resets.
      */
     public ResetObserver(GameCycleManager cycleManager) {
-        this.cycleManager = cycleManager;
+        super(cycleManager);
     }
 
     @Override
