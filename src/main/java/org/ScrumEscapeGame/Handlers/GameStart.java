@@ -1,5 +1,6 @@
 package org.ScrumEscapeGame.Handlers;
 
+import org.ScrumEscapeGame.AAEvents.ChooseJokerEvent;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.ItemObserver;
@@ -52,6 +53,9 @@ public class GameStart {
      * </ol>
      */
     public void initialise() {
+        GameEvent chooseJokerEvent = new ChooseJokerEvent(gameContext.getPlayer().getInventory());
+        chooseJokerEvent.apply((GameUIService) displayService);
+
         // Register commands and their handlers.
         commandManager.register("look", new LookCommand(gameContext, eventPublisher));
         commandManager.register("map", new MapCommand(gameContext, eventPublisher));

@@ -39,6 +39,8 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     // Flag for debugging purposes.
     private static final boolean DEBUG = true;
     private final HintProviderSelector hintSelector;
+    private boolean hasHelper;
+
 
 
     // DIT MOET NOG WORDEN AANGEPAST ALS JE JOKERS IN DE ROOM WIL
@@ -52,14 +54,17 @@ public class RoomWithQuestion extends Room implements HasQuestions {
      *
      * @param id          the room identifier.
      * @param description a description of the room.
-     * @param question    the question or challenge associated with the room.
+     * @param questionWithHints    the question or challenge associated with the room.
      * @param strategy    the strategy to use when asking the question.
+     * @param hintSelector what type of hint you're getting.
+     * @param hasHelper whether it can use hints.
      */
-    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector) {
+    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector, Boolean hasHelper) {
         super(id, description);
         this.questionWithHints = questionWithHints;
         this.strategy = strategy;
         this.hintSelector = hintSelector;
+        this.hasHelper = hasHelper;
     }
 
     /**
@@ -128,6 +133,9 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         }
     }
 
+    public boolean hasHelper() {
+        return hasHelper;
+    }
 }
 
 

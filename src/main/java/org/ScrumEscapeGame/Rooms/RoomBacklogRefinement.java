@@ -7,7 +7,7 @@ import org.ScrumEscapeGame.Providers.HintProviderSelector;
 
 public class RoomBacklogRefinement extends RoomWithQuestion {
     public RoomBacklogRefinement(int id, String description, QuestionWithHints question, QuestionStrategy strategy, HintProviderSelector hintProviderSelector) {
-        super(id, description, question, strategy, hintProviderSelector);
+        super(id, description, question, strategy, hintProviderSelector, true);
     }
 }
 
