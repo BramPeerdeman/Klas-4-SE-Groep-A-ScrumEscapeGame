@@ -3,10 +3,11 @@ package org.ScrumEscapeGame.Items;
 import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 
-public class JokerKey extends Joker implements Usable, Inspectable {
+public class JokerKey extends Item implements Joker {
 
     public JokerKey(int id, String name, String description) {
         super(id, name, description);
@@ -19,19 +20,13 @@ public class JokerKey extends Joker implements Usable, Inspectable {
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
-        int roomId = player.getPosition();
-        QuestionWithHints qwh = RoomQuestions.getQuestionForRoom(roomId);
-        String message;
-
-        if (qwh != null) {
-            // We assume the Question class provides a getter for the correct answer.
-            message = "Joker Key used: The correct answer is: " + qwh.getQuestion().getCorrectAnswer();
-        } else {
-            message = "There is no challenge in this room.";
-        }
-
-        publisher.publish(new JokerUsedEvent(getId(), getName(), message));
+        player.addKey();
+        publisher.publish(new JokerUsedEvent(getId(), getName(), "Key Joker used: You received an extra key!"));
         return true;
+    }
+
+    public boolean canBeUsedIn(Room room) {
+        return room.getName().equals("Daily Scrum") || room.getName().equals("Review");
     }
 
     @Override

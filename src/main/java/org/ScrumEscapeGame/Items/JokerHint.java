@@ -2,6 +2,7 @@ package org.ScrumEscapeGame.Items;
 
 import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.GameObjects.Player;
+import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Providers.HintProvider;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
@@ -9,7 +10,7 @@ import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import java.util.List;
 import java.util.Random;
 
-public class JokerHint extends Joker implements Usable, Inspectable {
+public class JokerHint extends Item implements Joker {
 
     public JokerHint(int id, String name, String description) {
         super(id, name, description);
@@ -42,6 +43,11 @@ public class JokerHint extends Joker implements Usable, Inspectable {
 
         // Publish an event to display the message.
         publisher.publish(new JokerUsedEvent(getId(), getName(), message));
+        return true;
+    }
+
+    @Override
+    public boolean canBeUsedIn(Room room) {
         return true;
     }
 
