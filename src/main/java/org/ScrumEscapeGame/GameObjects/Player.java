@@ -16,6 +16,7 @@ public class Player {
     private String status;      // The player's current status (e.g., "BEGINNING", "IN PROGRESS").
     private Inventory inventory; // Stores items collected by the player.
     private List<Integer> solvedRooms; // Tracks which rooms the player has solved.
+    private int keys = 0;
 
     /**
      * Initializes a new Player object with default values.
@@ -125,6 +126,16 @@ public class Player {
                 .filter(item -> item instanceof Key)
                 .map(item -> (Key) item)
                 .collect(Collectors.toList());
+    }
+
+    public void addKey()
+    {
+        keys++;
+    }
+
+    public int getKeyCount()
+    {
+        return keys;
     }
 }
 

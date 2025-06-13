@@ -22,6 +22,7 @@ abstract public class Room {
     private String description;            // Text describing the room.
     private Map<String, Connection> neighbours; // Stores connections to neighboring rooms.
     private int displayOrder;              // Defines the order in which the room is displayed.
+    private String name;
 
     // Inventory is left uninitialized eagerly to save resources:
     private Inventory inventory;
@@ -36,6 +37,7 @@ abstract public class Room {
         this.id = id;
         this.description = description;
         this.neighbours = new HashMap<>();
+        this.name = name;
     }
 
     /**
@@ -45,6 +47,12 @@ abstract public class Room {
      */
     public int getId() {
         return id;
+    }
+
+
+    public String getName()
+    {
+        return name;
     }
 
     /**
