@@ -121,6 +121,7 @@ public class RoomInventoryProvider {
             }
             else if ("Review".equals(roomType) || "SprintReview".equals(roomType)) {
                 inventory.addItem(new JokerKey(201, "KeyJoker", "Geeft een extra sleutel in Review."));
+                inventory.addItem(new JokerHint(105, "HintJoker", "Geeft een hint bij de SprintReview-vraag."));
             }
         }
 
