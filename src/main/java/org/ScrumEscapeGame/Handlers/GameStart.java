@@ -73,6 +73,8 @@ public class GameStart {
         // The displayService is passed to the AnswerCommand (to be used by room strategies).
         commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, displayService));
 
+        commandManager.register("hint", new HintCommand(gameContext, (GameUIService) displayService));
+
         commandManager.register("toggleInventory", new ToggleInventoryCommand((GameUIService) displayService));
 
 

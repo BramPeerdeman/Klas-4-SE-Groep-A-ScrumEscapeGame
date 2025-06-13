@@ -117,8 +117,10 @@ public class RoomWithQuestion extends Room implements HasQuestions {
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
                 // 1st incorrect answer → show hint
-                String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
-                publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
+                if (hasHelper) {
+                    String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+                    publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
+                }
 
                 // Retry the same question once
                 boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
@@ -135,6 +137,11 @@ public class RoomWithQuestion extends Room implements HasQuestions {
 
     public boolean hasHelper() {
         return hasHelper;
+    }
+
+    public void giveHint(EventPublisher<GameEvent> publisher) {
+        String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+        publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
     }
 }
 

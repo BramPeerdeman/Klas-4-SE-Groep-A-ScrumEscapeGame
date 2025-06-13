@@ -145,6 +145,15 @@ public class KeyBindSetup {
             }
         });
 
+        inputMap.put(KeyStroke.getKeyStroke("R"), "hint");
+        actionMap.put("hint", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                uiService.handle("hint");
+                uiService.refreshMapView();
+            }
+        });
+
         inputMap.put(KeyStroke.getKeyStroke("I"), "toggleInventory");
         actionMap.put("toggleInventory", new AbstractAction() {
             @Override
