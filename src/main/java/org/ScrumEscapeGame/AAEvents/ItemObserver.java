@@ -3,8 +3,8 @@ package org.ScrumEscapeGame.AAEvents;
 
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 
-public class ItemObserver implements EventObserver<GameEvent> {
-    private final GameUIService uiService;
+public class ItemObserver extends UIObserverBase implements EventObserver<GameEvent> {
+
 
     /**
      * Constructs a ItemObserver.
@@ -12,7 +12,7 @@ public class ItemObserver implements EventObserver<GameEvent> {
      * @param uiService The UI service to interact with game events.
      */
     public ItemObserver(GameUIService uiService) {
-        this.uiService = uiService;
+        super(uiService); // oproep naar de constructor van UIObserverBase
     }
     @Override
     public void update(GameEvent e) {

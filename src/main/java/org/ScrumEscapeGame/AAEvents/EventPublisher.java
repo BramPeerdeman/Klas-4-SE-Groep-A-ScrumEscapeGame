@@ -17,7 +17,7 @@ public class EventPublisher<T extends GameEvent> {
      * @param observer The observer to add.
      */
     public void addObserver(EventObserver<T> observer) {
-        observers.add(observer);
+        manageObserver(observer, true);
     }
 
     /**
@@ -26,7 +26,12 @@ public class EventPublisher<T extends GameEvent> {
      * @param observer The observer to remove.
      */
     public void removeObserver(EventObserver<T> observer) {
-        observers.remove(observer);
+        manageObserver(observer, false);
+    }
+
+    private void manageObserver(EventObserver<T> observer, boolean add) {
+        if (add) observers.add(observer);
+        else observers.remove(observer);
     }
 
     /**

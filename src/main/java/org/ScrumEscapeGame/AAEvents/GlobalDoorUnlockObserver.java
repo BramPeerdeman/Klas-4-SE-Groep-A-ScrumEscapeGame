@@ -6,8 +6,8 @@ import org.ScrumEscapeGame.Rooms.LockedDoor;
 /**
  * Observes door unlock events and unlocks the relevant door.
  */
-public class GlobalDoorUnlockObserver implements EventObserver<GameEvent> {
-    private final GameUIService uiService;
+public class GlobalDoorUnlockObserver extends UIObserverBase implements EventObserver<GameEvent> {
+
 
     /**
      * Constructs a GlobalDoorUnlockObserver.
@@ -15,7 +15,7 @@ public class GlobalDoorUnlockObserver implements EventObserver<GameEvent> {
      * @param uiService The UI service to interact with game events.
      */
     public GlobalDoorUnlockObserver(GameUIService uiService) {
-        this.uiService = uiService;
+        super(uiService); // oproep naar de constructor van UIObserverBase
     }
 
     @Override
