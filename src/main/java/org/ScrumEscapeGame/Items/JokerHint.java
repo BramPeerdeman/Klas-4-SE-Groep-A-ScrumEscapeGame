@@ -28,7 +28,10 @@ public class JokerHint extends Item implements Joker {
         String message;
 
         if (qwh != null) {
-            List<HintProvider> hints = qwh.getHintProviders();
+            //List<HintProvider> hints = qwh.getHintProviders();
+
+            List<HintProvider> hints = qwh.getFunnyHintProviders();
+
             if (hints != null && !hints.isEmpty()) {
                 // Pick a random hint from the available hints.
                 Random rnd = new Random();
