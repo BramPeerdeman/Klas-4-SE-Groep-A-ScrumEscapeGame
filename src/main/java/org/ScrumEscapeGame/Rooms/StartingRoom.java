@@ -47,17 +47,23 @@ public class StartingRoom extends Room {
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
         // Update the player's position.
         player.setPosition(this.getId());
-        // Publish the room description and welcome messages.
+
+        // Publish the room description.
         publisher.publish(new NotificationEvent(getDescription()));
-        publisher.publish(new NotificationEvent("This is the starting room. Read the introduction and get ready to begin!"));
-        publisher.publish(new NotificationEvent("\n--- Controls ---\n" +
-                "W - Move north        M - Open the level map\n" +
-                "A - Move west         L - Get the lore of the room\n" +
-                "S - Move south        K - Check the status of the game\n" +
-                "D - Move east         Q - Attempt the room's question\n" +
-                "SAVE - Type save to save the game\n"));
-        publisher.publish(new NotificationEvent("I - Open/close your inventory (uses mouse controls)"));
-        publisher.publish(new NotificationEvent("NOTE: Currently only hardcore mode is functional, the monster instakills!"));
+
+        // Publish a special message stating that a terminal is visible.
+        publisher.publish(new NotificationEvent(
+                "You enter the starting room and notice a terminal mounted on the wall."
+        ));
+
+        publisher.publish(new NotificationEvent(
+                "The terminal displays: 'Press R to access the introduction, instructions, and other help.'"
+        ));
+
+        // Optionally, include a short message to keep the room's ambience.
+        publisher.publish(new NotificationEvent(
+                "Take a moment to read the terminal message before you begin your journey."
+        ));
     }
 
     @Override

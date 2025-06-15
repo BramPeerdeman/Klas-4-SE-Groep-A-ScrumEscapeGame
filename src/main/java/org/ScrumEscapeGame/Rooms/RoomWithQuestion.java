@@ -143,6 +143,14 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
         publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
     }
+
+    public QuestionWithHints getQuestionWithHints() {
+        return questionWithHints;
+    }
+
+    public HintProviderSelector getHintProviderSelector() {
+        return hintSelector;
+    }
 }
 
 
