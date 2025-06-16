@@ -5,6 +5,7 @@ import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.GameResetEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
@@ -86,7 +87,7 @@ public class BossRoom extends Room implements HasQuestions {
     }
     public void triggerQuestion(Player player,
                                 EventPublisher<GameEvent> publisher,
-                                DisplayService displayService) {
+                                GameUIService displayService) {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in BossRoom id: " + getId());
             System.out.println("DEBUG: vragen beantwoord = " + questionsAnsweredCount + ", failed = " + failed);

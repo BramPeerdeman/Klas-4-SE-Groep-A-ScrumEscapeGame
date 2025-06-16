@@ -92,7 +92,6 @@ public class GamePanel extends JPanel {
             }
         });
 
-
         // Set up global key bindings.
         keyBindSetup.setupGlobalKeyBindings(this);
         // Request focus for key events.

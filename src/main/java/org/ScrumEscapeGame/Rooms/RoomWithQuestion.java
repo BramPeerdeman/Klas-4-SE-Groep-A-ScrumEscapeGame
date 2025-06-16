@@ -2,6 +2,7 @@ package org.ScrumEscapeGame.Rooms;
 
 import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
@@ -84,6 +85,9 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     @Override
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
         super.onEnter(player, publisher);
+        if (hasHelper) {
+            publisher.publish(new NotificationEvent("A terminal is located in this room, it's screen reads 'press R' "));
+        }
         if (questionWithHints != null && strategy != null && !questionAsked) {
             publisher.publish(new NotificationEvent("A challenge awaits in this room. Enter 'Q' to attempt the question."));
         }
@@ -99,7 +103,7 @@ public class RoomWithQuestion extends Room implements HasQuestions {
      * @param publisher       the publisher for game events.
      * @param displayService  the service used to display messages.
      */
-    public void triggerQuestion(Player player, EventPublisher<GameEvent> publisher, DisplayService displayService) {
+    public void triggerQuestion(Player player, EventPublisher<GameEvent> publisher, GameUIService displayService) {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }

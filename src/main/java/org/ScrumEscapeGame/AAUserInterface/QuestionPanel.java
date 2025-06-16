@@ -2,73 +2,71 @@ package org.ScrumEscapeGame.AAUserInterface;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.util.List;
 
 public class QuestionPanel extends JPanel {
+    private JLabel questionLabel;
+    private JRadioButton[] answerButtons;
+    private ButtonGroup buttonGroup;
+    private JButton submitButton;
 
-    private final JTextArea questionArea;
-    private final ButtonGroup answerGroup;
-    private final JPanel answersPanel;
-    private final JButton submitButton;
     private String correctAnswer;
 
-    public QuestionPanel() {
+    public QuestionPanel(InventoryPanel inventoryPanel) {
         setLayout(new BorderLayout());
 
-        questionArea = new JTextArea();
-        questionArea.setEditable(false);
-        questionArea.setLineWrap(true);
-        questionArea.setWrapStyleWord(true);
-        questionArea.setText("Puzzle will appear here.");
-        add(new JScrollPane(questionArea), BorderLayout.NORTH);
+        // Safe: only add inventoryPanel if it's not null
+        if (inventoryPanel != null) {
+            add(inventoryPanel, BorderLayout.EAST);
+        }
 
-        answersPanel = new JPanel();
-        answersPanel.setLayout(new BoxLayout(answersPanel, BoxLayout.Y_AXIS));
-        add(answersPanel, BorderLayout.CENTER);
+        questionLabel = new JLabel("Question appears here");
+        add(questionLabel, BorderLayout.NORTH);
+
+        JPanel answerPanel = new JPanel();
+        answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
+        add(answerPanel, BorderLayout.CENTER);
+
+        answerButtons = new JRadioButton[4];
+        buttonGroup = new ButtonGroup();
+
+        for (int i = 0; i < 4; i++) {
+            answerButtons[i] = new JRadioButton("Choice " + (i + 1));
+            buttonGroup.add(answerButtons[i]);
+            answerPanel.add(answerButtons[i]);
+        }
 
         submitButton = new JButton("Submit");
         add(submitButton, BorderLayout.SOUTH);
-
-        answerGroup = new ButtonGroup();
     }
 
-    // Call this method when loading a question.
-    public void loadQuestion(String questionText, List<String> answers, String correctAnswer) {
+    public void loadQuestion(String question, String[] choices, String correctAnswer) {
+        questionLabel.setText(question);
         this.correctAnswer = correctAnswer;
-        questionArea.setText(questionText);
-        answersPanel.removeAll();
-        answerGroup.clearSelection();
-
-        for (String ans : answers) {
-            JRadioButton button = new JRadioButton(ans);
-            answerGroup.add(button);
-            answersPanel.add(button);
+        for (int i = 0; i < answerButtons.length; i++) {
+            answerButtons[i].setText(choices[i]);
         }
-
-        answersPanel.revalidate();
-        answersPanel.repaint();
+        buttonGroup.clearSelection();
     }
 
-    // Register the listener for submit button.
+    public void setQuestionText(String text) {
+        questionLabel.setText(text);
+    }
+
     public void setSubmitAction(ActionListener listener) {
+        for (ActionListener al : submitButton.getActionListeners()) {
+            submitButton.removeActionListener(al);
+        }
         submitButton.addActionListener(listener);
     }
 
-    public String getSelectedAnswer() {
-        for (Enumeration<AbstractButton> buttons = answerGroup.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
-            if (button.isSelected()) {
-                return button.getText();
+    public boolean isAnswerCorrect() {
+        for (JRadioButton button : answerButtons) {
+            if (button.isSelected() && button.getText().equals(correctAnswer)) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    public boolean isAnswerCorrect() {
-        String selected = getSelectedAnswer();
-        return selected != null && selected.equals(correctAnswer);
-    }
 }

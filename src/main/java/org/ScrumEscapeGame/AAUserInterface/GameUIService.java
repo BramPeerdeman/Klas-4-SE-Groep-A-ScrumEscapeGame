@@ -19,25 +19,20 @@ import java.util.Map;
 public class GameUIService implements DisplayService {
     private final GameContext context;
     private final ConsoleWindow console;
-    private CardLayout cards;
-    private JPanel panelContainer;
-    // (Optional) a map of room labels for dynamic updates.
-    private Map<Integer, JLabel> roomLabels;
-    private MapPanel mapPanel;
-    private JTextArea outputArea;
-    private JTextField inputField;
-    private JLabel statusLabel; // Displays player status.
+    private final CardLayout cards;
+    private final JPanel panelContainer;
+    private final MapPanel mapPanel;
+    private final JTextArea outputArea;
+    private final JTextField inputField;
+    private final JLabel statusLabel;
 
-    // New: Inventory panel reference and visibility flag.
-    private InventoryPanel inventoryPanel;
-    private boolean inventoryVisible = false;
-
-    private QuestionPanel questionPanel;
-    private boolean questionVisible = false;
-
-    // Terminal (assistant) panel state.
-    private boolean terminalVisible = false;
+    private final InventoryPanel inventoryPanel;
+    private final QuestionPanel questionPanel;
     private TerminalPanel terminalPanel;
+
+    private boolean inventoryVisible = false;
+    private boolean questionVisible = false;
+    private boolean terminalVisible = false;
 
     /**
      * Constructs the UI service necessary for handling UI behavior.
@@ -62,6 +57,13 @@ public class GameUIService implements DisplayService {
         this.outputArea = outputArea;
         this.inputField = inputField;
         this.statusLabel = statusLabel;
+
+        // Initialize both panels immediately so they are never null
+        this.inventoryPanel = new InventoryPanel(context, this);
+        panelContainer.add(inventoryPanel, "inventory");
+
+        this.questionPanel = new QuestionPanel(inventoryPanel);
+        panelContainer.add(questionPanel, "question");
     }
 
     @Override
@@ -92,13 +94,6 @@ public class GameUIService implements DisplayService {
         cards.show(panelContainer, "question");
         inventoryVisible = false;
     }
-
-    public void setQuestionText(String text) {
-        if (questionPanel != null) {
-            questionPanel.setQuestionText(text);
-        }
-    }
-
 
     /**
      * Returns the room by its identifier from the context.
@@ -166,63 +161,64 @@ public class GameUIService implements DisplayService {
             cards.show(panelContainer, "game");
             inventoryVisible = false;
             printMessage("Closing inventory...");
-            // Publish event indicating the inventory has been closed.
             context.getEventPublisher().publish(new InventoryClosedEvent());
         } else {
-            if (inventoryPanel == null) {
-                inventoryPanel = new InventoryPanel(context, this);
-                panelContainer.add(inventoryPanel, "inventory");
-            }
             inventoryPanel.refresh();
             cards.show(panelContainer, "inventory");
             inventoryVisible = true;
-            System.out.println("DEBUG: Inventory Opened");
             printMessage("Inventory opened.");
-            // Publish event indicating the inventory is open.
             context.getEventPublisher().publish(new InventoryOpenedEvent());
         }
-        inventoryPanel.refresh();
     }
+
 
     public void toggleQuestionPanel() {
         if (questionVisible) {
-            cards.show(panelContainer, "game");
-            questionVisible = false;
+            showGamePanel();
             printMessage("Closing puzzle screen...");
+            questionVisible = false;
         } else {
-            if (questionPanel == null) {
-                questionPanel = new QuestionPanel();
-                panelContainer.add(questionPanel, "question");
-            }
-
-            Room currentRoom = context.getPlayer().getCurrentRoom();
+            int pos = context.getPlayer().getPosition();
+            Room currentRoom = context.getRoomManager().getRooms().get(pos);
             int roomId = currentRoom.getId();
 
-            // Check if the room is already solved
             if (context.getPlayer().isRoomSolved(roomId)) {
                 questionPanel.setQuestionText("You have already solved this puzzle.");
+                questionPanel.setSubmitAction(e -> {
+                    // Close immediately
+                    showGamePanel();
+                    questionVisible = false;
+                });
             } else if (currentRoom instanceof RoomWithQuestion roomWithQuestion) {
-                QuestionWithHints qw = roomWithQuestion.getQuestion();
+                // Load question normally
+                QuestionWithHints qw = roomWithQuestion.getQuestionWithHints();
                 org.ScrumEscapeGame.GameObjects.Question question = qw.getQuestion();
 
                 questionPanel.loadQuestion(
-                        question.getQuestionText(),
-                        question.getPossibleAnswers(),
+                        question.getPrompt(),
+                        question.getChoices().toArray(new String[0]),
                         question.getCorrectAnswer()
                 );
 
+                // Set submit action to delegate question handling to triggerQuestion
                 questionPanel.setSubmitAction(e -> {
-                    if (questionPanel.isAnswerCorrect()) {
-                        JOptionPane.showMessageDialog(questionPanel, "Correct answer!");
-                        context.getPlayer().addSolvedRoom(roomId);
-                        updateStatus("Room " + roomId + " solved.");
-                        printMessage("You solved room " + roomId + "!");
-                    } else {
-                        JOptionPane.showMessageDialog(questionPanel, "Incorrect. Try again.");
-                    }
+                    // Call the triggerQuestion logic here
+                    roomWithQuestion.triggerQuestion(
+                            context.getPlayer(),
+                            context.getEventPublisher(),
+                            this // GameUIService itself for display callbacks
+                    );
+
+                    // After question logic, close question panel
+                    showGamePanel();
+                    questionVisible = false;
                 });
             } else {
                 questionPanel.setQuestionText("No question in this room.");
+                questionPanel.setSubmitAction(e -> {
+                    showGamePanel();
+                    questionVisible = false;
+                });
             }
 
             cards.show(panelContainer, "question");
@@ -230,8 +226,6 @@ public class GameUIService implements DisplayService {
             printMessage("Puzzle screen opened.");
         }
     }
-
-
 
 
     public boolean isInventoryVisible() {
