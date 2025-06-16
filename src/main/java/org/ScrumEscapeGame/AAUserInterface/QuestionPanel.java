@@ -150,6 +150,16 @@ public class QuestionPanel extends JPanel implements ItemUsageCallback {
         return embeddedInventoryPanel;
     }
 
+    public void clear() {
+        // Clear out any previous text, answers, hints, etc.
+        this.questionLabel.setText("");
+        this.hintLabel.setText("");
+        // You might also want to clear any button selections or reset related components.
+        buttonGroup.clearSelection();
+        embeddedInventoryPanel.clearMessages(); // If you have a dedicated method.
+    }
+
+
 
 }
 

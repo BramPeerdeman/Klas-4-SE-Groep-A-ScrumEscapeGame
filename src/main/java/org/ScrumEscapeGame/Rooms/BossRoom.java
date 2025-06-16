@@ -23,109 +23,155 @@ public class BossRoom extends Room implements HasQuestions {
     // The locked door that guards the boss challenge.
     private LockedDoor bossDoor;
     private static final boolean DEBUG = true;
-    // Drie “boss‐level” vragen uit RoomQuestions.getBossQuestions()
 
-
+    // List of boss-level questions from RoomQuestions.getBossQuestions().
     private final List<Question> questions = RoomQuestions.getBossQuestions();
 
-    // Welke strategie we gebruiken om vragen te stellen (bijv. MultipleChoiceStrategy).
+    // The strategy used to ask questions (e.g., MultipleChoiceStrategy).
     private final QuestionStrategy strategy;
 
-    // Houdt bij hoeveel vragen al correct zijn beantwoord.
+    // Tracks how many questions have been answered correctly.
     private int questionsAnsweredCount = 0;
 
-    // Als de speler één vraag fout beantwoordt, zetten we deze flag en stoppen we verdere checks.
+    // Flag that indicates a failure (e.g., a wrong answer) has occurred.
     private boolean failed = false;
 
-    // Dit zo laten als je geen jokers in boss room wil
+    // In boss room we don't offer any jokers.
     @Override
     public List<Joker> getAvailableJokers() {
         return Collections.emptyList();
     }
 
-
-
-
     /**
-     * Constructs a BossRoom with a given id, description, and boss door.
+     * Constructs a BossRoom with a given id, description, boss door, and question strategy.
      *
      * @param id          the unique room identifier.
      * @param description a description of the room.
      * @param bossDoor    the locked door instance guarding the boss challenge.
+     * @param strategy    the question strategy to use.
      */
     public BossRoom(int id, String description, LockedDoor bossDoor, QuestionStrategy strategy) {
         super(id, description);
         this.bossDoor = bossDoor;
         this.strategy = strategy;
-
     }
 
     /**
      * Returns the boss door associated with this room.
      *
-     * @return the LockedDoor instance for this boss room.
+     * @return the LockedDoor instance for the boss room.
      */
     public LockedDoor getBossDoor() {
         return bossDoor;
     }
 
     /**
+     * Returns the list of boss questions.
+     *
+     * @return a list of questions.
+     */
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    /**
+     * Returns the number of correctly answered boss questions.
+     *
+     * @return the count of answered questions.
+     */
+    public int getQuestionsAnsweredCount() {
+        return questionsAnsweredCount;
+    }
+
+    /**
+     * Increments the count of correctly answered boss questions by one.
+     */
+    public void incrementQuestionsAnsweredCount() {
+        questionsAnsweredCount++;
+    }
+
+    /**
+     * Sets the failed flag.
+     *
+     * @param failed true if the challenge is failed, false otherwise.
+     */
+    public void setFailed(boolean failed) {
+        this.failed = failed;
+    }
+
+    /**
+     * Returns the current failed state.
+     *
+     * @return true if a wrong answer was given, false otherwise.
+     */
+    public boolean isFailed() {
+        return failed;
+    }
+
+    /**
      * Called when the player enters the boss room.
-     * In addition to the standard room entry logic, it publishes a notification
-     * informing the player that the door requires keys to unlock.
+     * In addition to the standard room entry logic, the player is informed that keys are needed.
      *
      * @param player    the player entering the room.
      * @param publisher the event publisher for sending notifications.
      */
     @Override
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
-        // Let the base class update the player's position and notify entry.
+        // Let the base room logic update player position etc.
         super.onEnter(player, publisher);
-
-        // Inform the player specific to the boss room.
+        // Notify the player specific to the boss room.
         publisher.publish(new NotificationEvent("You have entered the boss room. To unlock the door, you must use your keys."));
     }
+
+    /**
+     * Triggers the boss challenge question.
+     * The player must answer three questions correctly.
+     * A wrong answer immediately marks the challenge as failed.
+     *
+     * @param player         the current player.
+     * @param publisher      the event publisher.
+     * @param displayService the display service for showing messages.
+     */
     public void triggerQuestion(Player player,
                                 EventPublisher<GameEvent> publisher,
                                 GameUIService displayService) {
         if (DEBUG) {
             System.out.println("DEBUG: triggerQuestion() called in BossRoom id: " + getId());
-            System.out.println("DEBUG: vragen beantwoord = " + questionsAnsweredCount + ", failed = " + failed);
+            System.out.println("DEBUG: Questions answered = " + questionsAnsweredCount + ", failed = " + failed);
         }
 
-        // Als er al eerder een fout was, doen we niets meer.
+        // If failure has already occurred, do nothing further.
         if (failed) {
             return;
         }
 
-        // Zolang er nog minder dan 3 correct beantwoorde vragen zijn:
+        // Only ask questions if fewer than 3 have been answered correctly.
         if (questionsAnsweredCount < 3) {
             Question currentQ = questions.get(questionsAnsweredCount);
             boolean correct = strategy.ask(player, currentQ, publisher, displayService);
 
             if (DEBUG) {
-                System.out.println("DEBUG: Boss vraag #" + (questionsAnsweredCount + 1) +
-                        " beantwoord. Correct? " + correct);
+                System.out.println("DEBUG: Boss question #" + (questionsAnsweredCount + 1) +
+                        " answered. Correct? " + correct);
             }
-
             if (!correct) {
-                // Bij fout antwoord: direct game reset.
-                failed = true;
+                // On a wrong answer, mark failure and publish game reset event.
                 publisher.publish(new GameResetEvent("Wrong answer in boss room, game resetting...."));
                 return;
             }
+            // Correct answer; increment the count.
+            incrementQuestionsAnsweredCount();
 
-            // Als correct, verhogen we het aantal correct beantwoorde vragen.
-            questionsAnsweredCount++;
-
-            // Als dit nu de derde correcte vraag is, beëindig het spel.
+            // If three correct answers have been provided, announce victory.
             if (questionsAnsweredCount == 3) {
                 publisher.publish(new NotificationEvent(
-                        "Congratulations, you answered all questions correctly, you won!"
+                        "Congratulations, you answered all boss questions correctly, you won!"
                 ));
             }
         }
     }
 }
+
+
 
 

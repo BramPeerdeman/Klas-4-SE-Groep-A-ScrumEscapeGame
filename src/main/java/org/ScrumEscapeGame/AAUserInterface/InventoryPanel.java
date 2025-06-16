@@ -235,6 +235,10 @@ public class InventoryPanel extends JPanel {
         }
     }
 
+    public void clearMessages() {
+        messageArea.setText("");
+    }
+
 }
 
 
