@@ -68,6 +68,7 @@ public class GameComposition {
         publisher.addObserver(new InventoryObserver(uiService));
         publisher.addObserver(new InventoryItemActionObserver(gameContext, uiService));
         publisher.addObserver(new BossDoorUnlockHandler(gameContext));
+        publisher.addObserver(new TerminalObserver(uiService));
     }
 
 
