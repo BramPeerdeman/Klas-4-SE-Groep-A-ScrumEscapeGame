@@ -17,9 +17,9 @@ public abstract class Monster {
     // --- Gemeenschappelijke velden voor ieder monster ---
     protected final String name;
     protected final String description;
-    protected boolean alive;                           // staat dit monster nog “in leven”?
+    protected int healthPoints;                         // staat dit monster nog “in leven”?
     protected final EventPublisher<?> publisher;        // voor eventuele events / UI‐meldingen
-    protected final GameContext context;               // verwijzing naar de spel‐context
+    protected final GameContext context;                // verwijzing naar de spel‐context
 
     /**
      * Constructor: vul de naam, beschrijving, publisher en context in.
@@ -30,12 +30,12 @@ public abstract class Monster {
      * @param publisher   de EventPublisher uit GameContext (bijv. context.getPublisher())
      * @param context     de GameContext zelf (in geval je daar informatie uit haalt)
      */
-    public Monster(String name, String description, EventPublisher<?> publisher, GameContext context) {
+    public Monster(String name, String description, EventPublisher<?> publisher, GameContext context, int healthPoints) {
         this.name        = name;
         this.description = description;
         this.publisher   = publisher;
         this.context     = context;
-        this.alive       = false;    // staat nu nog “dood”—spawn() moet dit op true zetten
+        this.healthPoints = healthPoints;
     }
 
     // ================================
@@ -55,7 +55,7 @@ public abstract class Monster {
         spawn();
 
         // Stap 2: herhaal “per beurt” zolang alive == true
-        while (alive) {
+        while (isAlive()) {
             takeTurn();
         }
 
@@ -88,6 +88,9 @@ public abstract class Monster {
      *
      * Kortom: alle logica per dag/ronde/beurt komt hier.
      */
+    protected abstract void takeDamage(int damage);
+
+
     protected abstract void takeTurn();
 
     /**
@@ -98,6 +101,7 @@ public abstract class Monster {
      *   - Loot give‐away of score verhogen
      *   - Eventueel verwijderen uit GameContext / de arena opruimen
      */
+
     protected abstract void die();
 
     // ================================
@@ -109,7 +113,7 @@ public abstract class Monster {
      * Subklassen hoeven dit niet te overschrijven.
      */
     public boolean isAlive() {
-        return alive;
+        return healthPoints > 0;
     }
 
     /**

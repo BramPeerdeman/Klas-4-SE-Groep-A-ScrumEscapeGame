@@ -40,6 +40,7 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     private static final boolean DEBUG = true;
     private final HintProviderSelector hintSelector;
     private boolean hasHelper;
+    private boolean hasStatue;
 
 
 
@@ -59,12 +60,13 @@ public class RoomWithQuestion extends Room implements HasQuestions {
      * @param hintSelector what type of hint you're getting.
      * @param hasHelper whether it can use hints.
      */
-    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector, Boolean hasHelper) {
+    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector, Boolean hasHelper, Boolean hasStatue) {
         super(id, description);
         this.questionWithHints = questionWithHints;
         this.strategy = strategy;
         this.hintSelector = hintSelector;
         this.hasHelper = hasHelper;
+        this.hasStatue = hasStatue;
     }
 
     /**

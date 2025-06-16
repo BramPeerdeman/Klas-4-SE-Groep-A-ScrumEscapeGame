@@ -56,6 +56,8 @@ public class RoomFactory {
         // Standard room: BacklogRefinement.
         boolean helper = true;
         boolean noHelper = false;
+        boolean hasStatue = true;
+        boolean hasNoStatue = false;
         roomCreators.put("BacklogRefinement", (def, ds) ->
                 new RoomWithQuestion(
                         def.getId(),
@@ -63,7 +65,9 @@ public class RoomFactory {
                         RoomQuestions.getQuestionForRoom(def.getId()),
                         new MultipleChoiceStrategy(),  // Using a multiple choice strategy.
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
-                        helper
+                        helper,
+                        hasNoStatue
+
 
                 )
         );
@@ -75,7 +79,8 @@ public class RoomFactory {
                         RoomQuestions.getQuestionForRoom(def.getId()),
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
-                        helper
+                        helper,
+                        hasNoStatue
                 )
         );
         // Standard room: SprintBacklog.
@@ -86,7 +91,8 @@ public class RoomFactory {
                         RoomQuestions.getQuestionForRoom(def.getId()),
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
-                        helper
+                        helper,
+                        hasNoStatue
                 )
         );
         // Standard room: SprintReview.
@@ -97,7 +103,8 @@ public class RoomFactory {
                         RoomQuestions.getQuestionForRoom(def.getId()),
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
-                        helper
+                        helper,
+                        hasNoStatue
                 )
         );
         // Standard room: ProductBacklog.
@@ -108,7 +115,8 @@ public class RoomFactory {
                         RoomQuestions.getQuestionForRoom(def.getId()),
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
-                        helper
+                        helper,
+                        hasNoStatue
                 )
         );
         // New room type: Boss. A new BossRoom type already in your system.
