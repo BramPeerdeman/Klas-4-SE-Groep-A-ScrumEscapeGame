@@ -84,17 +84,14 @@ public class GamePanel extends JPanel {
         splitPane.setDividerLocation(400);
         add(splitPane, BorderLayout.CENTER);
 
-        // ✅ Keybinding voor Q
-//        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "openQuestionPanel");
-//        this.getActionMap().put("openQuestionPanel", new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                uiService.getEventPublisher().publish(new QuestionOpenedEvent());
-//                JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(GamePanel.this);
-//                QuestionPanel panel = new QuestionPanel(parent);
-//                panel.setVisible(true);
-//            }
-//        });
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "toggleQuestion");
+        this.getActionMap().put("toggleQuestion", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                uiService.toggleQuestionPanel();
+            }
+        });
+
 
         // Set up global key bindings.
         keyBindSetup.setupGlobalKeyBindings(this);

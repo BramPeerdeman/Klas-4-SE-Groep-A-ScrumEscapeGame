@@ -8,6 +8,8 @@ import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.*;
+import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +34,9 @@ public class GameUIService implements DisplayService {
     // New: Inventory panel reference and visibility flag.
     private InventoryPanel inventoryPanel;
     private boolean inventoryVisible = false;
+
+    private QuestionPanel questionPanel;
+    private boolean questionVisible = false;
 
     /**
      * Constructs the UI service necessary for handling UI behavior.
@@ -86,6 +91,13 @@ public class GameUIService implements DisplayService {
         cards.show(panelContainer, "question");
         inventoryVisible = false;
     }
+
+    public void setQuestionText(String text) {
+        if (questionPanel != null) {
+            questionPanel.setQuestionText(text);
+        }
+    }
+
 
     /**
      * Returns the room by its identifier from the context.
@@ -170,6 +182,56 @@ public class GameUIService implements DisplayService {
         }
         inventoryPanel.refresh();
     }
+
+    public void toggleQuestionPanel() {
+        if (questionVisible) {
+            cards.show(panelContainer, "game");
+            questionVisible = false;
+            printMessage("Closing puzzle screen...");
+        } else {
+            if (questionPanel == null) {
+                questionPanel = new QuestionPanel();
+                panelContainer.add(questionPanel, "question");
+            }
+
+            Room currentRoom = context.getPlayer().getCurrentRoom();
+            int roomId = currentRoom.getId();
+
+            // Check if the room is already solved
+            if (context.getPlayer().isRoomSolved(roomId)) {
+                questionPanel.setQuestionText("You have already solved this puzzle.");
+            } else if (currentRoom instanceof RoomWithQuestion roomWithQuestion) {
+                QuestionWithHints qw = roomWithQuestion.getQuestion();
+                org.ScrumEscapeGame.GameObjects.Question question = qw.getQuestion();
+
+                questionPanel.loadQuestion(
+                        question.getQuestionText(),
+                        question.getPossibleAnswers(),
+                        question.getCorrectAnswer()
+                );
+
+                questionPanel.setSubmitAction(e -> {
+                    if (questionPanel.isAnswerCorrect()) {
+                        JOptionPane.showMessageDialog(questionPanel, "Correct answer!");
+                        context.getPlayer().addSolvedRoom(roomId);
+                        updateStatus("Room " + roomId + " solved.");
+                        printMessage("You solved room " + roomId + "!");
+                    } else {
+                        JOptionPane.showMessageDialog(questionPanel, "Incorrect. Try again.");
+                    }
+                });
+            } else {
+                questionPanel.setQuestionText("No question in this room.");
+            }
+
+            cards.show(panelContainer, "question");
+            questionVisible = true;
+            printMessage("Puzzle screen opened.");
+        }
+    }
+
+
+
 
     public boolean isInventoryVisible() {
         return inventoryVisible;

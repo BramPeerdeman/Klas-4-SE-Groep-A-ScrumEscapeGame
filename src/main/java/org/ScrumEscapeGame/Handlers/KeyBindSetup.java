@@ -107,14 +107,14 @@ public class KeyBindSetup {
         });
 
         // Binding: "Q" to trigger the answer command (for questions in rooms).
-        inputMap.put(KeyStroke.getKeyStroke("Q"), "answer");
-        actionMap.put("answer", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                uiService.handle("answer");
-                uiService.refreshMapView();
-            }
-        });
+//        inputMap.put(KeyStroke.getKeyStroke("Q"), "answer");
+//        actionMap.put("answer", new AbstractAction() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                uiService.handle("answer");
+//                uiService.refreshMapView();
+//            }
+//        });
 
         // Bind F5 to save the game, and F9 to load.
         inputMap.put(KeyStroke.getKeyStroke("F5"), "save");
