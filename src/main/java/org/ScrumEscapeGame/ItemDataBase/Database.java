@@ -17,43 +17,65 @@ public class Database {
                 "Backlog refinement helps ensure the top items are ready for upcoming sprints."
         ));
         data.put("BacklogRefinement|UNCOMMON", List.of(
-                "Intermediate techniques for prioritizing and refining the backlog."
+                "Effective refinement includes breaking large items into smaller tasks and adding clear acceptance criteria.",
+                "Refinement is a shared responsibility involving the whole Scrum Team, not just the Product Owner."
         ));
         data.put("BacklogRefinement|RARE", List.of(
-                "Advanced theories on backlog optimization and dynamic prioritization."
+                "Backlog refinement sessions should balance the cost of time spent versus the clarity gained for development.",
+
+                "Advanced teams use refinement to uncover dependencies and anticipate blockers several sprints ahead."
         ));
 
         // Planning scrolls:
         data.put("Planning|COMMON", List.of(
-                "Simple planning strategies and meeting essentials."
+                "Sprint Planning kicks off each sprint and sets the stage for what will be built.",
+
+                "The team collaborates to determine what can be delivered and how it will be achieved."
         ));
         data.put("Planning|UNCOMMON", List.of(
-                "Intermediate planning insights for resource and time management."
+                "Capacity planning considers team availability, velocity, and historical data to improve accuracy.",
+
+                "A strong Sprint Goal acts as a guiding north star during planning and execution."
         ));
         data.put("Planning|RARE", List.of(
-                "Expert-level planning methodologies that integrate risk management with agile practices."
+                "Strategic Sprint Planning includes aligning with quarterly objectives and integrating stakeholder roadmaps.",
+
+                "Expert planners visualize work in systems thinking models to prevent localized optimization."
         ));
 
         // SprintBacklog scrolls:
         data.put("SprintBacklog|COMMON", List.of(
-                "A straightforward rundown of sprint task lists."
+                "The Sprint Backlog is a subset of the Product Backlog selected for the sprint.",
+
+                "It includes the sprint goal, selected backlog items, and a plan for delivering them."
+
         ));
         data.put("SprintBacklog|UNCOMMON", List.of(
-                "Techniques for maintaining and optimizing the sprint backlog."
+                "Daily updates to the Sprint Backlog during stand-ups reflect progress and adjust for new learnings.",
+
+                "Tasking out backlog items into smaller actionable steps can clarify scope and uncover hidden work."
         ));
         data.put("SprintBacklog|RARE", List.of(
-                "Deep theoretical insights into maximizing sprint throughput and backlog efficiency."
+                "Veteran Scrum Teams use the Sprint Backlog as a dynamic information radiator, continuously shaped during the sprint.",
+
+                "Metrics like work item age and throughput can optimize Sprint Backlog management."
         ));
 
         // SprintReview scrolls:
         data.put("SprintReview|COMMON", List.of(
-                "Fundamental guidelines for conducting a sprint review."
+                "Sprint Review is a collaborative session to inspect the outcome of the sprint.",
+
+                "Stakeholders are invited to provide feedback on what was done."
         ));
         data.put("SprintReview|UNCOMMON", List.of(
-                "Intermediate strategies for gathering useful feedback during sprint reviews."
+                "Effective reviews frame feedback in the context of the Sprint Goal and product roadmap.",
+
+                "Demos should reflect not just working software, but user value delivered."
         ));
         data.put("SprintReview|RARE", List.of(
-                "Expert advice on leveraging sprint reviews to capture transformative insights."
+                "Masterful reviews blend storytelling and technical demonstration to communicate impact.",
+
+                "Sprint Reviews are fertile ground for adaptive planning and realignment of priorities."
         ));
 
         // Penultimate scrolls:
@@ -69,27 +91,30 @@ public class Database {
 
         // Boss scrolls:
         data.put("Boss|COMMON", List.of(
-                "Basic strategic pointers for the final confrontation."
+                "Facing the final boss means confronting the ultimate test of Scrum mastery, Stick to the framework: inspect, adapt, and collaborate."
         ));
         data.put("Boss|UNCOMMON", List.of(
-                "Intermediate tactics and insights for facing the boss."
+                "Strong Definition of Done and cross-functional teamwork can prevent your plans from collapsing under pressure."
         ));
         data.put("Boss|RARE", List.of(
-                "Exclusive lore and advanced strategies revealing the secrets of defeating the boss."
+                "Only those who embody the Agile mindset — empiricism, courage, and focus — can defeat the boss, Anticipating failure modes and building resilience into the team’s workflow is the key to success."
         ));
 
         // Default list for general Scrum definitions:
         data.put("Default|COMMON", List.of(
                 "Scrum is an agile framework focused on iterative progress.",
-                "It emphasizes collaboration, accountability, and continuous improvement."
+                "It emphasizes collaboration, accountability, and continuous improvement.",
+                "The Product Owner is responsible for maximizing product value through backlog prioritization."
         ));
         data.put("Default|UNCOMMON", List.of(
                 "Scrum implementations vary, but common elements include daily stand-ups and sprints.",
-                "A good Scrum team understands the importance of self-organization and adapts quickly."
+                "A good Scrum team understands the importance of self-organization and adapts quickly.",
+                "The Scrum Master facilitates team performance and shields the team from distractions."
         ));
         data.put("Default|RARE", List.of(
                 "Advanced Scrum practices involve deep dives into agile philosophy and lean methodologies.",
-                "Mastery of Scrum means tailoring its principles as projects evolve, unlocking hidden efficiencies."
+                "Mastery of Scrum means tailoring its principles as projects evolve, unlocking hidden efficiencies.",
+                "A cross-functional Scrum Team combines all skills necessary to deliver a usable product increment."
         ));
     }
 

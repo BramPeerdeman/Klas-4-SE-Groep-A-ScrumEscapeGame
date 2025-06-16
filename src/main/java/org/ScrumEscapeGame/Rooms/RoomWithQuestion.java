@@ -3,10 +3,13 @@ package org.ScrumEscapeGame.Rooms;
 import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
+import org.ScrumEscapeGame.GameObjects.Monster;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.GameObjects.Question;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.Joker;
+import org.ScrumEscapeGame.Monster.MonsterManager;
+import org.ScrumEscapeGame.Monster.StatueMonster;
 import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
@@ -43,6 +46,11 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     private boolean hasHelper;
     private boolean hasStatue;
 
+    // New fields for tracking room clearance.
+    // Indicates if the challenge (i.e. the question) has been solved.
+    private boolean challengeCleared = false;
+    // Reference to the currently active monster in the room, if any.
+    private Monster activeMonster = null;
 
 
     // DIT MOET NOG WORDEN AANGEPAST ALS JE JOKERS IN DE ROOM WIL
@@ -61,7 +69,9 @@ public class RoomWithQuestion extends Room implements HasQuestions {
      * @param hintSelector what type of hint you're getting.
      * @param hasHelper whether it can use hints.
      */
-    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints, QuestionStrategy strategy, HintProviderSelector hintSelector, Boolean hasHelper, Boolean hasStatue) {
+    public RoomWithQuestion(int id, String description, QuestionWithHints questionWithHints,
+                            QuestionStrategy strategy, HintProviderSelector hintSelector,
+                            Boolean hasHelper, Boolean hasStatue) {
         super(id, description);
         this.questionWithHints = questionWithHints;
         this.strategy = strategy;
@@ -69,6 +79,38 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         this.hasHelper = hasHelper;
         this.hasStatue = hasStatue;
     }
+
+    /**
+     * Returns true if the room can be left.
+     * The player is not allowed to leave until the challenge is cleared,
+     * which means either answering the question correctly or defeating any active monster.
+     */
+    public boolean canLeave() {
+        // If there's an active monster and it's still alive, the room cannot be left.
+        if (activeMonster != null && activeMonster.isAlive()) {
+            return false;
+        }
+        return true;
+    }
+
+    // Setter for challengeCleared so it can be set, for example, when the question is answered correctly.
+    public void setChallengeCleared(boolean cleared) {
+        this.challengeCleared = cleared;
+    }
+
+    // Setter for the active monster (for example, when the statue awakens)
+    public void setActiveMonster(Monster monster) {
+        this.activeMonster = monster;
+    }
+
+    // Optionally, a getter to check if there is an active monster.
+    public Monster getActiveMonster() {
+        return activeMonster;
+    }
+
+    // ... (other methods such as onEnter, triggerQuestion, giveHint remain unchanged)
+
+
 
     /**
      * Sets the locked door associated with this room.
@@ -120,6 +162,11 @@ public class RoomWithQuestion extends Room implements HasQuestions {
 
             if (correct) {
                 player.addSolvedRoom(getId());
+                // If a monster is active, force it to die
+                if (activeMonster != null && activeMonster.isAlive()) {
+                    activeMonster.die();  // Ensure your monster implementation properly marks it as dead.
+                    setActiveMonster(null);
+                }
                 publisher.publish(new DoorUnlockedEvent(sharedDoor));
             } else {
                 // 1st incorrect answer → show hint
@@ -130,16 +177,35 @@ public class RoomWithQuestion extends Room implements HasQuestions {
 
                 // Retry the same question once
                 boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
-
                 if (retryCorrect) {
                     player.addSolvedRoom(getId());
                     publisher.publish(new DoorUnlockedEvent(sharedDoor));
                 } else {
-                    publisher.publish(new GameResetEvent("Still incorrect! Restarting the game."));
+                    // Instead of triggering GameResetEvent immediately, we spawn the monster.
+                    publisher.publish(new NotificationEvent("Incorrect again! A monster awakens..."));
+
+                    if (hasStatue) {
+                        try {
+                            StatueMonster monster = new StatueMonster("Backlog Beast",
+                                    "The statue awakens with a menacing glare.",
+                                    publisher,
+                                    /* gameContext */ null,
+                                    5); // For example, 5 hitpoints
+                            monster.spawn();
+                            // Register the monster with the Monster Manager.
+                            MonsterManager.getInstance().registerActiveMonster(monster);
+                            // Also, store the monster in this room.
+                            setActiveMonster(monster);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 }
             }
         }
     }
+
+
 
     public boolean hasHelper() {
         return hasHelper;
@@ -157,6 +223,17 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     public HintProviderSelector getHintProviderSelector() {
         return hintSelector;
     }
+
+    public boolean hasActiveMonster() {
+        return activeMonster != null && activeMonster.isAlive();
+    }
+
+    // New helper method: deactivates any active monster in the room.
+    public void clearActiveMonster() {
+        this.activeMonster = null;
+    }
+
+
 }
 
 

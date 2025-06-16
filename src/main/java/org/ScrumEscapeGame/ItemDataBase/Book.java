@@ -1,9 +1,6 @@
 package org.ScrumEscapeGame.ItemDataBase;
 
-import org.ScrumEscapeGame.AAEvents.EventPublisher;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.ItemInspectEvent;
-import org.ScrumEscapeGame.AAEvents.UseItemEvent;
+import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.GameObjects.Player;
 import org.ScrumEscapeGame.Items.Inspectable;
 import org.ScrumEscapeGame.Items.Rarity;
@@ -32,7 +29,9 @@ public class Book extends AbstractScroll {
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
+        String uniqueContent = ContentCache.getUniqueText(1, subject, rarity, texts);
         publisher.publish(new UseItemEvent(this.id, this.name, "You used your book on " + subject));
+        publisher.publish(new NotificationEvent("You skimmed the booklet about " + subject + ", the most important takeaway was: " + uniqueContent));
         return true;
     }
 

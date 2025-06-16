@@ -17,5 +17,9 @@ public class StackableItem extends Item {
     public int getQuantity() { return quantity; }
     public void addQuantity(int amount) { this.quantity += amount; }
     public void removeQuantity(int amount) { this.quantity = Math.max(0, this.quantity - amount); }
+
+    public void decrementQuantity() {
+
+    }
 }
 

@@ -28,9 +28,20 @@ public class MultipleChoiceStrategy implements QuestionStrategy {
         }
 
         // Read player input and validate selection.
-        String input = displayService.readLine("Your answer (a, b, c, d): ").trim().toLowerCase();
-        int index = input.charAt(0) - 'a';
+        String input = displayService.readLine("Your answer (a, b, c, d): ");
+        if (input == null || input.trim().isEmpty()) { // Input is empty or null.
+            displayService.printMessage("❌ No answer provided.");
+            return false;
+        }
 
+        input = input.trim().toLowerCase();
+        // Ensure we have at least one character before proceeding.
+        if (input.length() == 0) {
+            displayService.printMessage("❌ No answer provided.");
+            return false;
+        }
+
+        int index = input.charAt(0) - 'a';
         if (index >= 0 && index < options.size() &&
                 options.get(index).equalsIgnoreCase(question.getCorrectAnswer())) {
             displayService.printMessage("✅ Correct!");
@@ -41,6 +52,7 @@ public class MultipleChoiceStrategy implements QuestionStrategy {
         }
     }
 }
+
 
 
 

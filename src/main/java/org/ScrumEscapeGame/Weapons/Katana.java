@@ -15,7 +15,7 @@ public class Katana extends Item implements Weapon, Inspectable, Usable {
     public Katana(int id, String description ,int durability, int damage) {
         super(id, "Katana", description);
         this.durability = 1;
-        this.damage = 3;
+        this.damage = 5;
     }
 
     @Override
@@ -41,5 +41,15 @@ public class Katana extends Item implements Weapon, Inspectable, Usable {
     @Override
     public boolean isStackable() {
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getDurability() {
+        return durability;
     }
 }

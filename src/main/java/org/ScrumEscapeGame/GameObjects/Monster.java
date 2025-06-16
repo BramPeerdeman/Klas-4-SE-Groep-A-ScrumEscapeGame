@@ -88,7 +88,7 @@ public abstract class Monster {
      *
      * Kortom: alle logica per dag/ronde/beurt komt hier.
      */
-    protected abstract void takeDamage(int damage);
+    public abstract void takeDamage(int damage);
 
 
     protected abstract void takeTurn();
@@ -102,7 +102,7 @@ public abstract class Monster {
      *   - Eventueel verwijderen uit GameContext / de arena opruimen
      */
 
-    protected abstract void die();
+    public abstract void die();
 
     // ================================
     //      OPTIONELE HELPERMETHODES

@@ -5,6 +5,7 @@ import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.*;
+import org.ScrumEscapeGame.Monster.MonsterManager;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 
@@ -137,6 +138,8 @@ public class GameUIService implements DisplayService {
         String args = (parts.length > 1) ? parts[1] : "";
 
         context.getCommandManager().handle(commandKey, context, console, args);
+        MonsterManager.getInstance().tick(context.getPlayer(), context.getEventPublisher());
+
     }
 
 

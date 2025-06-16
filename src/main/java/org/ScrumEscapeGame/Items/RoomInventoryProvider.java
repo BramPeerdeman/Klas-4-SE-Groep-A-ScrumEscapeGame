@@ -9,6 +9,7 @@ import org.ScrumEscapeGame.Rooms.PenultimateRoom;
 // Vergeet niet KeyJoker en JokerHint te importeren:
 import org.ScrumEscapeGame.Items.JokerKey;
 import org.ScrumEscapeGame.Items.JokerHint;
+import org.ScrumEscapeGame.Weapons.WeaponFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,38 +92,30 @@ public class RoomInventoryProvider {
             inventory = penInv;
         }
         else {
-            // For generic rooms, we generate a basic inventory using our candidate items from our rarity buckets.
             BasicInventory basic = new BasicInventory();
             Random rnd = new Random(room.getId());
-            // Decide on how many items to add (for example, 1 to 3 items)
-            int count = rnd.nextInt(3) + 1;
-            for (int i = 0; i < count; i++) {
-                double weight = rnd.nextDouble();
-                // Use weighted probabilities for rarity:
-                // 70% chance for a common item, 20% for uncommon, 10% for rare.
-                if (weight < 0.7 && !commonItems.isEmpty()) {
-                    basic.addItem(commonItems.get(rnd.nextInt(commonItems.size())));
-                } else if (weight < 0.9 && !uncommonItems.isEmpty()) {
-                    basic.addItem(uncommonItems.get(rnd.nextInt(uncommonItems.size())));
-                } else if (!rareItems.isEmpty()) {
-                    basic.addItem(rareItems.get(rnd.nextInt(rareItems.size())));
-                }
-            }
-            inventory = basic;
-        }
+            int count = rnd.nextInt(4) + 2; // Spawn 1 to 3 items
 
-        // For specific room names, add Joker items (note these are bonus/informative items).
-        if (def != null) {
-            String roomType = def.getType();
-            // Optionally, you could also check def.getAllowedJokers() and add only if they’re allowed.
-            if ("ProductBacklog".equals(roomType)) {
-                inventory.addItem(new JokerKey(104, "KeyJoker", "Geeft een extra sleutel in Product Backlog."));
-                inventory.addItem(new JokerHint(105, "HintJoker", "Geeft een hint bij de Product Backlog-vraag."));
+            // Create and configure the spawn manager if not already created.
+            ItemSpawnManager spawnManager = new ItemSpawnManager();
+            // Register the factories for different item categories:
+            spawnManager.registerFactory(new ScrollFactory(0.3)); // 30% chance for default texts
+
+            spawnManager.registerFactory(new ScrollFactory(0.3));
+            spawnManager.registerFactory(new ScrollFactory(0.3));
+            spawnManager.registerFactory(new ScrollFactory(0.3));
+
+            spawnManager.registerFactory(new JokerItemFactory());
+
+            spawnManager.registerFactory(new WeaponFactory());
+            spawnManager.registerFactory(new WeaponFactory());
+            // spawnManager.registerFactory(new WeaponFactory()); // and so on...
+
+            for (int i = 0; i < count; i++) {
+                // Spawn an item based on the factories.
+                basic.addItem(spawnManager.spawnRandomItem(room, determineRarity(rnd)));
             }
-            else if ("Review".equals(roomType) || "SprintReview".equals(roomType)) {
-                inventory.addItem(new JokerKey(201, "KeyJoker", "Geeft een extra sleutel in Review."));
-                inventory.addItem(new JokerHint(105, "HintJoker", "Geeft een hint bij de SprintReview-vraag."));
-            }
+            return basic;
         }
 
 
@@ -135,5 +128,24 @@ public class RoomInventoryProvider {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static RoomDefinition getDefinitionForStatic(Room room) {
+        return RoomDefinition.sampleDefinitions().stream()
+                .filter(def -> def.getId() == room.getId())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Rarity determineRarity(Random rnd) {
+        double weight = rnd.nextDouble();
+        if (weight < 0.7) {
+            return Rarity.COMMON;
+        } else if (weight < 0.9) {
+            return Rarity.UNCOMMON;
+        } else {
+            return Rarity.RARE;
+        }
+    }
+
 
 }

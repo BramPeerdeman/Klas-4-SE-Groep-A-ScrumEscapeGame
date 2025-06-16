@@ -17,6 +17,7 @@ public class Player {
     private Inventory inventory; // Stores items collected by the player.
     private List<Integer> solvedRooms; // Tracks which rooms the player has solved.
     private int keys = 0;
+    private int hitPoints;
 
     /**
      * Initializes a new Player object with default values.
@@ -31,6 +32,7 @@ public class Player {
         // Use the concrete BasicInventory rather than attempting to instantiate an abstract class.
         this.inventory = new BasicInventory();
         this.solvedRooms = new ArrayList<>();
+        this.hitPoints = 5;
     }
 
     /**
@@ -139,6 +141,18 @@ public class Player {
     public int getKeyCount()
     {
         return keys;
+    }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
+
+    public void clearInventory() {
+        inventory.setItems(null);
     }
 }
 
