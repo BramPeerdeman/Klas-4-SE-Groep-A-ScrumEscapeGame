@@ -66,7 +66,7 @@ public class RoomFactory {
                         new MultipleChoiceStrategy(),  // Using a multiple choice strategy.
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
                         helper,
-                        hasNoStatue
+                        hasStatue
 
 
                 )
@@ -80,7 +80,7 @@ public class RoomFactory {
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
                         helper,
-                        hasNoStatue
+                        hasStatue
                 )
         );
         // Standard room: SprintBacklog.
@@ -92,7 +92,7 @@ public class RoomFactory {
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
                         helper,
-                        hasNoStatue
+                        hasStatue
                 )
         );
         // Standard room: SprintReview.
@@ -104,7 +104,7 @@ public class RoomFactory {
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
                         helper,
-                        hasNoStatue
+                        hasStatue
                 )
         );
         // Standard room: ProductBacklog.
@@ -116,7 +116,7 @@ public class RoomFactory {
                         new MultipleChoiceStrategy(),
                         new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
                         helper,
-                        hasNoStatue
+                        hasStatue
                 )
         );
         // New room type: Boss. A new BossRoom type already in your system.

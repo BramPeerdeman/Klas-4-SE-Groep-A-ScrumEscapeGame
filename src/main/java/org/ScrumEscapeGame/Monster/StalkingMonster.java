@@ -33,7 +33,7 @@ public class StalkingMonster extends Monster {
     }
 
     @Override
-    protected void takeDamage(int damage) {
+    public void takeDamage(int damage) {
         healthPoints -= damage;
         audioManager.swordHit();
     }
@@ -44,7 +44,7 @@ public class StalkingMonster extends Monster {
     }
 
     @Override
-    protected void die() {
+    public void die() {
         if (isAlive()) {
             audioManager.monsterDeath();
             //TODO despawn logica voor in de ui

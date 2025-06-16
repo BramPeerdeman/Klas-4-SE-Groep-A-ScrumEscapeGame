@@ -14,8 +14,8 @@ public class StraightSword extends Item implements Weapon, Inspectable, Usable {
 
     public StraightSword(int id, String description ,int durability, int damage) {
         super(id, "Straight Sword", description);
-        this.durability = 2;
-        this.damage = 1;
+        this.durability = 3;
+        this.damage = 3;
     }
 
     @Override
@@ -41,5 +41,15 @@ public class StraightSword extends Item implements Weapon, Inspectable, Usable {
     @Override
     public boolean isStackable() {
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getDurability() {
+        return durability;
     }
 }

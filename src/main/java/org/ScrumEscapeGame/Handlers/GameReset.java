@@ -7,10 +7,13 @@ import org.ScrumEscapeGame.AAUserInterface.DisplayService;
 import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.RoomInventoryProvider;
+import org.ScrumEscapeGame.Monster.MonsterManager;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
 import org.ScrumEscapeGame.Rooms.RoomFactory;
+import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.Rooms.ZoneConfig;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,8 +45,25 @@ public class GameReset {
      * (like returning the player to the starting room) are published.
      */
     public void reset() {
+        // Optionally, retrieve the old room map—if you need to do any cleanup.
+        Map<Integer, Room> oldRooms = new HashMap<>(context.getRoomManager().getRooms());
+
+        // Clear monster state in all old RoomWithQuestion instances.
+        for (Room room : oldRooms.values()) {
+            if (room instanceof RoomWithQuestion) {
+                ((RoomWithQuestion) room).clearActiveMonster();
+            }
+        }
+
         // Clear the current room map.
         context.getRoomManager().clearRooms();
+
+        context.getPlayer().setHitPoints(5);
+
+        context.getPlayer().clearInventory();
+
+        // Clear active monsters so no lingering monster prevents movement.
+        MonsterManager.getInstance().clearActiveMonsters();
 
         // Create a new zone configuration using sample definitions.
         ZoneConfig zone = new ZoneConfig("Scrum Zone", RoomDefinition.sampleDefinitions());

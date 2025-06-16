@@ -48,6 +48,7 @@ public class MapBuilder {
         // STEP 1: Create the starting room.
         // The StartingRoom (which extends Room) is explicitly created.
         StartingRoom startRoom = new StartingRoom(0, "Welcome to the Scrum Escape!");
+        context.getPlayer().setPosition(startRoom.getId());
         startRoom.setDisplayOrder(1);
         // Configure a specialized inventory for the starting room.
         PresetInventory startingInventory = new PresetInventory();

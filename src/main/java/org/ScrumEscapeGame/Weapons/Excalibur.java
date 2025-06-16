@@ -42,4 +42,15 @@ public class Excalibur extends Item implements Weapon, Inspectable, Usable {
     public boolean isStackable() {
         return false;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getDurability() {
+        return durability;
+    }
+
 }
