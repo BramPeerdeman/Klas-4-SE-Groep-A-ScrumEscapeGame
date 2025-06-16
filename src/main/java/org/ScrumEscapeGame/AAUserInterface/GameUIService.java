@@ -1,9 +1,6 @@
 package org.ScrumEscapeGame.AAUserInterface;
 
-import org.ScrumEscapeGame.AAEvents.EventPublisher;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.InventoryClosedEvent;
-import org.ScrumEscapeGame.AAEvents.InventoryOpenedEvent;
+import org.ScrumEscapeGame.AAEvents.*;
 import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.Commands.CommandManager;
@@ -37,6 +34,10 @@ public class GameUIService implements DisplayService {
 
     private QuestionPanel questionPanel;
     private boolean questionVisible = false;
+
+    // Terminal (assistant) panel state.
+    private boolean terminalVisible = false;
+    private TerminalPanel terminalPanel;
 
     /**
      * Constructs the UI service necessary for handling UI behavior.
@@ -254,6 +255,33 @@ public class GameUIService implements DisplayService {
         // For example, if you have a status label, update it:
         statusLabel.setText(statusMessage);
         // Otherwise, do nothing or log minimally.
+    }
+
+    /**
+     * Toggles the terminal (assistant) panel on or off.
+     */
+    public void toggleTerminalPanel() {
+        if (terminalVisible) {
+            // Hide the terminal panel, revert to the game panel.
+            cards.show(panelContainer, "game");
+            terminalVisible = false;
+            // Publish event indicating the assistant panel has been closed.
+            context.getEventPublisher().publish(new TerminalClosedEvent());
+        } else {
+            // Create the terminal panel if it does not exist.
+            if (terminalPanel == null) {
+                terminalPanel = new TerminalPanel(context, this);
+                panelContainer.add(terminalPanel, "terminal");
+            }
+            // Activate the assistant (update the hint, tutorial, and motivational message).
+            terminalPanel.activateAssistant();
+            // Show the terminal panel.
+            cards.show(panelContainer, "terminal");
+            terminalVisible = true;
+            System.out.println("DEBUG: Terminal Panel Opened");
+            // Publish event indicating the assistant panel is open.
+            context.getEventPublisher().publish(new TerminalOpenedEvent());
+        }
     }
 
 }

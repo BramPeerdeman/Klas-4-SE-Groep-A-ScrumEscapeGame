@@ -145,11 +145,11 @@ public class KeyBindSetup {
             }
         });
 
-        inputMap.put(KeyStroke.getKeyStroke("R"), "hint");
-        actionMap.put("hint", new AbstractAction() {
+        inputMap.put(KeyStroke.getKeyStroke("R"), "toggleTerminal");
+        actionMap.put("toggleTerminal", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                uiService.handle("hint");
+                uiService.handle("toggleTerminal");
                 uiService.refreshMapView();
             }
         });
