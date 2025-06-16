@@ -5,6 +5,7 @@ import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.AAUserInterface.DisplayService;
+import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Rooms.BossRoom;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
@@ -18,7 +19,7 @@ import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 public class    AnswerCommand implements Command {
     private final GameContext context;
     private final EventPublisher<GameEvent> publisher;
-    private final DisplayService displayService; // Used by room strategies
+    private final GameUIService displayService; // Used by room strategies
 
     /**
      * Constructs an AnswerCommand.
@@ -27,7 +28,7 @@ public class    AnswerCommand implements Command {
      * @param publisher     the event publisher to broadcast notifications.
      * @param displayService the display service for UI output.
      */
-    public AnswerCommand(GameContext context, EventPublisher<GameEvent> publisher, DisplayService displayService) {
+    public AnswerCommand(GameContext context, EventPublisher<GameEvent> publisher, GameUIService displayService) {
         this.context = context;
         this.publisher = publisher;
         this.displayService = displayService;

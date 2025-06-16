@@ -117,7 +117,10 @@ public class Player {
         if (!solvedRooms.contains(roomId)) {
             solvedRooms.add(roomId);
         }
+    }
 
+    public boolean isRoomSolved(int roomId) {
+        return solvedRooms.contains(roomId);
     }
 
     // Helper to get only keys from the generic inventory:

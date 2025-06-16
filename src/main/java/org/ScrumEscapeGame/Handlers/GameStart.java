@@ -71,7 +71,7 @@ public class GameStart {
         commandManager.register("pickup",    new PickUpCommand(gameContext, eventPublisher));
 
         // The displayService is passed to the AnswerCommand (to be used by room strategies).
-        commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, displayService));
+        commandManager.register("answer", new AnswerCommand(gameContext, eventPublisher, (GameUIService) displayService));
 
         commandManager.register("toggleTerminal", new ToggleTerminalCommand(gameContext, (GameUIService) displayService));
 

@@ -11,19 +11,12 @@ import org.ScrumEscapeGame.Items.Usable;
 
 import java.util.List;
 
-public class Book implements Scrolls, Usable, Inspectable {
+public class Book extends AbstractScroll {
     private final String subject;
-    private final List<String> texts;
-    private final Rarity rarity;
-    private final String name;
-    private final int id;
 
-    public Book(String subject, List<String> texts, Rarity rarity, int id, String name) {
+    public Book(int id, String name, String description, String subject, List<String> texts, Rarity rarity) {
+        super(id, name, description, texts, rarity);
         this.subject = subject;
-        this.texts = texts;
-        this.rarity = rarity;
-        this.id = id;
-        this.name = name;
     }
 
     @Override
@@ -32,24 +25,19 @@ public class Book implements Scrolls, Usable, Inspectable {
     }
 
     @Override
-    public List<String> getText() {
-        return texts;
-    }
-
-    @Override
-    public Rarity getRarity() {
-        return rarity;
+    public boolean isStackable() {
+        // Decide whether books can be stacked. Adjust according to your game logic.
+        return false;
     }
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
-        // In this test, we'll just publish an event indicating the item was used.
-        publisher.publish(new UseItemEvent(this.id, this.name, "You used your paper"));
+        publisher.publish(new UseItemEvent(this.id, this.name, "You used your book on " + subject));
         return true;
     }
 
     @Override
     public void inspect(Player player, EventPublisher<GameEvent> publisher) {
-        publisher.publish(new ItemInspectEvent(this.id, this.name, "A small piece of paper about "+ getSubject()));
+        publisher.publish(new ItemInspectEvent(this.id, this.name, "A fancy book about " + subject));
     }
 }
