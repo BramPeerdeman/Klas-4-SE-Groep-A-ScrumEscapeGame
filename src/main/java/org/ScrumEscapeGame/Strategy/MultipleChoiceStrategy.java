@@ -11,39 +11,34 @@ import org.ScrumEscapeGame.AAGame.Game;
 
 import java.util.List;
 
-/**
- * Handles multiple-choice questions where the player selects one of several predefined options.
- */
 public class MultipleChoiceStrategy implements QuestionStrategy {
+    /**
+     * Displays the question and its choices using the provided display service.
+     * This method no longer blocks for input.
+     */
     @Override
     public boolean ask(Player player, Question question, EventPublisher<GameEvent> publisher, DisplayService displayService) {
+        // Write out the question prompt and choices.
         displayService.printMessage("❓ " + question.getPrompt());
-
-        // Display multiple-choice options.
         List<String> options = question.getChoices();
         char optionLetter = 'a';
         for (String option : options) {
             displayService.printMessage("  " + optionLetter + ") " + option);
             optionLetter++;
         }
+        // We return false by default here since the actual evaluation will be done later via the UI.
+        return false;
+    }
 
-        // Read player input and validate selection.
-        String input = displayService.readLine("Your answer (a, b, c, d): ");
-        if (input == null || input.trim().isEmpty()) { // Input is empty or null.
+    /**
+     * Evaluates the answer provided by the question panel.
+     */
+    public boolean evaluateAnswer(String providedAnswer, Question question, DisplayService displayService) {
+        if (providedAnswer == null || providedAnswer.trim().isEmpty()) {
             displayService.printMessage("❌ No answer provided.");
             return false;
         }
-
-        input = input.trim().toLowerCase();
-        // Ensure we have at least one character before proceeding.
-        if (input.length() == 0) {
-            displayService.printMessage("❌ No answer provided.");
-            return false;
-        }
-
-        int index = input.charAt(0) - 'a';
-        if (index >= 0 && index < options.size() &&
-                options.get(index).equalsIgnoreCase(question.getCorrectAnswer())) {
+        if (providedAnswer.trim().equalsIgnoreCase(question.getCorrectAnswer())) {
             displayService.printMessage("✅ Correct!");
             return true;
         } else {
@@ -52,6 +47,7 @@ public class MultipleChoiceStrategy implements QuestionStrategy {
         }
     }
 }
+
 
 
 

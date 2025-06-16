@@ -151,8 +151,9 @@ public class Player {
         this.hitPoints = hitPoints;
     }
 
+    // Instead of setting inventory = null, simply clear it:
     public void clearInventory() {
-        inventory.setItems(null);
+        inventory.clear();
     }
 }
 

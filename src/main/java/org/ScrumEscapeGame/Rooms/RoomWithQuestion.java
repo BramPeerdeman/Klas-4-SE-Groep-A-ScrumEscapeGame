@@ -14,6 +14,7 @@ import org.ScrumEscapeGame.Observer.Observer;
 import org.ScrumEscapeGame.Observer.Subject;
 import org.ScrumEscapeGame.Providers.HintProviderSelector;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 import org.ScrumEscapeGame.Strategy.QuestionStrategy;
 import org.ScrumEscapeGame.AAGame.Game;
 
@@ -51,6 +52,10 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     private boolean challengeCleared = false;
     // Reference to the currently active monster in the room, if any.
     private Monster activeMonster = null;
+
+    // In RoomWithQuestion:
+    public int attemptCount = 0;
+
 
 
     // DIT MOET NOG WORDEN AANGEPAST ALS JE JOKERS IN DE ROOM WIL
@@ -121,6 +126,10 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         this.sharedDoor = door;
     }
 
+    public LockedDoor getAssociatedDoor() {
+        return sharedDoor;
+    }
+
     /**
      * Invoked when the player enters the room.
      * First calls the superclass onEnter to update the player's position,
@@ -152,58 +161,82 @@ public class RoomWithQuestion extends Room implements HasQuestions {
             System.out.println("DEBUG: triggerQuestion() called in RoomWithQuestion id: " + getId());
         }
 
+        // Only proceed if a question exists, a strategy is provided, and it hasn’t been asked yet.
         if (questionWithHints != null && strategy != null && !questionAsked) {
-            boolean correct = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
-            questionAsked = true;
+            // Retrieve the current question.
+            Question question = questionWithHints.getQuestion();
 
-            if (DEBUG) {
-                System.out.println("DEBUG: Question answered. Was the answer correct? " + correct);
-            }
+            // Load the question data into the question panel.
+            displayService.getQuestionPanel().loadQuestion(
+                    question.getPrompt(),
+                    question.getChoices().toArray(new String[0]),
+                    question.getCorrectAnswer()
+            );
 
-            if (correct) {
-                player.addSolvedRoom(getId());
-                // If a monster is active, force it to die
-                if (activeMonster != null && activeMonster.isAlive()) {
-                    activeMonster.die();  // Ensure your monster implementation properly marks it as dead.
-                    setActiveMonster(null);
-                }
-                publisher.publish(new DoorUnlockedEvent(sharedDoor));
-            } else {
-                // 1st incorrect answer → show hint
-                if (hasHelper) {
-                    String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
-                    publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
-                }
+            // Set the submit action for the question panel.
+            displayService.getQuestionPanel().setSubmitAction(e -> {
+                // Get the answer the player selected.
+                String providedAnswer = displayService.getQuestionPanel().getSelectedAnswer();
+                // Evaluate the answer using the strategy's evaluator.
+                boolean correct = strategy.evaluateAnswer(providedAnswer, question, displayService);
 
-                // Retry the same question once
-                boolean retryCorrect = strategy.ask(player, questionWithHints.getQuestion(), publisher, displayService);
-                if (retryCorrect) {
+                if (correct) {
                     player.addSolvedRoom(getId());
+                    // If there’s an active monster, ensure it dies.
+                    if (activeMonster != null && activeMonster.isAlive()) {
+                        activeMonster.die();
+                        setActiveMonster(null);
+                    }
                     publisher.publish(new DoorUnlockedEvent(sharedDoor));
+                    displayService.printMessage("Puzzle solved! Door unlocked.");
                 } else {
-                    // Instead of triggering GameResetEvent immediately, we spawn the monster.
-                    publisher.publish(new NotificationEvent("Incorrect again! A monster awakens..."));
+                    // If the answer is incorrect, first trigger a hint (if available).
+                    if (hasHelper) {
+                        String randomHint = hintSelector.selectHintProvider(questionWithHints.getHintProviders()).getHint();
+                        publisher.publish(new NotificationEvent("Here's a hint to help you: " + randomHint));
+                    }
 
-                    if (hasStatue) {
-                        try {
-                            StatueMonster monster = new StatueMonster("Backlog Beast",
-                                    "The statue awakens with a menacing glare.",
-                                    publisher,
-                                    /* gameContext */ null,
-                                    5); // For example, 5 hitpoints
-                            monster.spawn();
-                            // Register the monster with the Monster Manager.
-                            MonsterManager.getInstance().registerActiveMonster(monster);
-                            // Also, store the monster in this room.
-                            setActiveMonster(monster);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                    // Allow the player a retry.
+                    // (Note: Since the panel is still visible and interactive, you could allow further feedback
+                    // instead of immediately retrying. For now we assume one retry.)
+                    boolean retryCorrect = strategy.evaluateAnswer(providedAnswer, question, displayService);
+                    if (retryCorrect) {
+                        player.addSolvedRoom(getId());
+                        publisher.publish(new DoorUnlockedEvent(sharedDoor));
+                        displayService.printMessage("Puzzle solved on retry! Door unlocked.");
+                    } else {
+                        // On a second incorrect attempt, spawn a monster (if allowed).
+                        publisher.publish(new NotificationEvent("Incorrect again! A monster awakens..."));
+                        if (hasStatue) {
+                            try {
+                                StatueMonster monster = new StatueMonster(
+                                        "Backlog Beast",
+                                        "The statue awakens with a menacing glare.",
+                                        publisher,
+                                        /* gameContext */ null,
+                                        5  // For example, 5 hitpoints.
+                                );
+                                monster.spawn();
+                                MonsterManager.getInstance().registerActiveMonster(monster);
+                                setActiveMonster(monster);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
+
+                // Finally, return to the main game panel.
+                displayService.showGamePanel();
+            });
+
+            // Mark that the question has been asked so it is not repeated.
+            questionAsked = true;
+            // Show the question panel.
+            displayService.showQuestionPanel();
         }
     }
+
 
 
 
@@ -233,7 +266,9 @@ public class RoomWithQuestion extends Room implements HasQuestions {
         this.activeMonster = null;
     }
 
-
+    public boolean hasStatue() {
+        return hasStatue;
+    }
 }
 
 
