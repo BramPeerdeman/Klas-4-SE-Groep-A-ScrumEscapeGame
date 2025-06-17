@@ -31,5 +31,10 @@ public abstract class Inventory {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+
+    public void clear() {
+        // Instead of nulling out, just clear the list:
+        items.clear();
+    }
 }
 

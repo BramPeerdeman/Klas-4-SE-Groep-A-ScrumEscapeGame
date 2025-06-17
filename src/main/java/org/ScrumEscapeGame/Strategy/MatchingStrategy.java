@@ -19,6 +19,11 @@ public class MatchingStrategy implements QuestionStrategy {
         displayService.printMessage("Functionality not yet implemented.");
         return true;  // Placeholder return value; to be updated when implemented.
     }
+
+    @Override
+    public boolean evaluateAnswer(String providedAnswer, Question question, DisplayService displayService) {
+        return false;
+    }
 }
 
 

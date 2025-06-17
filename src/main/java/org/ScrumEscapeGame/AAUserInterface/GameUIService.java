@@ -1,13 +1,15 @@
 package org.ScrumEscapeGame.AAUserInterface;
 
 import org.ScrumEscapeGame.AAEvents.*;
-import org.ScrumEscapeGame.AAGame.Game;
 import org.ScrumEscapeGame.AAGame.GameContext;
 import org.ScrumEscapeGame.Commands.CommandManager;
 import org.ScrumEscapeGame.GameObjects.*;
 import org.ScrumEscapeGame.Monster.MonsterManager;
+import org.ScrumEscapeGame.Monster.StatueMonster;
 import org.ScrumEscapeGame.Providers.QuestionWithHints;
+import org.ScrumEscapeGame.Rooms.BossRoom;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
+import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +36,7 @@ public class GameUIService implements DisplayService {
     private boolean inventoryVisible = false;
     private boolean questionVisible = false;
     private boolean terminalVisible = false;
+    private boolean gameOver = false;
 
     /**
      * Constructs the UI service necessary for handling UI behavior.
@@ -60,21 +63,33 @@ public class GameUIService implements DisplayService {
         this.statusLabel = statusLabel;
 
         // Initialize both panels immediately so they are never null
-        this.inventoryPanel = new InventoryPanel(context, this);
+        // In GameUIService constructor:
+        this.inventoryPanel = new InventoryPanel(context, this, false);
         panelContainer.add(inventoryPanel, "inventory");
 
-        this.questionPanel = new QuestionPanel(inventoryPanel);
+        // For the question panel, create an InventoryPanel in question mode (only player inventory).
+        InventoryPanel questionInventoryPanel = new InventoryPanel(context, this, true);
+        // After creating the question panel, set its embedded inventory panel’s callback to be the question panel.
+        this.questionPanel = new QuestionPanel(questionInventoryPanel, this, context);
+        questionInventoryPanel.setItemUsageCallback(questionPanel);
         panelContainer.add(questionPanel, "question");
+
+
     }
 
     @Override
     public void printMessage(String message) {
-        if(isInventoryVisible() && getInventoryPanel() != null) {
+        // If the question panel is open, route all messages to its embedded inventory panel.
+        if (questionVisible && questionPanel != null) {
+            questionPanel.getEmbeddedInventoryPanel().appendMessage(message);
+        } else if (isInventoryVisible() && getInventoryPanel() != null) {
             getInventoryPanel().appendMessage(message);
         } else {
             console.printMessage(message);
         }
     }
+
+
 
 
     @Override
@@ -176,59 +191,179 @@ public class GameUIService implements DisplayService {
 
 
     public void toggleQuestionPanel() {
-        if (questionVisible) {
-            showGamePanel();
-            printMessage("Closing puzzle screen...");
-            questionVisible = false;
-        } else {
-            int pos = context.getPlayer().getPosition();
-            Room currentRoom = context.getRoomManager().getRooms().get(pos);
-            int roomId = currentRoom.getId();
+        // Get current room.
+        int pos = context.getPlayer().getPosition();
+        Room currentRoom = context.getRoomManager().getRooms().get(pos);
 
-            if (context.getPlayer().isRoomSolved(roomId)) {
-                questionPanel.setQuestionText("You have already solved this puzzle.");
+        // Special case: Current room is a BossRoom.
+        if (currentRoom instanceof BossRoom bossRoom) {
+            if (gameOver) {
+                printMessage("Game is over.");
+                return;
+            }
+
+            // Check if the boss challenge is already complete.
+            if (bossRoom.getQuestionsAnsweredCount() == 3) {
+                questionPanel.setQuestionText("You have already conquered the boss challenge.");
                 questionPanel.setSubmitAction(e -> {
-                    // Close immediately
-                    showGamePanel();
-                    questionVisible = false;
-                });
-            } else if (currentRoom instanceof RoomWithQuestion roomWithQuestion) {
-                // Load question normally
-                QuestionWithHints qw = roomWithQuestion.getQuestionWithHints();
-                org.ScrumEscapeGame.GameObjects.Question question = qw.getQuestion();
-
-                questionPanel.loadQuestion(
-                        question.getPrompt(),
-                        question.getChoices().toArray(new String[0]),
-                        question.getCorrectAnswer()
-                );
-
-                // Set submit action to delegate question handling to triggerQuestion
-                questionPanel.setSubmitAction(e -> {
-                    // Call the triggerQuestion logic here
-                    roomWithQuestion.triggerQuestion(
-                            context.getPlayer(),
-                            context.getEventPublisher(),
-                            this // GameUIService itself for display callbacks
-                    );
-
-                    // After question logic, close question panel
                     showGamePanel();
                     questionVisible = false;
                 });
             } else {
-                questionPanel.setQuestionText("No question in this room.");
+                // Load the current boss question based on how many have been answered.
+                int currentIndex = bossRoom.getQuestionsAnsweredCount();
+                Question currentQ = bossRoom.getQuestions().get(currentIndex);
+                questionPanel.loadQuestion(
+                        currentQ.getPrompt(),
+                        currentQ.getChoices().toArray(new String[0]),
+                        currentQ.getCorrectAnswer()
+                );
+                // Set the submit action for the boss challenge.
                 questionPanel.setSubmitAction(e -> {
-                    showGamePanel();
-                    questionVisible = false;
+                    if (gameOver) {
+                        return;
+                    }
+                    String providedAnswer = questionPanel.getSelectedAnswer();
+                    MultipleChoiceStrategy mcs = new MultipleChoiceStrategy();
+                    boolean correct = mcs.evaluateAnswer(providedAnswer, currentQ, this);
+                    if (!correct) {
+                        // Wrong answer: mark failure and trigger immediate reset.
+                        getEventPublisher().publish(new GameResetEvent("Wrong answer in boss room, game resetting...."));
+                        showGamePanel();
+                        questionVisible = false;
+                    } else {
+                        // Correct answer: increment the count.
+                        bossRoom.incrementQuestionsAnsweredCount();
+                        printMessage("Boss question answered correctly.");
+                        if (bossRoom.getQuestionsAnsweredCount() == 3) {
+                            getEventPublisher().publish(new NotificationEvent(
+                                    "Congratulations, you answered all boss questions correctly, you won!"
+                            ));
+                            showGamePanel();
+                            questionVisible = false;
+                        } else {
+                            // Load the next boss question.
+                            int nextIndex = bossRoom.getQuestionsAnsweredCount();
+                            Question nextQ = bossRoom.getQuestions().get(nextIndex);
+                            questionPanel.loadQuestion(
+                                    nextQ.getPrompt(),
+                                    nextQ.getChoices().toArray(new String[0]),
+                                    nextQ.getCorrectAnswer()
+                            );
+                        }
+                    }
+                    // After processing the answer, trigger a monster tick.
+                    MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
+                    if (this.getPlayer().getHitPoints() <= 0) {
+                        MonsterManager.getInstance().clearActiveMonsters();
+                        this.handleGameReset("You died while attempting the boss challenge!");
+                    }
                 });
             }
-
             cards.show(panelContainer, "question");
             questionVisible = true;
-            printMessage("Puzzle screen opened.");
+            printMessage("Boss challenge panel opened.");
+            return; // Exit here since boss room processing is complete.
         }
+
+        // Otherwise: handle regular RoomWithQuestion challenge.
+        if (!(currentRoom instanceof RoomWithQuestion roomWithQuestion) ||
+                roomWithQuestion.getQuestionWithHints() == null) {
+            printMessage("There is no challenge in this room.");
+            return;
+        }
+
+        // If the panel is already open, warn and do nothing.
+        if (questionVisible) {
+            printMessage("Puzzle screen is already open.");
+            return;
+        }
+
+        // Reset the attempt count.
+        roomWithQuestion.attemptCount = 0;
+
+        if (context.getPlayer().isRoomSolved(roomWithQuestion.getId())) {
+            questionPanel.setQuestionText("You have already solved this puzzle.");
+            questionPanel.setSubmitAction(e -> {
+                showGamePanel();
+                questionVisible = false;
+            });
+        } else {
+            // Load the room challenge question.
+            QuestionWithHints qw = roomWithQuestion.getQuestionWithHints();
+            org.ScrumEscapeGame.GameObjects.Question question = qw.getQuestion();
+            questionPanel.loadQuestion(
+                    question.getPrompt(),
+                    question.getChoices().toArray(new String[0]),
+                    question.getCorrectAnswer()
+            );
+            // Set up the submit action for the room challenge.
+            questionPanel.setSubmitAction(e -> {
+                if (gameOver) {
+                    return;
+                }
+                String providedAnswer = questionPanel.getSelectedAnswer();
+                MultipleChoiceStrategy mcs = new MultipleChoiceStrategy();
+                boolean correct = mcs.evaluateAnswer(providedAnswer, question, this);
+
+                if (correct) {
+                    context.getPlayer().addSolvedRoom(roomWithQuestion.getId());
+                    roomWithQuestion.setChallengeCleared(true);
+                    if (roomWithQuestion.hasActiveMonster()) {
+                        roomWithQuestion.getActiveMonster().die();
+                        roomWithQuestion.setActiveMonster(null);
+                    }
+                    getEventPublisher().publish(new DoorUnlockedEvent(roomWithQuestion.getAssociatedDoor()));
+                    printMessage("Puzzle solved and door unlocked!");
+                    roomWithQuestion.attemptCount = 0;
+                    showGamePanel();
+                    questionVisible = false;
+                } else {
+                    roomWithQuestion.attemptCount++;
+                    if (roomWithQuestion.attemptCount == 1) {
+                        if (roomWithQuestion.hasHelper()) {
+                            String randomHint = roomWithQuestion.getHintProviderSelector()
+                                    .selectHintProvider(qw.getHintProviders())
+                                    .getHint();
+                            getEventPublisher().publish(new NotificationEvent("Here's a hint: " + randomHint));
+                        }
+                        printMessage("Incorrect answer. Please try again or use a lifeline.");
+                        // Keep panel open for reattempt.
+                    } else {
+                        getEventPublisher().publish(new NotificationEvent("Incorrect again! A monster awakens..."));
+                        if (roomWithQuestion.hasStatue()) {
+                            try {
+                                StatueMonster monster = new StatueMonster("Backlog Beast",
+                                        "The statue awakens with a menacing glare.",
+                                        getEventPublisher(), null, 5);
+                                monster.spawn();
+                                MonsterManager.getInstance().registerActiveMonster(monster);
+                                roomWithQuestion.setActiveMonster(monster);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                        showGamePanel();
+                        questionVisible = false;
+                    }
+                }
+                // Trigger a tick after processing the answer.
+                MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
+                if (this.getPlayer().getHitPoints() <= 0) {
+                    MonsterManager.getInstance().clearActiveMonsters();
+                    this.handleGameReset("You died while attempting the challenge!");
+                }
+            });
+        }
+
+        cards.show(panelContainer, "question");
+        questionVisible = true;
+        printMessage("Puzzle screen opened.");
     }
+
+
+
+
 
 
     public boolean isInventoryVisible() {
@@ -281,6 +416,29 @@ public class GameUIService implements DisplayService {
         }
     }
 
+    public QuestionPanel getQuestionPanel() {
+        return questionPanel;
+    }
+
+    public void handleGameReset(String reason) {
+        // Close any open panels—here, ensure the question panel is closed:
+        this.showGamePanel();
+        this.questionVisible = false;
+        // Display a reset message.
+        printMessage(reason);
+        // Clear active monsters so no further damage is applied.
+        MonsterManager.getInstance().clearActiveMonsters();
+        // Optionally: Transition to a reset screen or reinitialize game state.
+        // For example:
+        // gameReset.reset();   // if you have a GameReset instance.
+        context.getEventPublisher().publish(new GameResetEvent(reason));
+    }
+
+    public void removeQuestionPanel() {
+        questionPanel.clear();
+        this.showGamePanel();
+        this.questionVisible = false;
+    }
 }
 
 

@@ -55,6 +55,7 @@ public class MonsterManager {
         }
         // Check player's HP; if it's 0 or less, trigger a game reset.
         if (player.getHitPoints() <= 0) {
+            clearActiveMonsters();
             publisher.publish(new GameResetEvent("Your health has reached 0! Restarting the game."));
         }
     }

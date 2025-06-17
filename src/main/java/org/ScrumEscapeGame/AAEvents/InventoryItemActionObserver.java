@@ -36,24 +36,31 @@ public class InventoryItemActionObserver implements EventObserver<GameEvent> {
                 return;
             }
 
+            StringBuilder sb = new StringBuilder();
+
+            // Handle pickup from room inventory.
             if (action.equalsIgnoreCase("pickup") && source.equalsIgnoreCase("room")) {
-                // Logic for picking up: transfer item from room inventory to player inventory.
                 Room currentRoom = context.getRoomManager().getRoom(context.getPlayer().getPosition());
                 boolean transferred = context.getInventoryManager().transferItem(
                         item, currentRoom.getInventory(), context.getPlayer().getInventory(),
                         context.getEventPublisher());
-
+                sb.append("Action confirmed: pickup for ").append(item.getName())
+                        .append(" from room inventory.\n");
                 if (transferred) {
+                    sb.append("Picked up: ").append(item.getName()).append("\n");
                     System.out.println("DEBUG: You picked up an item.");
-                    uiService.printMessage("Picked up: " + item.getName());
                 } else {
-                    uiService.printMessage("Failed to pick up: " + item.getName());
-                    System.out.println("DEBUG: You DIDN'T picked up an item.");
+                    sb.append("Failed to pick up: ").append(item.getName()).append("\n");
+                    System.out.println("DEBUG: You DIDN'T pick up an item.");
                 }
 
             } else if (action.equalsIgnoreCase("use") && source.equalsIgnoreCase("player")) {
 
-                // If the item is a Key, follow the key logic for boss door unlocking.
+                // Begin building a unified message for the use action.
+                sb.append("Action confirmed: use for ").append(item.getName())
+                        .append(" from player inventory.\n");
+
+                // If the item is a key, follow the boss key logic.
                 if (item instanceof Key) {
                     Room currentRoom = context.getRoomManager().getRoom(context.getPlayer().getPosition());
                     Optional<BossLockedDoorConnection> bossConnOpt = currentRoom.getNeighbours().values().stream()
@@ -61,32 +68,31 @@ public class InventoryItemActionObserver implements EventObserver<GameEvent> {
                             .map(conn -> (BossLockedDoorConnection) conn)
                             .findFirst();
                     if (bossConnOpt.isPresent()) {
-                        int requiredKeys = 6; // Example: keys required for a boss door.
+                        int requiredKeys = 6; // Example number.
                         boolean consumed = Key.tryConsumeKeysForUnlock(context.getPlayer(), requiredKeys);
                         if (consumed) {
                             BossLockedDoorConnection bossConn = bossConnOpt.get();
                             bossConn.getDoor().unlock();
                             context.getEventPublisher().publish(new DoorUnlockedEvent(bossConn.getDoor()));
-                            uiService.printMessage("Boss door unlocked using your keys!");
+                            sb.append("Boss door unlocked using your keys!\n");
                         } else {
-                            uiService.printMessage("You do not have enough keys to unlock the boss door.");
+                            sb.append("You do not have enough keys to unlock the boss door.\n");
                         }
                     } else {
-                        uiService.printMessage("You are not near a boss door. Nothing happens.");
+                        sb.append("You are not near a boss door. Nothing happens.\n");
                     }
-
                 } else {
-                    // For non-key items
+                    // For non-key items.
                     if (item instanceof Weapon) {
-                        // Check if there is an active monster in the current room.
                         Room currentRoom = context.getRoomManager().getRoom(context.getPlayer().getPosition());
                         if (currentRoom instanceof RoomWithQuestion) {
                             RoomWithQuestion rq = (RoomWithQuestion) currentRoom;
                             if (rq.hasActiveMonster()) {
-                                // Attack the active monster.
                                 Weapon weapon = (Weapon) item;
                                 Monster monster = rq.getActiveMonster();
                                 attackMonster(context.getPlayer(), weapon, monster, context.getEventPublisher());
+                                sb.append("Item used: ").append(item.getName())
+                                        .append(" -> You attacked the monster with your ").append(item.getName()).append(".\n");
                             } else {
                                 uiService.printMessage("There is no monster to attack here.");
                                 return;  // Do not remove or use the weapon.
@@ -96,33 +102,49 @@ public class InventoryItemActionObserver implements EventObserver<GameEvent> {
                             return;
                         }
                     } else if (item instanceof Usable) {
-                        // Use any other usable item (like scrolls, potions, etc.)
+                        // Here we assume all other usable items work.
                         ((Usable) item).use(context.getPlayer(), context.getEventPublisher());
+                        sb.append("Item used: ").append(item.getName())
+                                .append(" -> You used your ").append(item.getName()).append(".\n");
+                        // Add extra details for paper-type items.
+                        if (item.getName().toLowerCase().contains("paper")) {
+                            sb.append("The paper reads: Scrum is an agile framework focused on iterative progress.\n");
+                        }
                     }
 
-                    // Decrement quantity for stackable items, or remove non-stackable items.
-                    if (item instanceof StackableItem) {
+                    // Manage inventory: for weapons, leave them in inventory (durability will be handled elsewhere);
+                    // for stackable items, decrement quantity and remove when quantity is 0;
+                    // for non-stackable non-weapon items, remove them.
+                    if (item instanceof Weapon) {
+                        // Do not remove weapons here – their durability system will handle eventual removal.
+                        // Optionally, update durability here if needed.
+                    } else if (item instanceof StackableItem) {
                         StackableItem stackItem = (StackableItem) item;
-                        stackItem.decrementQuantity(); // Decrements quantity by one.
+                        stackItem.decrementQuantity(); // Decrement by one.
                         if (stackItem.getQuantity() <= 0) {
                             context.getPlayer().getInventory().removeItem(item);
                         }
                     } else {
                         context.getPlayer().getInventory().removeItem(item);
                     }
-                    uiService.printMessage("Used: " + item.getName());
+
                 }
-                uiService.refreshInventory();
+
             } else if (action.equalsIgnoreCase("inspect")) {
+                sb.append("Action confirmed: inspect for ").append(item.getName()).append(".\n");
                 if (item instanceof Inspectable) {
                     ((Inspectable) item).inspect(context.getPlayer(), context.getEventPublisher());
+                    sb.append("Inspection: ").append(item.getName())
+                            .append(" - ").append(item.getDescription()).append("\n");
                 } else {
-                    uiService.printMessage("Item cannot be inspected: " + item.getName());
+                    sb.append("Item cannot be inspected: ").append(item.getName()).append("\n");
                 }
             }
+
             uiService.refreshInventory();
         }
     }
+
 
     private Item findItemById(int itemId, String source) {
         if (source.equalsIgnoreCase("room")) {

@@ -21,6 +21,7 @@ public class GameResetEvent implements GameEvent {
 
     @Override
     public void apply(GameUIService uiService) {
+        uiService.removeQuestionPanel();
         uiService.printMessage(message);
         AudioManager.playSound().questionIncorrect();
     }
