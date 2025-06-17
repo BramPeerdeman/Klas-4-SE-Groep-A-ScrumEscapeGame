@@ -69,4 +69,9 @@ public class MatchingStrategy implements QuestionStrategy {
             return false;
         }
     }
+
+    @Override
+    public boolean evaluateAnswer(String providedAnswer, Question question, DisplayService displayService) {
+        return false;
+    }
 }

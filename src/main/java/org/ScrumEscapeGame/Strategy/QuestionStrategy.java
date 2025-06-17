@@ -22,6 +22,8 @@ public interface QuestionStrategy {
      * @return               True if the player's answer is correct; false otherwise.
      */
     boolean ask(Player player, Question question, EventPublisher<GameEvent> publisher, DisplayService displayService);
+
+    boolean evaluateAnswer(String providedAnswer, Question question, DisplayService displayService);
 }
 
 

@@ -94,7 +94,7 @@ public class RoomInventoryProvider {
         else {
             BasicInventory basic = new BasicInventory();
             Random rnd = new Random(room.getId());
-            int count = rnd.nextInt(4) + 2; // Spawn 1 to 3 items
+            int count = rnd.nextInt(4) + 1; // Spawn 1 to 4 items
 
             // Create and configure the spawn manager if not already created.
             ItemSpawnManager spawnManager = new ItemSpawnManager();
