@@ -137,6 +137,8 @@ abstract public class Room {
     public void setInventory(Inventory inventory) {
         this.inventory = (inventory != null) ? inventory : new BasicInventory();
     }
+
+    public abstract Map<String, Connection> getAllNeighbours();
 }
 
 
