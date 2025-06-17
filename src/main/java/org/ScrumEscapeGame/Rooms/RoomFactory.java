@@ -8,6 +8,7 @@ import org.ScrumEscapeGame.Providers.RoomHintProviderSelector;
 import org.ScrumEscapeGame.Rooms.RoomQuestions;
 import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
 import org.ScrumEscapeGame.GameObjects.Question;
+import org.ScrumEscapeGame.Strategy.MatchingStrategy;
 import org.ScrumEscapeGame.Strategy.MultipleChoiceStrategy;
 
 import java.util.*;
@@ -119,6 +120,20 @@ public class RoomFactory {
                         hasStatue
                 )
         );
+
+        //using new strategy
+        roomCreators.put("DefinitionMatch", (def, ds) ->
+                new RoomWithQuestion(
+                        def.getId(),
+                        def.getDescription(),
+                        RoomQuestions.getQuestionForRoom(def.getId()),
+                        new MatchingStrategy(),
+                        new RoomHintProviderSelector(RoomQuestions.getQuestionForRoom(def.getId()).getHintProviders()),
+                        true,
+                        true
+                )
+        );
+
         // New room type: Boss. A new BossRoom type already in your system.
         roomCreators.put("Boss", (def, ds) ->
                 new BossRoom(
@@ -129,6 +144,7 @@ public class RoomFactory {
 
                 )
         );
+
         // New room type: Penultimate.
         roomCreators.put("Penultimate", (def, ds) ->
                 new PenultimateRoom(def.getId(), def.getDescription())

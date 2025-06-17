@@ -95,6 +95,8 @@ public class RoomDefinition {
                         "Geeft een hint bij de SprintBacklog-vraag."
                 )
         )));
+
+        definitions.add(new RoomDefinition(7, "DefinitionMatch", "A puzzling chamber with scattered role cards and clue boards.", List.of()));
         definitions.add(new RoomDefinition(4, "SprintReview", "A server-filled room where ventilation roars like beastly lungs.", List.of()));
         definitions.add(new RoomDefinition(5, "Penultimate", "A shadowy chamber rumored to yield hidden keys.", List.of()));  // New definition.
         definitions.add(new RoomDefinition(6, "Boss", "The final challenge room, with a door that can only be unlocked with keys.", List.of())); // New definition.

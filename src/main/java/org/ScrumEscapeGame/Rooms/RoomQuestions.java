@@ -85,6 +85,23 @@ public class RoomQuestions {
                 )
         ));
 
+        QUESTIONS.put(7, new QuestionWithHints(
+                new Question(
+                        "Match the Scrum terms to their definitions.",
+                        List.of(
+                                "Sprint", "Product Backlog", "Scrum Master",
+                                "A time-boxed period for development",
+                                "An ordered list of everything that is known to be needed in the product",
+                                "Responsible for ensuring the team understands and follows Scrum"
+                        ),
+                        "0,1,2" // Indicates correct matching: term 0 → def at index 0 in the unshuffled list, etc.
+                ),
+                List.of(
+                        new HelpHintProvider("Match each term to what it describes."),
+                        new FunnyHintProvider("Scrum Master isn't a cooking term!")
+                )
+        ));
+
         // Boss-level questions (no integer key)
         QUESTIONBOSS.add(new Question(
                 "What should the Scrum Team do if the Sprint Goal becomes obsolete due to changes in market conditions mid-Sprint?",
