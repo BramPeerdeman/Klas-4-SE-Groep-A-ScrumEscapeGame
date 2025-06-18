@@ -230,7 +230,7 @@ public class GameUIService implements DisplayService {
 
         // If the panel is already open, warn and do nothing.
         if (questionVisible) {
-            printMessage("Puzzle screen is already open.");
+            printMessage("You must answer the question challenge.");
             return;
         }
 
