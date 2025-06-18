@@ -108,8 +108,9 @@ public class Database {
         ));
 
         data.put("Warning|RARE", List.of(
-                "❗: The bossroom is very dangerous, it contains a set of 3 questions. %n Get one question wrong, and it's game over!"
+                String.format("❗ A Warning:%n Within the Boss Chamber lie three enigmatic trials—each a riddle whose failure portends in a game over.")
         ));
+
     }
 
     /**

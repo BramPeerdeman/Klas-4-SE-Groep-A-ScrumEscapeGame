@@ -1,5 +1,6 @@
 package org.ScrumEscapeGame.Handlers;
 
+import org.ScrumEscapeGame.AAEvents.ChooseJokerEvent;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAGame.GameContext;
@@ -84,6 +85,8 @@ public class GameReset {
         // Build a new map based on the current context and new room definitions.
         MapBuilder mapBuilder = new MapBuilder(context, eventPublisher, roomFactory);
         mapBuilder.build();
+
+        eventPublisher.publish(new ChooseJokerEvent(context.getPlayer().getInventory()));
     }
 
 }

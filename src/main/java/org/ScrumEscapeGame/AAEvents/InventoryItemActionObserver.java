@@ -76,7 +76,7 @@ public class InventoryItemActionObserver implements EventObserver<GameEvent> {
                             context.getEventPublisher().publish(new DoorUnlockedEvent(bossConn.getDoor()));
                             sb.append("Boss door unlocked using your keys!\n");
                         } else {
-                            sb.append("You do not have enough keys to unlock the boss door.\n");
+                            uiService.printMessage("You do not have enough keys to unlock the boss door.\n");
                         }
                     } else {
                         sb.append("You are not near a boss door. Nothing happens.\n");

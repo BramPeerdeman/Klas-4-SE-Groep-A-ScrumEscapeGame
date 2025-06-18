@@ -65,7 +65,7 @@ public class TerminalPanel extends JPanel {
         motivationalArea = new JTextArea(3, 40);
         motivationalArea.setEditable(false);
         motivationalArea.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "Motivatie", TitledBorder.LEFT, TitledBorder.TOP));
+                BorderFactory.createEtchedBorder(), "Motivation", TitledBorder.LEFT, TitledBorder.TOP));
         messagePanel.add(motivationalArea);
 
         add(messagePanel, BorderLayout.CENTER);
