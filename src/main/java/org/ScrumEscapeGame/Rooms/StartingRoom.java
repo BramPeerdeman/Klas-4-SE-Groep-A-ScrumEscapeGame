@@ -1,5 +1,6 @@
 package org.ScrumEscapeGame.Rooms;
 
+import org.ScrumEscapeGame.AAEvents.ClearOutputAreaEvent;
 import org.ScrumEscapeGame.AAEvents.EventPublisher;
 import org.ScrumEscapeGame.AAEvents.GameEvent;
 import org.ScrumEscapeGame.AAEvents.NotificationEvent;
@@ -45,6 +46,7 @@ public class StartingRoom extends Room {
      */
     @Override
     public void onEnter(Player player, EventPublisher<GameEvent> publisher) {
+        publisher.publish(new ClearOutputAreaEvent());
         // Update the player's position.
         player.setPosition(this.getId());
 

@@ -6,7 +6,6 @@ import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
 import org.ScrumEscapeGame.Items.BasicInventory;
 import org.ScrumEscapeGame.Items.Joker;
 import org.ScrumEscapeGame.Rooms.Connection;
-import org.ScrumEscapeGame.AAGame.Game;
 
 import java.util.HashMap;
 import java.util.List;

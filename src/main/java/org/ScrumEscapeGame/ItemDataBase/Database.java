@@ -78,25 +78,15 @@ public class Database {
                 "Sprint Reviews are fertile ground for adaptive planning and realignment of priorities."
         ));
 
+
         // Penultimate scrolls:
         data.put("Penultimate|COMMON", List.of(
-                "A brief glimpse into the challenges of the penultimate room."
-        ));
-        data.put("Penultimate|UNCOMMON", List.of(
-                "Subtle hints that prepare you for tougher challenges ahead."
-        ));
-        data.put("Penultimate|RARE", List.of(
-                "Advanced strategies for overcoming the penultimate test."
-        ));
-
-        // Boss scrolls:
-        data.put("Boss|COMMON", List.of(
                 "Facing the final boss means confronting the ultimate test of Scrum mastery, Stick to the framework: inspect, adapt, and collaborate."
         ));
-        data.put("Boss|UNCOMMON", List.of(
+        data.put("Penultimate|UNCOMMON", List.of(
                 "Strong Definition of Done and cross-functional teamwork can prevent your plans from collapsing under pressure."
         ));
-        data.put("Boss|RARE", List.of(
+        data.put("Penultimate|RARE", List.of(
                 "Only those who embody the Agile mindset — empiricism, courage, and focus — can defeat the boss, Anticipating failure modes and building resilience into the team’s workflow is the key to success."
         ));
 
@@ -115,6 +105,10 @@ public class Database {
                 "Advanced Scrum practices involve deep dives into agile philosophy and lean methodologies.",
                 "Mastery of Scrum means tailoring its principles as projects evolve, unlocking hidden efficiencies.",
                 "A cross-functional Scrum Team combines all skills necessary to deliver a usable product increment."
+        ));
+
+        data.put("Warning|RARE", List.of(
+                "❗: The bossroom is very dangerous, it contains a set of 3 questions. %n Get one question wrong, and it's game over!"
         ));
     }
 

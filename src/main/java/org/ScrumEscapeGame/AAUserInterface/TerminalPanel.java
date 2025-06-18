@@ -116,7 +116,7 @@ public class TerminalPanel extends JPanel {
             } else if (currentRoom instanceof PenultimateRoom) {
                 motivationalMessage = "Almost there! Keep pushing forward!";
             } else {
-                motivationalMessage = "Je denkt als een echte product owner!";
+                motivationalMessage = "You're thinking as a real product owner!";
             }
         } else {
             // Fallback default messages (should rarely be reached).

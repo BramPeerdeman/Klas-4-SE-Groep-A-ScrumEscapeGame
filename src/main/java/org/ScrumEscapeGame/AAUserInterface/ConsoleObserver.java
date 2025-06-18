@@ -1,9 +1,6 @@
 package org.ScrumEscapeGame.AAUserInterface;
 
-import org.ScrumEscapeGame.AAEvents.EventObserver;
-import org.ScrumEscapeGame.AAEvents.GameEvent;
-import org.ScrumEscapeGame.AAEvents.RoomEnteredEvent;
-import org.ScrumEscapeGame.AAEvents.UIObserverBase;
+import org.ScrumEscapeGame.AAEvents.*;
 
 public class ConsoleObserver extends UIObserverBase implements EventObserver<GameEvent> {
 

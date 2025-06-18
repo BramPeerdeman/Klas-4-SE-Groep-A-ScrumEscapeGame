@@ -2,6 +2,9 @@ package org.ScrumEscapeGame.Items;
 
 import org.ScrumEscapeGame.GameObjects.Inventory;
 import org.ScrumEscapeGame.GameObjects.Room;
+import org.ScrumEscapeGame.ItemDataBase.AncientScroll;
+import org.ScrumEscapeGame.ItemDataBase.Database;
+import org.ScrumEscapeGame.ItemDataBase.Paper;
 import org.ScrumEscapeGame.Rooms.RoomDefinition;
 import org.ScrumEscapeGame.Rooms.RoomWithPresetItems;
 import org.ScrumEscapeGame.Rooms.BossRoom;
@@ -83,12 +86,23 @@ public class RoomInventoryProvider {
             // Note: Changing each Key to be unique (non-stackable) might require extra refactoring.
             // For now, we assume they are non-stackable or handled in PresetInventory.
             PresetInventory bossInv = new PresetInventory();
-            bossInv.addItem(new Key(300, "Boss Key", "Een sleutel voor de baasdeur.", 6));
+            bossInv.addItem(new Key(300, "Boss Trophy", "You won't see this lol", 6));
             inventory = bossInv;
         }
         else if (room instanceof PenultimateRoom) {
+            ScrollFactory penultimateFactory = new ScrollFactory(1);
             PresetInventory penInv = new PresetInventory();
-            penInv.addItem(new Key(400, "Penultimate Key", "Een sleutel uit de voorlaatste kamer.", 6));
+            penInv.addItem(new Key(400, "Penultimate Key", "A key needed to unlock the bossroom", 6));
+            penInv.addItem(penultimateFactory.createItem(room, Rarity.COMMON));
+            penInv.addItem(penultimateFactory.createItem(room, Rarity.UNCOMMON));
+            penInv.addItem(penultimateFactory.createItem(room, Rarity.RARE));
+            List<String> texts = Database.getTexts("Warning", Rarity.RARE);
+            penInv.addItem(new AncientScroll(9999,
+                    "Ancient Scroll of " + "Warning",
+                    "An ancient scroll with a huge red exclamation mark",
+                    "Warning",
+                    texts,
+                    Rarity.RARE));
             inventory = penInv;
         }
         else {

@@ -34,7 +34,7 @@ public class InventoryItemActionEvent implements GameEvent {
     @Override
     public void apply(GameUIService uiService) {
         // Inform the system that the user has confirmed an action on the item.
-        uiService.printMessage("Action confirmed: " + action + " for " + name + " from " + source + " inventory.");
+        //uiService.printMessage("Action confirmed: " + action + " for " + name + " from " + source + " inventory.");
         // Here you might invoke the corresponding command (for example, call the PickupCommand or UseCommand).
     }
 }

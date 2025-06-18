@@ -32,6 +32,7 @@ public class GameUIService implements DisplayService {
     private final InventoryPanel inventoryPanel;
     private final QuestionPanel questionPanel;
     private TerminalPanel terminalPanel;
+    private WinPanel winPanel;
 
     private boolean inventoryVisible = false;
     private boolean questionVisible = false;
@@ -72,6 +73,9 @@ public class GameUIService implements DisplayService {
         // After creating the question panel, set its embedded inventory panel’s callback to be the question panel.
         this.questionPanel = new QuestionPanel(questionInventoryPanel, this, context);
         panelContainer.add(questionPanel, "question");
+
+        winPanel = new WinPanel(this);
+        panelContainer.add(winPanel, "win");
 
 
     }
@@ -135,7 +139,7 @@ public class GameUIService implements DisplayService {
      * Refreshes the map view by updating the status label and redrawing the MapPanel.
      */
     public void refreshMapView() {
-        statusLabel.setText("Player Status: " + context.getPlayer().getStatus());
+        statusLabel.setText("Player Health: " + context.getPlayer().getHitPoints() + "/5");
         mapPanel.refreshCoordinates();
         mapPanel.repaint();
     }
@@ -153,6 +157,7 @@ public class GameUIService implements DisplayService {
 
         context.getCommandManager().handle(commandKey, context, console, args);
         MonsterManager.getInstance().tick(context.getPlayer(), context.getEventPublisher());
+        this.refreshStatus();
 
     }
 
@@ -177,13 +182,11 @@ public class GameUIService implements DisplayService {
         if (inventoryVisible) {
             cards.show(panelContainer, "game");
             inventoryVisible = false;
-            printMessage("Closing inventory...");
             context.getEventPublisher().publish(new InventoryClosedEvent());
         } else {
             inventoryPanel.refresh();
             cards.show(panelContainer, "inventory");
             inventoryVisible = true;
-            printMessage("Inventory opened.");
             context.getEventPublisher().publish(new InventoryOpenedEvent());
         }
     }
@@ -252,6 +255,7 @@ public class GameUIService implements DisplayService {
             // Set up the submit action for the room challenge.
             questionPanel.setSubmitAction(e -> {
                 if (gameOver) {
+                    removeQuestionPanel();
                     return;
                 }
                 String providedAnswer = questionPanel.getSelectedAnswer();
@@ -264,11 +268,13 @@ public class GameUIService implements DisplayService {
                     if (roomWithQuestion.hasActiveMonster()) {
                         roomWithQuestion.getActiveMonster().die();
                         roomWithQuestion.setActiveMonster(null);
+                        MonsterManager.getInstance().clearActiveMonsters();
                     }
                     getEventPublisher().publish(new DoorUnlockedEvent(roomWithQuestion.getAssociatedDoor()));
                     printMessage("Puzzle solved and door unlocked!");
                     roomWithQuestion.attemptCount = 0;
                     showGamePanel();
+                    removeQuestionPanel();
                     questionVisible = false;
                 } else {
                     roomWithQuestion.attemptCount++;
@@ -279,7 +285,6 @@ public class GameUIService implements DisplayService {
                                     .getHint();
                             getEventPublisher().publish(new NotificationEvent("Here's a hint: " + randomHint));
                         }
-                        printMessage("Incorrect answer. Please try again or use a lifeline.");
                         // Keep panel open for reattempt.
                     } else {
                         getEventPublisher().publish(new NotificationEvent("Incorrect again! A monster awakens..."));
@@ -301,16 +306,12 @@ public class GameUIService implements DisplayService {
                 }
                 // Trigger a tick after processing the answer.
                 MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
-                if (this.getPlayer().getHitPoints() <= 0) {
-                    MonsterManager.getInstance().clearActiveMonsters();
-                    this.handleGameReset("You died while attempting the challenge!");
-                }
+                this.refreshStatus();
             });
         }
 
         cards.show(panelContainer, "question");
         questionVisible = true;
-        printMessage("Puzzle screen opened.");
     }
 
 
@@ -393,55 +394,72 @@ public class GameUIService implements DisplayService {
     }
 
     private void loadBossQuestion(BossRoom bossRoom) {
-        // Get the current boss question based on how many have been answered.
         int currentIndex = bossRoom.getQuestionsAnsweredCount();
-        Question currentQ = bossRoom.getQuestions().get(currentIndex);
+        // If the boss challenge is complete, do not try to load another question.
+        if (currentIndex >= bossRoom.getQuestions().size()) {
+            return;
+        }
 
-        // Load the question into the panel.
+        Question currentQ = bossRoom.getQuestions().get(currentIndex);
         questionPanel.loadQuestion(
                 currentQ.getPrompt(),
                 currentQ.getChoices().toArray(new String[0]),
                 currentQ.getCorrectAnswer()
         );
 
-        // Bind a fresh submit action that captures the current question.
         questionPanel.setSubmitAction(e -> {
-            if (gameOver) {
-                return;
-            }
+            if (gameOver) return;
             String providedAnswer = questionPanel.getSelectedAnswer();
             MultipleChoiceStrategy mcs = new MultipleChoiceStrategy();
             boolean correct = mcs.evaluateAnswer(providedAnswer, currentQ, this);
             if (!correct) {
-                // Wrong answer triggers reset.
                 getEventPublisher().publish(new GameResetEvent("Wrong answer in boss room, game resetting...."));
                 showGamePanel();
                 questionVisible = false;
             } else {
                 bossRoom.incrementQuestionsAnsweredCount();
                 printMessage("Boss question answered correctly.");
-                if (bossRoom.getQuestionsAnsweredCount() == 3) {
-                    // Boss challenge complete!
+                if (bossRoom.getQuestionsAnsweredCount() == bossRoom.getQuestions().size()) {
+                    // Boss challenge complete: trigger win screen.
                     getEventPublisher().publish(new NotificationEvent(
                             "Congratulations, you answered all boss questions correctly, you won!"
                     ));
-                    showGamePanel();
+                    // Option: Disable the submit button so further clicks do nothing.
+                    questionPanel.setSubmitAction(null);// or disable the submit button.
+                    System.out.println("LALALALALA");
+                    showWinScreen();
                     questionVisible = false;
-                    return; // Stop further processing.
+                    return;
                 } else {
-                    // For a correct answer, load the next boss question.
+                    // Load the next boss question fresh.
                     loadBossQuestion(bossRoom);
-                    return; // Ensure we do not continue executing further code here.
+                    return;
                 }
             }
-            // After processing, trigger a monster tick.
             MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
-            if (this.getPlayer().getHitPoints() <= 0) {
-                MonsterManager.getInstance().clearActiveMonsters();
-                this.handleGameReset("You died while attempting the boss challenge!");
-            }
+            this.refreshStatus();
         });
     }
+
+
+
+    public void showWinScreen() {
+        // Show the win panel.
+        cards.show(panelContainer, "win");
+    }
+
+    public void refreshStatus() {
+        // assuming the maximum health is 5 as in your GamePanel status label
+        statusLabel.setText("Player Health: " + context.getPlayer().getHitPoints() + "/5");
+    }
+    public JLabel getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void clearMessages() {
+        console.clearMessages();
+    }
+
 
 }
 

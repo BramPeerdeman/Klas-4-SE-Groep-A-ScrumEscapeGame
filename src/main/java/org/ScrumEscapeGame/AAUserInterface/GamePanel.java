@@ -57,8 +57,11 @@ public class GamePanel extends JPanel {
         // Status panel (optional).
         JPanel statusPanel = new JPanel();
         statusPanel.setPreferredSize(new Dimension(400, 50)); // fixed height.
-        JLabel statusLabel = new JLabel("Player Status: " + uiService.getPlayer().getStatus());
+        JLabel statusLabel = uiService.getStatusLabel();
+        // Optionally update its text immediately:
+        statusLabel.setText("Player Health: " + uiService.getPlayer().getHitPoints() + "/5");
         statusPanel.add(statusLabel);
+
         leftPanel.add(statusPanel, BorderLayout.NORTH);
 
         // Add the shared MapPanel.

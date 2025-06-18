@@ -18,7 +18,7 @@ public class MoveCommand implements Command {
     private String direction;
     private GameContext context;
     private final EventPublisher<GameEvent> publisher;
-    private static final boolean DEBUG = true; // Set true for debug logging
+    private static final boolean DEBUG = false; // Set true for debug logging
 
     /**
      * Constructs a MoveCommand.

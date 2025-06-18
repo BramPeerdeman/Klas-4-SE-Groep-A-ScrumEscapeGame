@@ -144,6 +144,10 @@ public class ConsoleWindow extends JFrame {
     public MapPanel getMapPanel() {
         return mapPanel;
     }
+
+    public void clearMessages() {
+        outputArea.setText("");
+    }
 }
 
 

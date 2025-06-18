@@ -42,7 +42,7 @@ public class RoomWithQuestion extends Room implements HasQuestions {
     // Holds the door associated with the room (shared between connected rooms).
     private LockedDoor sharedDoor;
     // Flag for debugging purposes.
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private final HintProviderSelector hintSelector;
     private boolean hasHelper;
     private boolean hasStatue;

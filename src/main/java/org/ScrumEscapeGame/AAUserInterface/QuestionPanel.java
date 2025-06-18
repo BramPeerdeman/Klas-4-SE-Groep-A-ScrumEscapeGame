@@ -125,13 +125,14 @@ public class QuestionPanel extends JPanel {
     }
 
     public void clear() {
-        // Clear out any previous text, answers, hints, etc.
+        // Clear out any previous texts (question, hint, and message).
         this.questionLabel.setText("");
         this.hintLabel.setText("");
-        // You might also want to clear any button selections or reset related components.
+        // Also clear selections and embedded messages.
         buttonGroup.clearSelection();
-        embeddedInventoryPanel.clearMessages(); // If you have a dedicated method.
+        embeddedInventoryPanel.clearMessages();
     }
+
 
 
 
