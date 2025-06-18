@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class QuestionPanel extends JPanel implements ItemUsageCallback {
+public class QuestionPanel extends JPanel {
     private JLabel questionLabel;
     private JRadioButton[] answerButtons;
     private ButtonGroup buttonGroup;
@@ -118,32 +118,6 @@ public class QuestionPanel extends JPanel implements ItemUsageCallback {
             submitButton.removeActionListener(al);
         }
         submitButton.addActionListener(listener);
-    }
-
-    // Implementing ItemUsageCallback methods so items work immediately.
-    @Override
-    public void useItem(Item item) {
-        // For this example, we assume that if the item is a Hint Joker, perform the hint action.
-        if (item.getName().equalsIgnoreCase("Hint Joker")) {
-            // Retrieve a hint (this could be based on the current question’s hint providers).
-            String hint = "Remember to double-check your choices!";
-            setHintText("Hint: " + hint);
-            // Update the inventory panel's message area immediately.
-            embeddedInventoryPanel.appendMessage("Used " + item.getName() + " to reveal a hint.");
-        } else {
-            // For any other item, just log that it was used.
-            embeddedInventoryPanel.appendMessage("Used " + item.getName() + ".");
-        }
-        // Remove the item from the player's inventory.
-        uiService.getPlayer().getInventory().removeItem(item);
-        // Refresh so the inventory panel shows the change.
-        embeddedInventoryPanel.refresh();
-    }
-
-    @Override
-    public void inspectItem(Item item) {
-        // Display inspection info in the embedded inventory's message area.
-        embeddedInventoryPanel.appendMessage("Inspection: " + item.getName() + " - " + item.getDescription());
     }
 
     public InventoryPanel getEmbeddedInventoryPanel() {

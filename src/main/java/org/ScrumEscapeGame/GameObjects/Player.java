@@ -155,5 +155,9 @@ public class Player {
     public void clearInventory() {
         inventory.clear();
     }
+
+    public void clearSolvedRooms() {
+        solvedRooms.clear();
+    }
 }
 

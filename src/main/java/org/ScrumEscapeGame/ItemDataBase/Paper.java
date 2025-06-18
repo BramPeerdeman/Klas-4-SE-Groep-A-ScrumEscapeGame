@@ -32,7 +32,8 @@ public class Paper extends AbstractScroll{
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
         String uniqueContent = ContentCache.getUniqueText(1, subject, rarity, texts);
         publisher.publish(new UseItemEvent(this.id, this.name, "You used your paper."));
-        publisher.publish(new NotificationEvent("The paper reads: " + uniqueContent));
+        publisher.publish(new NotificationEvent("The paper reads: "));
+        publisher.publish(new NotificationEvent(uniqueContent));
         return true;
     }
 

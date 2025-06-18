@@ -30,7 +30,8 @@ public class AncientScroll extends AbstractScroll{
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
         String uniqueContent = ContentCache.getUniqueText(1, subject, rarity, texts);
         publisher.publish(new UseItemEvent(this.id, this.name, "You used the ancient scroll on " + subject));
-        publisher.publish(new NotificationEvent("The scroll lights up as letters form, you can feel the following being transmitted to your brain: " + uniqueContent));
+        publisher.publish(new NotificationEvent("The scroll lights up as letters form, you can feel the following being transmitted to your brain: "));
+        publisher.publish(new NotificationEvent(uniqueContent));
         return true;
     }
 

@@ -31,7 +31,8 @@ public class Book extends AbstractScroll {
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
         String uniqueContent = ContentCache.getUniqueText(1, subject, rarity, texts);
         publisher.publish(new UseItemEvent(this.id, this.name, "You used your book on " + subject));
-        publisher.publish(new NotificationEvent("You skimmed the booklet about " + subject + ", the most important takeaway was: " + uniqueContent));
+        publisher.publish(new NotificationEvent("You skimmed the booklet about " + subject + ", the most important takeaway was: "));
+        publisher.publish(new NotificationEvent(uniqueContent));
         return true;
     }
 

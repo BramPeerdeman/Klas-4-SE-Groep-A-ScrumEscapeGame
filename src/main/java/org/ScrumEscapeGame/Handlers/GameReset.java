@@ -8,10 +8,7 @@ import org.ScrumEscapeGame.AAUserInterface.GameUIService;
 import org.ScrumEscapeGame.GameObjects.Room;
 import org.ScrumEscapeGame.Items.RoomInventoryProvider;
 import org.ScrumEscapeGame.Monster.MonsterManager;
-import org.ScrumEscapeGame.Rooms.RoomDefinition;
-import org.ScrumEscapeGame.Rooms.RoomFactory;
-import org.ScrumEscapeGame.Rooms.RoomWithQuestion;
-import org.ScrumEscapeGame.Rooms.ZoneConfig;
+import org.ScrumEscapeGame.Rooms.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +51,16 @@ public class GameReset {
                 ((RoomWithQuestion) room).clearActiveMonster();
             }
         }
+        // In resetGame():
+        for (Room room : context.getRoomManager().getRooms().values()) {
+            if (room instanceof BossRoom bossRoom) {
+                bossRoom.resetChallenge();
+            }
+        }
+
+        // Also, clear player's solved room list if that’s appropriate:
+        context.getPlayer().clearSolvedRooms();
+
 
         // Clear the current room map.
         context.getRoomManager().clearRooms();

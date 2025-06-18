@@ -71,7 +71,6 @@ public class GameUIService implements DisplayService {
         InventoryPanel questionInventoryPanel = new InventoryPanel(context, this, true);
         // After creating the question panel, set its embedded inventory panel’s callback to be the question panel.
         this.questionPanel = new QuestionPanel(questionInventoryPanel, this, context);
-        questionInventoryPanel.setItemUsageCallback(questionPanel);
         panelContainer.add(questionPanel, "question");
 
 
@@ -211,54 +210,7 @@ public class GameUIService implements DisplayService {
                 });
             } else {
                 // Load the current boss question based on how many have been answered.
-                int currentIndex = bossRoom.getQuestionsAnsweredCount();
-                Question currentQ = bossRoom.getQuestions().get(currentIndex);
-                questionPanel.loadQuestion(
-                        currentQ.getPrompt(),
-                        currentQ.getChoices().toArray(new String[0]),
-                        currentQ.getCorrectAnswer()
-                );
-                // Set the submit action for the boss challenge.
-                questionPanel.setSubmitAction(e -> {
-                    if (gameOver) {
-                        return;
-                    }
-                    String providedAnswer = questionPanel.getSelectedAnswer();
-                    MultipleChoiceStrategy mcs = new MultipleChoiceStrategy();
-                    boolean correct = mcs.evaluateAnswer(providedAnswer, currentQ, this);
-                    if (!correct) {
-                        // Wrong answer: mark failure and trigger immediate reset.
-                        getEventPublisher().publish(new GameResetEvent("Wrong answer in boss room, game resetting...."));
-                        showGamePanel();
-                        questionVisible = false;
-                    } else {
-                        // Correct answer: increment the count.
-                        bossRoom.incrementQuestionsAnsweredCount();
-                        printMessage("Boss question answered correctly.");
-                        if (bossRoom.getQuestionsAnsweredCount() == 3) {
-                            getEventPublisher().publish(new NotificationEvent(
-                                    "Congratulations, you answered all boss questions correctly, you won!"
-                            ));
-                            showGamePanel();
-                            questionVisible = false;
-                        } else {
-                            // Load the next boss question.
-                            int nextIndex = bossRoom.getQuestionsAnsweredCount();
-                            Question nextQ = bossRoom.getQuestions().get(nextIndex);
-                            questionPanel.loadQuestion(
-                                    nextQ.getPrompt(),
-                                    nextQ.getChoices().toArray(new String[0]),
-                                    nextQ.getCorrectAnswer()
-                            );
-                        }
-                    }
-                    // After processing the answer, trigger a monster tick.
-                    MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
-                    if (this.getPlayer().getHitPoints() <= 0) {
-                        MonsterManager.getInstance().clearActiveMonsters();
-                        this.handleGameReset("You died while attempting the boss challenge!");
-                    }
-                });
+                loadBossQuestion(bossRoom);
             }
             cards.show(panelContainer, "question");
             questionVisible = true;
@@ -439,6 +391,58 @@ public class GameUIService implements DisplayService {
         this.showGamePanel();
         this.questionVisible = false;
     }
+
+    private void loadBossQuestion(BossRoom bossRoom) {
+        // Get the current boss question based on how many have been answered.
+        int currentIndex = bossRoom.getQuestionsAnsweredCount();
+        Question currentQ = bossRoom.getQuestions().get(currentIndex);
+
+        // Load the question into the panel.
+        questionPanel.loadQuestion(
+                currentQ.getPrompt(),
+                currentQ.getChoices().toArray(new String[0]),
+                currentQ.getCorrectAnswer()
+        );
+
+        // Bind a fresh submit action that captures the current question.
+        questionPanel.setSubmitAction(e -> {
+            if (gameOver) {
+                return;
+            }
+            String providedAnswer = questionPanel.getSelectedAnswer();
+            MultipleChoiceStrategy mcs = new MultipleChoiceStrategy();
+            boolean correct = mcs.evaluateAnswer(providedAnswer, currentQ, this);
+            if (!correct) {
+                // Wrong answer triggers reset.
+                getEventPublisher().publish(new GameResetEvent("Wrong answer in boss room, game resetting...."));
+                showGamePanel();
+                questionVisible = false;
+            } else {
+                bossRoom.incrementQuestionsAnsweredCount();
+                printMessage("Boss question answered correctly.");
+                if (bossRoom.getQuestionsAnsweredCount() == 3) {
+                    // Boss challenge complete!
+                    getEventPublisher().publish(new NotificationEvent(
+                            "Congratulations, you answered all boss questions correctly, you won!"
+                    ));
+                    showGamePanel();
+                    questionVisible = false;
+                    return; // Stop further processing.
+                } else {
+                    // For a correct answer, load the next boss question.
+                    loadBossQuestion(bossRoom);
+                    return; // Ensure we do not continue executing further code here.
+                }
+            }
+            // After processing, trigger a monster tick.
+            MonsterManager.getInstance().tick(this.getPlayer(), context.getEventPublisher());
+            if (this.getPlayer().getHitPoints() <= 0) {
+                MonsterManager.getInstance().clearActiveMonsters();
+                this.handleGameReset("You died while attempting the boss challenge!");
+            }
+        });
+    }
+
 }
 
 
