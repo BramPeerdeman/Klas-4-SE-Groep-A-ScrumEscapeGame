@@ -17,11 +17,15 @@ public class TutorialRepository {
                         "S - Move south        K - Check the status of the game\n" +
                         "D - Move east         Q - Attempt the room's question\n" +
                         "SAVE - Type save to save the game\n" +
-                        "I - Open/close your inventory (uses mouse controls)\n" +
-                        "NOTE: Currently only hardcore mode is functional, the monster instakills!"
+                        "I - Open/close your inventory (uses mouse controls)\n"
         );
-        tutorials.put(2, "Remember to prioritize the backlog. Each step builds your journey.");
+        tutorials.put(2, "If you get a question wrong twice in a row, then a monster spawns. %n" +
+                "A monster deal damage for every action you take%n" +
+                "When your health reaches zero, the game resets.%n" +
+                "You can use weapons to damage a monster, when they die they drop a hint joker");
         tutorials.put(3, "Use your resources wisely! Every decision affects your progress.");
+        tutorials.put(4, "Hints nudge you in the right direction, you have to deliberate before answering.");
+        tutorials.put(5, "Keys are needed to open a locked door, the bossroom needs 6 'penultimate keys'");
         // Add more entries as needed.
     }
 

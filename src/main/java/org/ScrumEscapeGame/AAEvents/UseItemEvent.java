@@ -27,7 +27,8 @@ public class UseItemEvent implements GameEvent {
 
     @Override
     public void apply(GameUIService uiService) {
-        uiService.printMessage("Item used: " + name + " -> " + effectMessage);
+        //uiService.printMessage("Item used: " + name + " -> " + effectMessage);
+        uiService.printMessage("");
     }
 }
 

@@ -52,38 +52,39 @@ public class RoomQuestions {
         ));
 
         QUESTIONS.put(3, new QuestionWithHints(
-                new Question(
-                "How long is a typical Sprint in Scrum?",
-                List.of(
-                        "1 to 2 days",
-                        "1 to 2 weeks",
-                        "2 to 4 weeks",
-                        "4 to 6 weeks"
-                ),
-                "2 to 4 weeks"
-                ),
-                List.of(
-                        new HelpHintProvider("Not implemented"),
-                        new FunnyHintProvider("Not implemented")
-                )
-        ));
+    new Question(
+        "How long is a typical Sprint in Scrum?",
+        List.of(
+            "1 to 2 days",
+            "1 to 2 weeks",
+            "2 to 4 weeks",
+            "4 to 6 weeks"
+        ),
+        "2 to 4 weeks"
+    ),
+    List.of(
+        new HelpHintProvider("Consider the time needed to develop and review a usable product increment"),
+        new FunnyHintProvider("A sprint shouldn’t be as quick as a flash nor as long as a season—find that middle ground!")
+    )
+));
 
-        QUESTIONS.put(4, new QuestionWithHints(
-                new Question(
-                "What is the maximum timebox for the Daily Scrum?",
-                List.of(
-                        "5 minutes",
-                        "10 minutes",
-                        "15 minutes",
-                        "30 minutes"
-                ),
-                "15 minutes"
-                ),
-                List.of(
-                        new HelpHintProvider("Not implemented"),
-                        new FunnyHintProvider("Not implemented")
-                )
-        ));
+QUESTIONS.put(4, new QuestionWithHints(
+    new Question(
+        "What is the maximum timebox for the Daily Scrum?",
+        List.of(
+            "5 minutes",
+            "10 minutes",
+            "15 minutes",
+            "30 minutes"
+        ),
+        "15 minutes"
+    ),
+    List.of(
+        new HelpHintProvider("The Daily Scrum is designed as a brief update meeting; it should keep things moving without getting into details."),
+        new FunnyHintProvider("Your stand-up should be as long as you can hold people's attention for. If you hear yawning, you've overstayed your welcome!")
+    )
+));
+
 
         // Boss-level questions (no integer key)
         QUESTIONBOSS.add(new Question(

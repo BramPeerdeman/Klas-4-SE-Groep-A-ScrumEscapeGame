@@ -126,6 +126,7 @@ public class InventoryPanel extends JPanel {
                                 uiService.getPlayer(),
                                 context.getEventPublisher()
                         );
+                        uiService.refreshStatus();
 
                     }
                 }
@@ -181,6 +182,7 @@ public class InventoryPanel extends JPanel {
                             uiService.getPlayer(),
                             context.getEventPublisher()
                     );
+                    uiService.refreshStatus();
 
                 }
             }

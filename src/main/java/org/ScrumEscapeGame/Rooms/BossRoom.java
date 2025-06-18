@@ -22,7 +22,7 @@ import java.util.List;
 public class BossRoom extends Room implements HasQuestions {
     // The locked door that guards the boss challenge.
     private LockedDoor bossDoor;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     // List of boss-level questions from RoomQuestions.getBossQuestions().
     private final List<Question> questions = RoomQuestions.getBossQuestions();

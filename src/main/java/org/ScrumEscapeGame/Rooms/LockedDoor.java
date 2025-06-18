@@ -7,7 +7,7 @@ package org.ScrumEscapeGame.Rooms;
  */
 public class LockedDoor {
     private boolean locked = true;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * Determines whether the door is currently locked.

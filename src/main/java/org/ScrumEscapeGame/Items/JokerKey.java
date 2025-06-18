@@ -20,7 +20,12 @@ public class JokerKey extends Item implements Joker {
 
     @Override
     public boolean use(Player player, EventPublisher<GameEvent> publisher) {
-        player.addKey();
+        player.getInventory().addItem(new Key(
+                7777,
+                "Joker Key",
+                "A useless key, for now...",
+                1
+                ));
         publisher.publish(new JokerUsedEvent(getId(), getName(), "Key Joker used: You received an extra key!"));
         return true;
     }

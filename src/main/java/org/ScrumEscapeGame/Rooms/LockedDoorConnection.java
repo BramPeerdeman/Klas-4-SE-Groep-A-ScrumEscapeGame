@@ -10,7 +10,7 @@ public class LockedDoorConnection implements Connection {
     private Room destination;
     public LockedDoor door;
     // Set DEBUG to true for logging; false for production.
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * Constructs a LockedDoorConnection.

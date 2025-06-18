@@ -28,6 +28,7 @@ public class RoomEnteredEvent implements GameEvent {
 
     @Override
     public void apply(GameUIService uiService) {
+        uiService.clearMessages();
         uiService.printMessage(message);
     }
 }
