@@ -120,7 +120,7 @@ public class MapBuilder {
                 builder.connectBossLocked(current.getId(), "east", next.getId(), context.getPlayer());
                 System.out.println("DEBUG: Boss connection should've been made!");
             } else {
-                builder.connectLocked(current.getId(), "east", next.getId());
+                builder.connectLocked(current.getId(), "south", next.getId());
             }
         }
 

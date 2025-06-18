@@ -170,6 +170,12 @@ public class BossRoom extends Room implements HasQuestions {
             }
         }
     }
+
+    public void resetChallenge() {
+        questionsAnsweredCount = 0;
+        failed = false;
+    }
+
 }
 
 

@@ -195,10 +195,6 @@ public class InventoryPanel extends JPanel {
         add(messageScroll, BorderLayout.SOUTH);
     }
 
-    public void setItemUsageCallback(ItemUsageCallback callback) {
-        this.usageCallback = callback;
-    }
-
     // Append messages.
     public void appendMessage(String message) {
         messageArea.append(message + "\n");
