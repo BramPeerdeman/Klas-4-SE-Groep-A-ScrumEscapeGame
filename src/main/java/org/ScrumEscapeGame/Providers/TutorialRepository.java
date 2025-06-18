@@ -19,7 +19,10 @@ public class TutorialRepository {
                         "SAVE - Type save to save the game\n" +
                         "I - Open/close your inventory (uses mouse controls)\n"
         );
-        tutorials.put(2, "When your health reaches zero, the game resets.");
+        tutorials.put(2, "If you get a question wrong twice in a row, then a monster spawns. %n" +
+                "A monster deal damage for every action you take%n" +
+                "When your health reaches zero, the game resets.%n" +
+                "You can use weapons to damage a monster, when they die they drop a hint joker");
         tutorials.put(3, "Use your resources wisely! Every decision affects your progress.");
         tutorials.put(4, "Hints nudge you in the right direction, you have to deliberate before answering.");
         tutorials.put(5, "Keys are needed to open a locked door, the bossroom needs 6 'penultimate keys'");
