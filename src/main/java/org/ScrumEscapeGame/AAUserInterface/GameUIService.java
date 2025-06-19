@@ -458,6 +458,7 @@ public class GameUIService implements DisplayService {
 
     public void clearMessages() {
         console.clearMessages();
+        inventoryPanel.clearMessages();
     }
 
 

@@ -78,7 +78,7 @@ public class ConsoleWindow extends JFrame {
         // Add the panel container to the frame.
         add(panelContainer);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(1500, 900);
         setLocationRelativeTo(null);
     }
 
